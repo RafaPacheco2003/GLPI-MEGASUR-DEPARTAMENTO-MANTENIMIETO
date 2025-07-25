@@ -1,4 +1,19 @@
 <?php
+// Autoload para MyCLabs\Enum
+spl_autoload_register(function ($class) {
+    $prefix = 'MyCLabs\\Enum\\';
+    $base_dir = __DIR__ . '/../MyCLabs/Enum/src/';
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
 // Autoload para PhpSpreadsheet
 spl_autoload_register(function ($class) {
     $prefix = 'PhpOffice\\PhpSpreadsheet\\';
@@ -44,7 +59,7 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// Autoload para ZipStream
+// Autoload para ZipStream (v2.x)
 spl_autoload_register(function ($class) {
     $prefix = 'ZipStream\\';
     $base_dir = __DIR__ . '/../ZipStream/src/';

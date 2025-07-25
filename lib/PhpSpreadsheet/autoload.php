@@ -1,4 +1,3 @@
-
 <?php
 // Autoload para PhpSpreadsheet
 spl_autoload_register(function ($class) {
@@ -34,6 +33,21 @@ spl_autoload_register(function ($class) {
 spl_autoload_register(function ($class) {
     $prefix = 'Composer\\Pcre\\';
     $base_dir = __DIR__ . '/../Composer/Pcre/src/';
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+    }
+});
+
+// Autoload para ZipStream
+spl_autoload_register(function ($class) {
+    $prefix = 'ZipStream\\';
+    $base_dir = __DIR__ . '/../ZipStream/src/';
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
         return;

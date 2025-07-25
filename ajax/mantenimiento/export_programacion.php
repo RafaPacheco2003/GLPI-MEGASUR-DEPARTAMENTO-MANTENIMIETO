@@ -198,7 +198,7 @@ echo '   <Row ss:Height="9"></Row>
    <Row ss:Height="9"></Row>
    <Row ss:Height="72">
     <Cell ss:Index="5" ss:MergeAcross="2" ss:StyleID="s2"><Data ss:Type="String">Imagen de Ejemplo</Data></Cell>
-    <Cell ss:StyleID="s2">
+    <Cell ss:StyleID="s2">s
       <ss:Data ss:Type="String" xmlns="http://www.w3.org/TR/REC-html40">
         <html>
           <body>

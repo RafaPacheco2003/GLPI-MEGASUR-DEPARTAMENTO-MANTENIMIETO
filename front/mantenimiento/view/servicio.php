@@ -50,7 +50,7 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
 
 
             <div class="d-flex">
-                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi3/front/mantenimiento/view/programacion.php#"); ?>
+                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/programacion.php#"); ?>
 
                 <form class="d-flex" method="GET" action="">
                     <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">

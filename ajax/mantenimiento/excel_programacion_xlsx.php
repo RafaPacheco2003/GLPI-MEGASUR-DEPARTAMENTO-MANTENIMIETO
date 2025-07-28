@@ -29,10 +29,14 @@ if (!$programacion) {
 $servicio = $managerServicio->getServiciosByProgramacion2($id);
 
 
+
 // Crear hoja de cálculo y configurar encabezado
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 $nombreProgramacion = $programacion['nombre_programacion'] ?? '';
+
+// Forzar vista "Diseño de página" (Page Layout) al abrir el archivo
+$sheet->getSheetView()->setView(\PhpOffice\PhpSpreadsheet\Worksheet\SheetView::SHEETVIEW_PAGE_LAYOUT);
 
 
 $logoPath = __DIR__ . '/../../files/logos/SGI.jpeg';
@@ -106,12 +110,21 @@ if ($firmaPathFinal) {
     copy($firmaPathFinal, $tempImage);
 
     $sheet->getColumnDimension('D')->setWidth(25);
+
+
+    // Agregar el texto "Elaboró" ARRIBA de la firma y centrado en C:D (más a la derecha)
+    $elaboroRow = $firmaRow - 1;
+    $sheet->mergeCells('E' . $elaboroRow . ':E' . $elaboroRow);
+    $sheet->setCellValue('E' . $elaboroRow, 'Elaboró');
+    $sheet->getStyle('E' . $elaboroRow)->getFont()->setSize(8);
+    $sheet->getStyle('E' . $elaboroRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
     $drawing = new Drawing();
     $drawing->setName('FirmaElaboro');
     $drawing->setDescription('Firma de quien elaboró');
     $drawing->setPath($tempImage);
-    $drawing->setHeight(150);
-    $drawing->setWidth(180);
+    $drawing->setHeight(120);
+    $drawing->setWidth(150);
     $drawing->setCoordinates('B' . $firmaRow);
     $drawing->setWorksheet($sheet);
 }
@@ -148,9 +161,61 @@ $sheet->setCellValue('J3', 'Año');
 $sheet->setCellValue('K3', $año);
 
 $nombreEmpresa = $programacion['nombre_empresa'] ?? '';
+
+
+// Obtener el nombre del usuario que elaboró directamente desde la base de datos
+$idElaboro = $programacion['id_elaboro'] ?? '';
+$nombreElaboro = '';
+if ($idElaboro) {
+    $mysqli = new mysqli('localhost', 'root', '', 'glpi'); // Cambia usuario, contraseña y base si es necesario
+    if (!$mysqli->connect_errno) {
+        $stmt = $mysqli->prepare('SELECT realname, firstname, name FROM glpi_users WHERE id = ? LIMIT 1');
+        $stmt->bind_param('i', $idElaboro);
+        $stmt->execute();
+        $stmt->bind_result($realname, $firstname, $login);
+        if ($stmt->fetch()) {
+            if (!empty($realname)) {
+                $nombreElaboro = $realname;
+                if (!empty($firstname)) {
+                    $nombreElaboro .= ' ' . $firstname;
+                }
+            } else {
+                $nombreElaboro = $login;
+            }
+        }
+        $stmt->close();
+        $mysqli->close();
+    }
+}
+
 $sheet->mergeCells('F2:H2');
 $sheet->setCellValue('F2', 'EMPRESA: ' . $nombreEmpresa);
 $sheet->getStyle('F2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+
+
+// Mostrar el nombre de quien elaboró JUSTO debajo de la firma y centrado con el texto 'Elaboró'
+if ($firmaPathFinal && $idElaboro) {
+    $mysqli = new mysqli('localhost', 'root', '', 'glpi'); // Cambia usuario, contraseña y base si es necesario
+    $nombreElaboro = '';
+    if (!$mysqli->connect_errno) {
+        $stmt = $mysqli->prepare('SELECT name FROM glpi_users WHERE id = ? LIMIT 1');
+        $stmt->bind_param('i', $idElaboro);
+        $stmt->execute();
+        $stmt->bind_result($login);
+        if ($stmt->fetch()) {
+            $nombreElaboro = $login;
+        }
+        $stmt->close();
+        $mysqli->close();
+    }
+    // El nombre debe ir 4 filas debajo de la firma, en la columna E (igual que 'Elaboró')
+    $nombreRow = $firmaRow + 4;
+    $sheet->mergeCells('E' . $nombreRow . ':E' . $nombreRow);
+    $sheet->setCellValue('E' . $nombreRow, $nombreElaboro);
+    $sheet->getStyle('E' . $nombreRow)->getFont()->setSize(8);
+    $sheet->getStyle('E' . $nombreRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+}
 
 
 // --- Quitar bordes de toda la hoja y reducir tamaño de fuente ---

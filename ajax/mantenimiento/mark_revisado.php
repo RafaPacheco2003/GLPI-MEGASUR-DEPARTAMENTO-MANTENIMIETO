@@ -1,4 +1,9 @@
 <?php
+// Forzar cabecera JSON y evitar cualquier salida antes del JSON
+while (ob_get_level()) ob_end_clean();
+header('Content-Type: application/json');
+ini_set('display_errors', 0);
+error_reporting(0);
 require_once '../../inc/includes.php';
 require_once '../../inc/mantenimiento/ProgramacionManager.php';
 
@@ -54,12 +59,16 @@ try {
     ]);
 
 } catch (Exception $e) {
+    // Limpiar cualquier salida previa
+    if (ob_get_length()) ob_end_clean();
     // Solo establecer código 400 si no se ha establecido ya
     if (http_response_code() === 200) {
         http_response_code(400);
     }
+    header('Content-Type: application/json');
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
     ]);
+    exit;
 }

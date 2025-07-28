@@ -1,1 +1,21 @@
 [2025-07-25 19:27:40] glpiphplog.WARNING: Test logger  
+[2025-07-28 19:40:33] glpiphplog.WARNING:   *** PHP Warning (2): Constant GLPI_ROOT already defined in C:\xampp\htdocs\glpi\inc\mantenimiento\bootstrap.php at line 4
+  Backtrace :
+  inc\mantenimiento\bootstrap.php:4                  define()
+  ajax\mantenimiento\mark_revisado.php:12            require_once()
+  
+[2025-07-28 19:41:46] glpiphplog.WARNING:   *** PHP Warning (2): Constant GLPI_ROOT already defined in C:\xampp\htdocs\glpi\inc\mantenimiento\bootstrap.php at line 4
+  Backtrace :
+  inc\mantenimiento\bootstrap.php:4                  define()
+  ajax\mantenimiento\mark_revisado.php:12            require_once()
+  
+[2025-07-28 19:44:59] glpiphplog.WARNING:   *** PHP Warning (2): Constant GLPI_ROOT already defined in C:\xampp\htdocs\glpi\inc\mantenimiento\bootstrap.php at line 4
+  Backtrace :
+  inc\mantenimiento\bootstrap.php:4                  define()
+  ajax\mantenimiento\mark_revisado.php:14            require_once()
+  
+[2025-07-28 19:47:17] glpiphplog.WARNING:   *** PHP Warning (2): Constant GLPI_ROOT already defined in C:\xampp\htdocs\glpi\inc\mantenimiento\bootstrap.php at line 4
+  Backtrace :
+  inc\mantenimiento\bootstrap.php:4                  define()
+  ajax\mantenimiento\mark_revisado.php:15            require_once()
+  

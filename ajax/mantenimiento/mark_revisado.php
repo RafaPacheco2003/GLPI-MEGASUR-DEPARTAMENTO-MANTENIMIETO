@@ -29,25 +29,26 @@ try {
     }
 
     // Validar campos requeridos
-    $requiredFields = ['id', 'id_reviso'];
+    $requiredFields = ['id', 'id_reviso', 'firma_reviso'];
     foreach ($requiredFields as $field) {
         if (!isset($data[$field]) || empty($data[$field])) {
             throw new Exception("El campo {$field} es requerido");
         }
     }
 
+
     // Debug: Registrar los datos que se intentan insertar
-    error_log("Datos recibidos en save_programacion.php: " . json_encode($data));
+    error_log("Datos recibidos en mark_revisado.php: " . json_encode($data));
 
     $programacionManager = new ProgramacionManager();
 
-     // Actualizar la programación
-    $success = $programacionManager->markAsReviewed($data['id'], $data['id_reviso']);
+    // Actualizar la programación con firma
+    $success = $programacionManager->markAsReviewed($data['id'], $data['id_reviso'], $data['firma_reviso']);
 
     if(!$success) {
         http_response_code(400);
         throw new Exception('No se pudo marcar la programación como revisada');
-    }   
+    }
 
 
     

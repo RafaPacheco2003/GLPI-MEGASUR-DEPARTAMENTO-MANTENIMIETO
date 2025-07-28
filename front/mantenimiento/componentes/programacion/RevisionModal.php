@@ -177,12 +177,8 @@
         <script>
         // Ejemplo de uso: al dar click en Guardar, se manda el id de la programación y el id del usuario logueado
         document.getElementById('btnGuardarRevisado').addEventListener('click', async function() {
-          // Suponiendo que tienes el id de la programación en una variable JS, por ejemplo:
-          // let idProgramacion = ...;
-          // Aquí puedes obtenerlo dinámicamente según tu flujo
           let idProgramacion = window.idProgramacionSeleccionada || null;
           if (!idProgramacion) {
-            // Intentar obtener el id de la URL
             const params = new URLSearchParams(window.location.search);
             idProgramacion = params.get('id');
           }
@@ -191,12 +187,12 @@
             return;
           }
           let idRevisor = document.getElementById('id_usuario_logueado').value;
+          let firmaRevisor = window.revisionSignatureFileName || '';
+          if (!firmaRevisor) {
+            alert('Debes firmar antes de guardar.');
+            return;
+          }
           try {
-            const firmaRevisor = window.revisionSignatureFileName || '';
-            if (!firmaRevisor) {
-              alert('Por favor, firma antes de guardar.');
-              return;
-            }
             const response = await fetch('/glpi/ajax/mantenimiento/mark_revisado.php', {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },

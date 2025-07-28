@@ -166,28 +166,20 @@ class ProgramacionManager
      * @param string $firmaRevisor Nombre o ruta de la firma del revisor
      * @return bool Devuelve true si la actualización fue exitosa, false si falló
      */
-    public function markAsReviewed($id, $idRevisor)
+    public function markAsReviewed($id, $idRevisor, $firmaRevisor)
     {
         // Consulta SQL con marcadores ? para los valores que se enviarán después
         $query = "UPDATE programacion
               SET estado = 1,               -- Se cambia el estado a 'revisado'
-                  id_reviso = ?            -- Se asigna el ID del revisor
+                  id_reviso = ?,            -- Se asigna el ID del revisor
+                  firma_reviso = ?          -- Se asigna la firma del revisor
               WHERE id = ?";                // Solo se actualiza la fila con el ID indicado
 
-        // Prepara la consulta para evitar inyecciones SQL
         $stmt = $this->db->prepare($query);
-
-        // Verifica si la preparación de la consulta fue exitosa
         if (!$stmt) {
-            // Si falla, lanza una excepción con el error del servidor MySQL
             throw new Exception("Error al preparar la consulta: " . $this->db->error);
         }
-
-        // Enlaza los parámetros a la consulta:
-        // "i" = entero, "s" = string → entonces: entero, string, entero
-        $stmt->bind_param("ii", $idRevisor, $id);
-
-        // Ejecuta la consulta y devuelve true si fue exitosa, false si falló
+        $stmt->bind_param("isi", $idRevisor, $firmaRevisor, $id);
         return $stmt->execute();
     }
 

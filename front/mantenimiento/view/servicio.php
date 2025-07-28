@@ -74,7 +74,7 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
                 <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
                     <i class="me-2 fas fa-edit"></i> Editar programacion
                 </button>
-                <button type="button" class="btn btn-exportar" id="btnExportar" onclick="exportarProgramacion()">
+                <button type="button" class="btn btn-exportar" id="btnExportar">
                     <i class="me-2 fas fa-file-excel"></i> Exportar a Excel
                 </button>
                 <?php echo ButtonComponent::custom('Nueva servicio', 'fas fa-plus'); ?>
@@ -203,141 +203,67 @@ include '../componentes/programacion/RevisionModal.php';
 ?>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    // --- FUNCIONES GLOBALES ---
+    window.exportarProgramacion = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id_programacion = urlParams.get('id');
+        if (!id_programacion) {
+            alert('No se encontró el ID de la programación');
+            return;
+        }
+        window.location.href = '../../../ajax/mantenimiento/excel_programacion_xlsx.php?id=' + id_programacion;
+    };
 
-        document.getElementById('btnMarcarRevisado').addEventListener('click', function () {
-            // Mostrar el modal de revisión
-            const modal = new bootstrap.Modal(document.getElementById('modalRevisado'));
-            modal.show();
-        });
+    // --- EVENTOS DOM ---
+    document.addEventListener('DOMContentLoaded', function () {
+        // Botón Marcar como revisado (si existe)
+        var btnMarcar = document.getElementById('btnMarcarRevisado');
+        if (btnMarcar) {
+            btnMarcar.addEventListener('click', function () {
+                const modal = new bootstrap.Modal(document.getElementById('modalRevisado'));
+                modal.show();
+            });
+        }
 
         // Inicializar los modales
         const nuevoServicioModal = new bootstrap.Modal(document.getElementById('nuevoServicioModal'));
         // El modal de edición de programación se inicializa en su propio componente, no aquí.
 
-        // Agregar event listeners para los botones de guardar
-        document.getElementById('btnGuardarEdicionProgramacion').addEventListener('click', function () {
-            window.guardarEdicionProgramacion();
-        });
+        // Botón guardar edición programación (si existe)
+        var btnGuardarEdicion = document.getElementById('btnGuardarEdicionProgramacion');
+        if (btnGuardarEdicion) {
+            btnGuardarEdicion.addEventListener('click', function () {
+                window.guardarEdicionProgramacion();
+            });
+        }
 
-        // (Eliminado para evitar doble guardado, la asignación está en el modal)
-
-        // Obtener el botón "Nueva servicio"
+        // Botón Nueva servicio (si existe)
         const btnNuevoServicio = document.querySelector('button:has(i.fas.fa-plus)');
         if (btnNuevoServicio) {
             btnNuevoServicio.addEventListener('click', function () {
-                // Establecer la fecha actual como valor predeterminado
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-
-                // Establecer fecha actual
                 document.getElementById('fecha_servicio').value = now.toISOString().split('T')[0];
-
-                // Establecer hora actual
                 const horaActual = now.toTimeString().slice(0, 5);
                 document.getElementById('hora_inicio').value = horaActual;
-
-                // Establecer hora final una hora después por defecto
                 const horaFinal = new Date(now.getTime() + 60 * 60000).toTimeString().slice(0, 5);
                 document.getElementById('hora_final').value = horaFinal;
-
                 nuevoServicioModal.show();
             });
         }
 
-        // Agregar el manejador para el botón de editar programación
-        document.getElementById('btnEditarProg').addEventListener('click', function () {
-            cargarDatosProgramacion();
-        });
+        // Botón editar programación (si existe)
+        var btnEditarProg = document.getElementById('btnEditarProg');
+        if (btnEditarProg) {
+            btnEditarProg.addEventListener('click', function () {
+                cargarDatosProgramacion();
+            });
+        }
 
-        // Asignar las funciones a window para que estén disponibles globalmente
-        // Las funciones de programación se han movido al componente EditarProgramacionModal
-
-        window.guardarServicio = async function () {
-            try {
-                const form = document.getElementById('nuevoServicioForm');
-                const urlParams = new URLSearchParams(window.location.search);
-                const id_programacion = urlParams.get('id');
-
-                // Obtener fecha y horas
-                const fecha = document.getElementById('fecha_servicio').value;
-                const horaInicio = document.getElementById('hora_inicio').value;
-                const horaFinal = document.getElementById('hora_final').value;
-
-                // Crear objetos Date para fecha_inicio y fecha_final
-                const fecha_inicio = new Date(fecha + 'T' + horaInicio);
-                const fecha_final = new Date(fecha + 'T' + horaFinal);
-
-                // Formatear fechas para MySQL (YYYY-MM-DD HH:mm:ss)
-                const formatearFecha = (fecha) => {
-                    return fecha.toISOString().slice(0, 19).replace('T', ' ');
-                };
-
-                const formData = {
-                    fecha_inicio: formatearFecha(fecha_inicio),
-                    fecha_final: formatearFecha(fecha_final),
-                    servidor_site: document.getElementById('servidor_site').value,
-                    serie_id: document.getElementById('serie_id').value,
-                    estatus: document.getElementById('estatus').value,
-                    afectacion: document.getElementById('afectacion').value,
-                    serie_folio_hoja_servicio: document.getElementById('serie_folio_hoja_servicio').value,
-                    id_programacion: id_programacion
-                };
-
-                // Validar que la hora final sea después de la hora inicial
-                if (fecha_final <= fecha_inicio) {
-                    alert('La hora final debe ser posterior a la hora de inicio');
-                    return;
-                }
-
-                // Validar campos requeridos
-                for (const [key, value] of Object.entries(formData)) {
-                    if (!value) {
-                        alert('Por favor, complete todos los campos requeridos');
-                        return;
-                    }
-                }
-
-                // Enviar los datos al servidor
-                const response = await fetch('/glpi/ajax/mantenimiento/create_servicio.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
-                }
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // Cerrar el modal y recargar la página
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('nuevoServicioModal'));
-                    modal.hide();
-                    window.location.reload();
-                } else {
-                    alert(result.message || 'Error al guardar el servicio');
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-                console.error('Error completo:', error);
-            }
-        };
-
-        window.exportarProgramacion = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id_programacion = urlParams.get('id');
-
-            if (!id_programacion) {
-                alert('No se encontró el ID de la programación');
-                return;
-            }
-
-            // Crear y descargar el archivo Excel
-            window.location.href = '../../../ajax/mantenimiento/excel_programacion_xlsx.php?id=' + id_programacion;
+        // Botón exportar (si existe)
+        var btnExportar = document.getElementById('btnExportar');
+        if (btnExportar) {
+            btnExportar.addEventListener('click', window.exportarProgramacion);
         }
     });
 </script>

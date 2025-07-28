@@ -335,7 +335,7 @@ include '../componentes/programacion/RevisionModal.php';
             }
 
             // Crear y descargar el archivo Excel
-            window.location.href = '../../../ajax/mantenimiento/export_programacion.php?id=' + id_programacion;
+            window.location.href = '../../../ajax/mantenimiento/excel_programacion_xlsx.php?id=' + id_programacion;
         }
     });
 </script>

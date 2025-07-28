@@ -1,0 +1,70 @@
+-- Tabla PROGRAMACION
+CREATE TABLE programacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_empresa VARCHAR(25) NOT NULL,
+    nombre_programacion ENUM(
+        'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE COMPUTO Y RED(SERVIDORES Y REDES)',
+        'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE SOFTWARE(SERVIDORES)'
+    ) NOT NULL,
+    fecha_emision DATE NOT NULL,
+    id_elaboro INT,
+    id_reviso INT,
+    id_autorizo INT,
+    firma_elaboro VARCHAR(100),
+    firma_reviso VARCHAR(100),
+    firma_autorizo VARCHAR(100),
+    estado TINYINT NOT NULL DEFAULT 0 //Elaborado= 0, 1= revisado=2, autorizado=3
+);
+
+-- Tabla SERVICIO
+CREATE TABLE servicio (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fecha_inicio DATE NOT NULL,
+    fecha_final DATE NOT NULL,
+    servidor_site VARCHAR(75),
+    serie_id VARCHAR(50),
+    estatus VARCHAR(50),
+    afectacion ENUM(
+        'SIN AFECTACION AL MOMENTO',
+        'SIN ACCESO AL PORTAL DE TICKET GLPI',
+        'SIN RED LOCAL E INTERNET EN EL CORPORATIVO',
+        'SIN ACCESO AL PORTAL DE CALIDAD SGC',
+        'SIN INTERNET EN EL DEPARTAMENTO JURIDICO',
+        'SIN INTERNET EN EL DEPARTAMENTO DE OPERACIONES',
+        'SIN ACCESO AL SERVICIO DE CARPETAS COMPARTIDAS',
+        'AFECTACION GENERAL ESTACIONES Y CORPORATIVO',
+        'SIN AFECTACION A LA OPERACION',
+        'AFECTACION MINIMA Y SOLO AL DEPARTAMENTO',
+        'AFECTACION MINIMA SIN ACCESO A LAS CARPETAS COMPARTIDAS',
+        'NINGUNA'
+    ),
+    serie_folio_hoja_servicio VARCHAR(100),
+        id_estacion INT,
+         quien VARCHAR(100);
+    id_programacion INT,
+    estado TINYINT NOT NULL DEFAULT 0, -- 0 = asignado, 1 = proceso, 2 = completado
+    FOREIGN KEY (id_programacion) REFERENCES programacion(id)
+);
+
+CREATE TABLE hoja_servicio (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_estacion INT NOT NULL,
+    id_servicio INT NOT NULL UNIQUE,
+    folio VARCHAR(50) NOT NULL,
+    serie VARCHAR(50) NOT NULL,
+    fecha_inicio DATETIME NOT NULL,
+    fecha_fin DATETIME NOT NULL,
+    descripcion TEXT,
+    id_entregado INT,
+    firma_entregado VARCHAR(100),
+    id_recibido INT,
+    firma_recibido VARCHAR(100),
+    tipo_servicio ENUM('Instalación', 'Mantenimiento', 'Retiro', 'Proyecto') NOT NULL,
+
+    FOREIGN KEY (id_servicio) REFERENCES servicio(id),
+
+    INDEX idx_folio (folio),
+    INDEX idx_serie (serie),
+    INDEX idx_fechas (fecha_inicio, fecha_fin),
+    INDEX idx_estacion (id_estacion)
+);

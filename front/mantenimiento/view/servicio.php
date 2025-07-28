@@ -62,12 +62,14 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
             </div>
 
             <div>
+                <?php if (isset($programacion) && isset($programacion['estado']) && $programacion['estado'] != 1): ?>
                 <button type="button" class="btn" id="btnMarcarRevisado"
                     style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
                     onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
                     onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';">
                     <i class="me-2"></i> Marcar como revisado
                 </button>
+                <?php endif; ?>
 
                 <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
                     <i class="me-2 fas fa-edit"></i> Editar programacion

@@ -1,16 +1,21 @@
 <?php // No dejar espacios ni líneas antes de esta línea ?>
+
+<!-- ================== MODAL AUTORIZAR ================== -->
 <div class="modal fade" id="modalAutorizar" tabindex="-1" aria-labelledby="modalAutorizarLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
+      <!-- ========== HEADER ========== -->
       <div class="modal-header">
         <h5 class="modal-title" id="modalAutorizarLabel">Marcar como autorizado</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
 
+      <!-- ========== BODY ========== -->
       <div class="modal-body">
         <div class="row">
           <div class="col-md-12">
+            <!-- Autorizador -->
             <div class="mb-2">
               <label for="inputAutorizo" class="form-label" style="font-weight:600; color:#2563eb; letter-spacing:0.5px;">Autorizador</label>
               <input type="text" class="form-control" id="autorizador" readonly
@@ -25,8 +30,10 @@
             <input type="hidden" id="id_usuario_logueado" value="<?php echo htmlspecialchars($id_usuario); ?>">
           </div>
 
+          <!-- Mensaje de firma -->
           <p class="mt-2">Necesitamos tu firma para autorizar.</p>
 
+          <!-- Preview de firma -->
           <div class="signature-container" style="width:100%; background:#f4f8ff; border-radius:8px; overflow:hidden; border:2px dashed #2563eb; margin-bottom:10px;">
             <div id="autorizacionSignaturePreview" class="signature-preview"
               style="width:100%; height:120px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; background:transparent; cursor:pointer;">
@@ -70,133 +77,10 @@
               </div>
             </div>
           </div>
-
-          <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-          <script>
-            let autorizacionSignaturePad, autorizacionSignatureModal;
-            let autorizacionSignatureDataUrl = null;
-
-            function initAutorizacionSignaturePad() {
-              console.log('[Firma] Ejecutando initAutorizacionSignaturePad');
-              const modalElem = document.getElementById('autorizacionSignatureModal');
-              const img = document.getElementById('autorizacionSignatureImg');
-              if (!modalElem) { alert('[Firma] No se encontró el modalElem'); console.error('[Firma] No se encontró el modalElem'); return; }
-              if (!img) { alert('[Firma] No se encontró el img'); console.error('[Firma] No se encontró el img'); return; }
-              autorizacionSignatureModal = new bootstrap.Modal(modalElem);
-
-              // Solo registrar una vez
-              if (!window._autorizacionSignaturePadDelegated) {
-                document.body.addEventListener('click', function(e) {
-                  // Abrir modal al hacer click en el preview
-                  if (e.target.closest('#autorizacionSignaturePreview')) {
-                    console.log('[Firma] Click en preview, abriendo modal de firma...');
-                    autorizacionSignatureModal.show();
-                    setTimeout(() => {
-                      const canvas = document.getElementById('autorizacionSignaturePad');
-                      if (!canvas) { alert('[Firma] No se encontró el canvas'); console.error('[Firma] No se encontró el canvas'); return; }
-                      resizeAutorizacionSignatureCanvas(canvas);
-                      autorizacionSignaturePad = new SignaturePad(canvas, { penColor: 'rgb(0,0,0)' });
-                      if (autorizacionSignatureDataUrl) {
-                        const image = new window.Image();
-                        image.onload = function () {
-                          const ctx = canvas.getContext('2d');
-                          ctx.clearRect(0, 0, canvas.width, canvas.height);
-                          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-                        };
-                        image.src = autorizacionSignatureDataUrl;
-                      } else {
-                        autorizacionSignaturePad.clear();
-                      }
-                      console.log('[Firma] Modal de firma abierto y canvas inicializado');
-                    }, 200);
-                  }
-                  // Limpiar firma
-                  if (e.target.closest('#clearAutorizacionSignature')) {
-                    console.log('[Firma] Click en limpiar firma');
-                    if (autorizacionSignaturePad) autorizacionSignaturePad.clear();
-                  }
-                  // Guardar firma
-                  if (e.target.closest('#saveAutorizacionSignature')) {
-                    console.log('[Firma] Click en guardar firma');
-                    const preview = document.getElementById('autorizacionSignaturePreview');
-                    const imgNew = document.getElementById('autorizacionSignatureImg');
-                    const placeholderNew = preview ? preview.querySelector('.placeholder-text') : null;
-                    if (autorizacionSignaturePad && !autorizacionSignaturePad.isEmpty()) {
-                      autorizacionSignatureDataUrl = autorizacionSignaturePad.toDataURL('image/png');
-                      fetch('/glpi/ajax/mantenimiento/upload_signature.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image: autorizacionSignatureDataUrl })
-                      })
-                        .then(response => response.json())
-                        .then(result => {
-                          if (result.success && result.fileName) {
-                            imgNew.src = autorizacionSignatureDataUrl;
-                            imgNew.style.display = 'block';
-                            if (placeholderNew) placeholderNew.style.display = 'none';
-                            autorizacionSignatureModal.hide();
-                            window.autorizacionSignatureFileName = result.fileName;
-                            console.log('[Firma] Firma guardada correctamente');
-                          } else {
-                            alert('Error al guardar la firma: ' + (result.message || 'Error desconocido'));
-                            console.error('[Firma] Error al guardar la firma', result);
-                          }
-                        })
-                        .catch(e => {
-                          alert('Error de conexión al guardar la firma: ' + e.message);
-                          console.error('[Firma] Error de conexión al guardar la firma', e);
-                        });
-                    } else {
-                      alert('Por favor, realiza una firma antes de guardar.');
-                      console.warn('[Firma] Intento de guardar sin firma');
-                    }
-                  }
-                });
-                window._autorizacionSignaturePadDelegated = true;
-              }
-            }
-
-            function resizeAutorizacionSignatureCanvas(canvas) {
-              if (!canvas) { console.error('[Firma] No se puede redimensionar: canvas no encontrado'); return; }
-              const container = canvas.parentElement;
-              let width = container.offsetWidth;
-              let height = container.offsetHeight;
-              if (window.innerWidth >= 992) {
-                height = Math.max(window.innerHeight * 0.7, 400);
-              } else {
-                height = Math.max(window.innerHeight * 0.5, 200);
-              }
-              canvas.style.width = width + 'px';
-              canvas.style.height = height + 'px';
-              const ratio = Math.max(window.devicePixelRatio || 1, 1);
-              canvas.width = width * ratio;
-              canvas.height = height * ratio;
-              canvas.getContext('2d').scale(ratio, ratio);
-              console.log('[Firma] Canvas redimensionado', {width, height, ratio});
-            }
-
-            window.addEventListener('resize', function () {
-              const canvas = document.getElementById('autorizacionSignaturePad');
-              if (autorizacionSignatureModal && canvas && autorizacionSignatureModal._isShown) {
-                resizeAutorizacionSignatureCanvas(canvas);
-              }
-            });
-
-            // Inicializar automáticamente solo si el modal está visible en el DOM
-            function tryInitFirmaModal() {
-              const modal = document.getElementById('autorizacionSignatureModal');
-              if (modal && modal.offsetParent !== null) {
-                console.log('[Firma] Inicializando modal de firma (visible en DOM)');
-                initAutorizacionSignaturePad();
-              } else {
-                setTimeout(tryInitFirmaModal, 300);
-              }
-            }
-            tryInitFirmaModal();
-          </script>
         </div>
       </div>
 
+      <!-- ========== FOOTER ========== -->
       <div class="modal-footer" style="padding: 1rem 1.5rem;">
         <button type="button" class="btn" id="btnGuardarAutorizar"
           style="background-color: #2563eb; color: #fff; border: 1px solid #2563eb; padding: 0.5rem 1.25rem; font-weight: 500; border-radius: 6px;"
@@ -204,47 +88,361 @@
           onmouseout="this.style.background='#2563eb'; this.style.borderColor='#2563eb';">
           Guardar
         </button>
-        <script>
-        document.getElementById('btnGuardarAutorizar').addEventListener('click', async function() {
-          let idProgramacion = window.idProgramacionSeleccionada || null;
-          if (!idProgramacion) {
-            const params = new URLSearchParams(window.location.search);
-            idProgramacion = params.get('id');
-          }
-          if (!idProgramacion) {
-            alert('No se encontró el ID de la programación a autorizar.');
-            return;
-          }
-          let idAutorizador = document.getElementById('id_usuario_logueado').value;
-          let firmaAutorizador = window.autorizacionSignatureFileName || '';
-          if (!firmaAutorizador) {
-            alert('Debes firmar antes de guardar.');
-            return;
-          }
-          try {
-            const response = await fetch('/glpi/ajax/mantenimiento/mark_autorizado.php', {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                id: idProgramacion,
-                id_autorizo: idAutorizador,
-                firma_autorizo: firmaAutorizador
-              })
-            });
-            const result = await response.json();
-            if (result.success) {
-              window.location.reload();
-            } else {
-              alert('Error: ' + (result.message || 'No se pudo marcar como autorizado.'));
-            }
-          } catch (e) {
-            alert('Error de conexión: ' + e.message);
-          }
-        });
-        </script>
       </div>
 
     </div>
   </div>
 </div>
+
+<!-- ================== SCRIPTS ================== -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script>
+// =================== LIMPIAR FUNCIONES ANTERIORES ===================
+console.log('🧹 LIMPIANDO FUNCIONES ANTERIORES');
+
+// Eliminar cualquier función anterior que pueda causar conflictos
+if (window.initAutorizacionSignaturePad) {
+    window.initAutorizacionSignaturePad = null;
+    delete window.initAutorizacionSignaturePad;
+}
+
+if (window.handleGuardarAutorizar) {
+    window.handleGuardarAutorizar = null;
+    delete window.handleGuardarAutorizar;
+}
+
+// =================== VARIABLES GLOBALES ===================
+let autorizacionSignaturePad = null;
+let autorizacionSignatureModal = null;
+let autorizacionSignatureDataUrl = null;
+
+// =================== FUNCIÓN PRINCIPAL PARA GUARDAR AUTORIZACIÓN ===================
+function guardarAutorizacion() {
+    console.log('💾 GUARDANDO AUTORIZACIÓN...');
+    
+    try {
+        // Obtener datos del formulario
+        const autorizador = document.getElementById('autorizador');
+        const idUsuario = document.getElementById('id_usuario_logueado');
+        // Obtener el id de la programación desde la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const idProgramacion = urlParams.get('id');
+
+        console.log('[Autorizar] Datos obtenidos:', {
+            autorizador: autorizador ? autorizador.value : null,
+            idUsuario: idUsuario ? idUsuario.value : null,
+            idProgramacion,
+            firma: autorizacionSignatureDataUrl ? autorizacionSignatureDataUrl.substring(0, 30) + '...' : null
+        });
+
+        if (!idProgramacion) {
+            console.error('[Autorizar] Falta idProgramacion');
+            return;
+        }
+
+        // Verificar si hay firma
+        if (!autorizacionSignatureDataUrl) {
+            console.error('[Autorizar] Falta firma');
+            return;
+        }
+
+        // Preparar datos para el endpoint
+        const payload = {
+            id: idProgramacion,
+            id_autorizo: idUsuario ? idUsuario.value : '',
+            firma_autorizo: autorizacionSignatureDataUrl
+        };
+
+        console.log('[Autorizar] Enviando payload a mark_autorizado.php:', payload);
+
+        fetch('../../../ajax/mantenimiento/mark_autorizado.php', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(async response => {
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('[Autorizar] Error parseando JSON de respuesta:', e);
+            }
+            console.log('[Autorizar] Respuesta HTTP:', response.status, response.statusText);
+            console.log('[Autorizar] Respuesta JSON:', data);
+            if (response.ok && data && data.success) {
+                cerrarModal();
+                window.location.reload();
+            } else {
+                console.error('[Autorizar] Error en respuesta:', data);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error al guardar autorización (fetch):', error);
+        });
+    } catch (error) {
+        console.error('❌ Error al guardar autorización (try/catch):', error);
+        alert('Error al guardar la autorización: ' + error.message);
+    }
+}
+
+// =================== FUNCIÓN PARA CERRAR MODAL ===================
+function cerrarModal() {
+    try {
+        const modal = document.getElementById('modalAutorizar');
+        if (modal) {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+                modalInstance.hide();
+            } else {
+                // Si no hay instancia, crear una temporal para cerrar
+                const tempModal = new bootstrap.Modal(modal);
+                tempModal.hide();
+            }
+        }
+    } catch (error) {
+        console.error('⚠️ Error al cerrar modal:', error);
+    }
+}
+
+// =================== GESTIÓN DE FIRMA ===================
+function inicializarFirma() {
+    console.log('✍️ Inicializando sistema de firma...');
+    
+    const signatureModal = document.getElementById('autorizacionSignatureModal');
+    if (!signatureModal) {
+        console.log('❌ Modal de firma no encontrado');
+        return;
+    }
+    
+    try {
+        autorizacionSignatureModal = new bootstrap.Modal(signatureModal);
+        console.log('✅ Modal de firma inicializado');
+    } catch (error) {
+        console.error('❌ Error al inicializar modal de firma:', error);
+    }
+}
+
+function abrirModalFirma() {
+    console.log('📝 Abriendo modal de firma...');
+    
+    if (!autorizacionSignatureModal) {
+        inicializarFirma();
+    }
+    
+    if (autorizacionSignatureModal) {
+        autorizacionSignatureModal.show();
+        
+        setTimeout(() => {
+            const canvas = document.getElementById('autorizacionSignaturePad');
+            if (canvas) {
+                configurarCanvas(canvas);
+                autorizacionSignaturePad = new SignaturePad(canvas, { 
+                    penColor: 'rgb(0,0,0)',
+                    backgroundColor: 'rgb(255,255,255)'
+                });
+                
+                if (autorizacionSignatureDataUrl) {
+                    cargarFirmaExistente();
+                }
+            }
+        }, 300);
+    }
+}
+
+function configurarCanvas(canvas) {
+    const container = canvas.parentElement;
+    const rect = container.getBoundingClientRect();
+    
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2);
+}
+
+function cargarFirmaExistente() {
+    if (autorizacionSignaturePad && autorizacionSignatureDataUrl) {
+        const img = new Image();
+        img.onload = function() {
+            const canvas = document.getElementById('autorizacionSignaturePad');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width / 2, canvas.height / 2);
+        };
+        img.src = autorizacionSignatureDataUrl;
+    }
+}
+
+function limpiarFirma() {
+    console.log('🧹 Limpiando firma...');
+    if (autorizacionSignaturePad) {
+        autorizacionSignaturePad.clear();
+    }
+}
+
+function guardarFirma() {
+    console.log('💾 Guardando firma...');
+    
+    if (!autorizacionSignaturePad || autorizacionSignaturePad.isEmpty()) {
+        alert('Por favor, realiza una firma antes de guardar.');
+        return;
+    }
+    
+    try {
+        autorizacionSignatureDataUrl = autorizacionSignaturePad.toDataURL('image/png');
+        
+        // Actualizar preview
+        const img = document.getElementById('autorizacionSignatureImg');
+        const placeholder = document.querySelector('#autorizacionSignaturePreview .placeholder-text');
+        
+        if (img && placeholder) {
+            img.src = autorizacionSignatureDataUrl;
+            img.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+        
+        // Cerrar modal de firma
+        if (autorizacionSignatureModal) {
+            autorizacionSignatureModal.hide();
+        }
+        
+        console.log('✅ Firma guardada correctamente');
+        
+    } catch (error) {
+        console.error('❌ Error al guardar firma:', error);
+        alert('Error al guardar la firma: ' + error.message);
+    }
+}
+
+// =================== EVENT LISTENERS ===================
+document.addEventListener('click', function(e) {
+    // Botón Guardar Autorización
+    if (e.target.id === 'btnGuardarAutorizar') {
+        console.log('🎯 BOTÓN GUARDAR AUTORIZACIÓN CLICKEADO');
+        e.preventDefault();
+        guardarAutorizacion();
+        return;
+    }
+    
+    // Preview de firma
+    if (e.target.closest('#autorizacionSignaturePreview')) {
+        console.log('📝 Abriendo editor de firma');
+        abrirModalFirma();
+        return;
+    }
+    
+    // Limpiar firma
+    if (e.target.id === 'clearAutorizacionSignature') {
+        limpiarFirma();
+        return;
+    }
+    
+    // Guardar firma
+    if (e.target.id === 'saveAutorizacionSignature') {
+        guardarFirma();
+        return;
+    }
+});
+
+// =================== INICIALIZACIÓN ===================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📋 DOM listo - Verificando elementos...');
+    
+    const elementos = {
+        modalAutorizar: document.getElementById('modalAutorizar'),
+        modalFirma: document.getElementById('autorizacionSignatureModal'),
+        btnGuardar: document.getElementById('btnGuardarAutorizar'),
+        autorizador: document.getElementById('autorizador'),
+        preview: document.getElementById('autorizacionSignaturePreview')
+    };
+    
+    let todosPresentes = true;
+    Object.entries(elementos).forEach(([nombre, elemento]) => {
+        if (elemento) {
+            console.log(`✅ ${nombre}: ENCONTRADO`);
+        } else {
+            console.log(`❌ ${nombre}: NO ENCONTRADO`);
+            todosPresentes = false;
+        }
+    });
+    
+    if (todosPresentes) {
+        console.log('🎉 TODOS LOS ELEMENTOS ENCONTRADOS - SISTEMA LISTO');
+        inicializarFirma();
+    } else {
+        console.log('⚠️ FALTAN ELEMENTOS - VERIFICAR HTML');
+    }
+});
+
+console.log('✅ SCRIPT DE AUTORIZACIÓN CARGADO COMPLETAMENTE');
+</script>
+
+<!-- COLOCA ESTE SCRIPT AL FINAL DE TU PÁGINA, DESPUÉS DE TODOS LOS DEMÁS -->
+<script>
+// =================== SCRIPT DOMINANTE - SOBRESCRIBE TODO ===================
+console.log('🚀 SCRIPT DOMINANTE INICIANDO...');
+
+// ESPERAR UN MOMENTO PARA QUE SE CARGUEN OTROS SCRIPTS
+setTimeout(function() {
+    console.log('💥 SOBRESCRIBIENDO FUNCIONES EXISTENTES...');
+    
+    // ELIMINAR TODOS LOS EVENT LISTENERS EXISTENTES DEL BODY
+    const nuevoBody = document.body.cloneNode(true);
+    document.body.parentNode.replaceChild(nuevoBody, document.body);
+    
+    // FUNCIÓN PARA EL BOTÓN GUARDAR
+    function ejecutarGuardar() {
+        console.log('🎯 ¡¡¡BOTÓN GUARDAR FUNCIONANDO!!!');
+        
+        // Obtener datos
+        const autorizador = document.getElementById('autorizador');
+        const idUsuario = document.getElementById('id_usuario_logueado');
+        
+        const datos = {
+            autorizador: autorizador ? autorizador.value : 'No encontrado',
+            idUsuario: idUsuario ? idUsuario.value : 'No encontrado'
+        };
+        
+        console.log('📋 Datos obtenidos:', datos);
+        
+        alert('🎉 ¡ÉXITO! Autorización procesada:\n\n' + 
+              'Autorizador: ' + datos.autorizador + '\n' +
+              'ID Usuario: ' + datos.idUsuario);
+        
+        // Cerrar modal
+        try {
+            const modal = document.getElementById('modalAutorizar');
+            if (modal) {
+                const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                modalInstance.hide();
+                console.log('✅ Modal cerrado');
+            }
+        } catch (e) {
+            console.log('⚠️ Error al cerrar modal:', e);
+        }
+    }
+    
+    // NUEVO EVENT LISTENER QUE DOMINA TODOS
+    document.body.addEventListener('click', function(e) {
+        console.log('👆 CLICK INTERCEPTADO por script dominante:', e.target.id, e.target.tagName);
+        
+        // DETENER PROPAGACIÓN PARA EVITAR OTROS SCRIPTS
+        e.stopImmediatePropagation();
+        
+        if (e.target.id === 'btnGuardarAutorizar') {
+            console.log('🎯 BOTÓN GUARDAR DETECTADO POR SCRIPT DOMINANTE');
+            e.preventDefault();
+            ejecutarGuardar();
+        }
+    }, true); // true = CAPTURE phase, se ejecuta ANTES que otros
+    
+    console.log('✅ SCRIPT DOMINANTE CONFIGURADO');
+    
+}, 1000); // Esperar 1 segundo
+
+console.log('⏳ SCRIPT DOMINANTE CARGADO, ESPERANDO...');
+</script>
+
 <?php // No dejar espacios ni líneas después de esta línea ?>

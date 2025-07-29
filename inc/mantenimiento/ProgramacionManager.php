@@ -183,6 +183,35 @@ class ProgramacionManager
         return $stmt->execute();
     }
 
+    /**
+     * Marcar como autorizado una programación
+     * 
+     * @param int $id ID del registro en la tabla programacion
+     * @param int $idAutoriza ID del usuario que autoriza
+     * @param string $firmaAutoriza Nombre o ruta de la firma del autorizador
+     * @return bool Devuelve true si la actualización fue exitosa, false si falló
+     */
+    public function markAsAuthorized($id, $idAutoriza, $firmaAutoriza)
+    {
+        // Consulta SQL con marcadores ? para los valores que se enviarán después
+        $query = "UPDATE programacion
+              SET estado = 2,               -- Se cambia el estado a 'autorizado'
+                  id_autorizo = ?,          -- Se asigna el ID del autorizador
+                  firma_autorizo = ?        -- Se asigna la firma del autorizador
+              WHERE id = ?";
+
+        $stmt = $this->db->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $this->db->error);
+        }
+        // id_autorizo (int), firma_autorizo (string), id (int)
+        $stmt->bind_param("isi", $idAutoriza, $firmaAutoriza, $id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+        }
+        return $stmt->affected_rows > 0;
+    }
+
 
     /**
      * Buscar programaciones por nombre de programación

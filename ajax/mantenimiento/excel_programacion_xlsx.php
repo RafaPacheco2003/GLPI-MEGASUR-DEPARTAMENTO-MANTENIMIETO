@@ -105,12 +105,12 @@ if (!empty($servicio)) {
 }
 $firmaRow = $row + 4; // 6 filas abajo del último servicio o del header si no hay servicios
 
+// Firma de quien elaboró
 if ($firmaPathFinal) {
     $tempImage = sys_get_temp_dir() . '/temp_excel_img.png';
     copy($firmaPathFinal, $tempImage);
 
     $sheet->getColumnDimension('D')->setWidth(25);
-
 
     // Agregar el texto "Elaboró" ARRIBA de la firma y centrado en C:D (más a la derecha)
     $elaboroRow = $firmaRow - 1;
@@ -127,6 +127,32 @@ if ($firmaPathFinal) {
     $drawing->setWidth(150);
     $drawing->setCoordinates('B' . $firmaRow);
     $drawing->setWorksheet($sheet);
+}
+
+// Firma de quien revisó (misma altura que la de elaborado, pero en columna G)
+$firmaRevisoPath = null;
+if (!empty($programacion['firma_reviso'])) {
+    $firmaRevisoPath = obtenerFirmaPath($programacion['firma_reviso'], '');
+}
+if ($firmaRevisoPath && file_exists($firmaRevisoPath)) {
+    $tempImageReviso = sys_get_temp_dir() . '/temp_excel_img_reviso.png';
+    copy($firmaRevisoPath, $tempImageReviso);
+
+    // Texto "Revisó" arriba de la firma, en columna H (una columna a la derecha de la firma de elaborado)
+    $revisoCol = 'H';
+    $sheet->mergeCells($revisoCol . ($elaboroRow) . ':' . $revisoCol . ($elaboroRow));
+    $sheet->setCellValue($revisoCol . ($elaboroRow), 'Revisó');
+    $sheet->getStyle($revisoCol . ($elaboroRow))->getFont()->setSize(8);
+    $sheet->getStyle($revisoCol . ($elaboroRow))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+    $drawingReviso = new Drawing();
+    $drawingReviso->setName('FirmaReviso');
+    $drawingReviso->setDescription('Firma de quien revisó');
+    $drawingReviso->setPath($tempImageReviso);
+    $drawingReviso->setHeight(120);
+    $drawingReviso->setWidth(150);
+    $drawingReviso->setCoordinates('G' . $firmaRow);
+    $drawingReviso->setWorksheet($sheet);
 }
 
 // Ajustar la altura de la fila 3 para que sea delgada

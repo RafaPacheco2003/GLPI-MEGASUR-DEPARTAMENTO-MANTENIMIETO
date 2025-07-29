@@ -19,3 +19,185 @@
   inc\mantenimiento\bootstrap.php:4                  define()
   ajax\mantenimiento\mark_revisado.php:15            require_once()
   
+[2025-07-29 18:21:43] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:43] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:43] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:43] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:21:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:22:20] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:22:20] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:22:20] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:22:20] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:24) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:49] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:49] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:49] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:49] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:50] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1114
+  Backtrace :
+  src\Html.php:1114                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 1118
+  Backtrace :
+  src\Html.php:1118                                  header()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2137
+  Backtrace :
+  src\Html.php:2137                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  
+[2025-07-29 18:25:51] glpiphplog.WARNING:   *** PHP Warning (2): Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\AutorizarModal.php:25) in C:\xampp\htdocs\glpi\src\Html.php at line 2138
+  Backtrace :
+  src\Html.php:2138                                  header()
+  src\Html.php:1122                                  Html::header_nocache()
+  src\Html.php:1692                                  Html::includeHeader()
+  front\mantenimiento\view\servicio.php:43           Html::header()
+  

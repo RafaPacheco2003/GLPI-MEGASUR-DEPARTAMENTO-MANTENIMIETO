@@ -43,58 +43,54 @@ if (!$programacion) {
 Html::header("Servicio", $_SERVER['PHP_SELF']);
 ?>
 
+
 <!-- Header-->
 <div class="center">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-
-
-            <div class="d-flex">
-                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/programacion.php#"); ?>
-
-                <form class="d-flex" method="GET" action="">
-                    <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">
-                    <input type="text" name="search" class="form-control me-2 ms-2" placeholder="Buscar por servidor..."
-                        style="width: 250px;"
-                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <?php echo ButtonComponent::search(); ?>
-                </form>
-            </div>
-
-            <div>
-                <?php if (isset($programacion) && isset($programacion['estado'])): ?>
-                    <?php $estado = (int) $programacion['estado']; ?>
-
-                    <?php if ($estado != 1 && $estado != 2): ?>
-                        <button type="button" class="btn" id="btnMarcarRevisado"
-                            style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
-                            onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
-                            onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';">
-                            <i class="me-2"></i> Marcar como revisado
-                        </button>
+        <div class="card-header px-3 py-3">
+            <div class="row g-2 align-items-center flex-column flex-md-row">
+                <!-- Columna izquierda: Volver y buscador -->
+                <div class="col-12 col-md-7 d-flex flex-column flex-md-row align-items-stretch align-items-md-center mb-2 mb-md-0 gap-2">
+                    <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/programacion.php#"); ?>
+                    <form class="d-flex flex-grow-1" method="GET" action="">
+                        <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">
+                        <input type="text" name="search" class="form-control me-2 ms-2" placeholder="Buscar por servidor..."
+                            style="width: 100%; min-width: 0; max-width: 350px;"
+                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <?php echo ButtonComponent::search(); ?>
+                    </form>
+                </div>
+                <!-- Columna derecha: Botones -->
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-md-end gap-2">
+                    <?php if (isset($programacion) && isset($programacion['estado'])): ?>
+                        <?php $estado = (int) $programacion['estado']; ?>
+                        <?php if ($estado != 1 && $estado != 2): ?>
+                            <button type="button" class="btn" id="btnMarcarRevisado"
+                                style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
+                                onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
+                                onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';">
+                                <i class="me-2"></i> Marcar como revisado
+                            </button>
+                        <?php endif; ?>
+                        <?php if ($estado === 1): ?>
+                            <button type="button" class="btn" id="btnMarcarAutorizado"
+                                style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
+                                onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
+                                onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';"
+                                data-usuario="<?php echo htmlspecialchars($_SESSION['glpiname'] ?? ''); ?>"
+                                data-id="<?php echo htmlspecialchars($_SESSION['glpiID'] ?? ''); ?>">
+                                <i class="me-2"></i> Marcar como autorizado
+                            </button>
+                        <?php endif; ?>
                     <?php endif; ?>
-
-                    <?php if ($estado === 1): ?>
-                        <button type="button" class="btn" id="btnMarcarAutorizado"
-                            style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
-                            onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
-                            onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';"
-                            data-usuario="<?php echo htmlspecialchars($_SESSION['glpiname'] ?? ''); ?>"
-                            data-id="<?php echo htmlspecialchars($_SESSION['glpiID'] ?? ''); ?>">
-                            <i class="me-2"></i> Marcar como autorizado
-                        </button>
-                    <?php endif; ?>
-                <?php endif; ?>
-
-
-
-                <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
-                    <i class="me-2 fas fa-edit"></i> Editar programacion
-                </button>
-                <button type="button" class="btn btn-exportar" id="btnExportar">
-                    <i class="me-2 fas fa-file-excel"></i> Exportar a Excel
-                </button>
-                <?php echo ButtonComponent::custom('Nueva servicio', 'fas fa-plus'); ?>
+                    <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
+                        <i class="me-2 fas fa-edit"></i> Editar programacion
+                    </button>
+                    <button type="button" class="btn btn-exportar" id="btnExportar">
+                        <i class="me-2 fas fa-file-excel"></i> Exportar a Excel
+                    </button>
+                    <?php echo ButtonComponent::custom('Nueva servicio', 'fas fa-plus'); ?>
+                </div>
             </div>
         </div>
     </div>

@@ -674,11 +674,11 @@ class ProgramacionModal
                                 afectacion = item.querySelector('select[name="afectacion"]')?.value || 'N/A';
                                 serie_folio_hoja_servicio = item.querySelector('input[name="serie_folio_hoja[]"]')?.value || 'N/A';
                             }
-                            // Validar campos requeridos (los que exige create_servicio.php)
-                            if (!fecha_servicio || !hora_inicio || !hora_fin || !serie_id || !estatus) {
-                                alert('Faltan campos obligatorios en uno de los servicios. Verifica todos los datos.');
-                                continue;
-                            }
+                        // Validar solo los campos realmente requeridos por el backend
+                        if (!fecha_servicio || !hora_inicio || !hora_fin || !servidor_site || !afectacion) {
+                            alert('Faltan campos obligatorios en uno de los servicios. Verifica fecha, horas, servidor y afectación.');
+                            continue;
+                        }
                             // Formatear fechas
                             const fecha_inicio = new Date(fecha_servicio + 'T' + hora_inicio);
                             const fecha_final = new Date(fecha_servicio + 'T' + hora_fin);

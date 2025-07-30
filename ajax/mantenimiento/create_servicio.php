@@ -26,11 +26,7 @@ try {
         'fecha_inicio',
         'fecha_final',
         'servidor_site',
-        'serie_id',
-        'estatus',
-        'afectacion',
-        'serie_folio_hoja_servicio',
-        'id_programacion'
+        'afectacion'
     ];
 
     foreach ($requiredFields as $field) {

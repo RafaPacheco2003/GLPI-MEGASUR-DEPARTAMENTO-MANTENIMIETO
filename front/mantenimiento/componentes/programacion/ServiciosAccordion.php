@@ -121,25 +121,24 @@ class ServiciosAccordion
                     <label class="form-label">Estatus</label>
                     <input type="text" class="form-control" name="estatus[]" placeholder="Estatus">
                 </div>
-               <div class="col-md-3">
-    <label for="afectacion" class="form-label">Afectación</label>
-    <select class="form-select" id="afectacion" name="afectacion" required>
-        <option value="">Seleccione una afectación</option>
-        <option value="SIN AFECTACION AL MOMENTO">Sin afectación al momento</option>
-        <option value="SIN ACCESO AL PORTAL DE TICKET GLPI">Sin acceso al portal de ticket GLPI</option>
-        <option value="SIN RED LOCAL E INTERNET EN EL CORPORATIVO">Sin red local e internet en el corporativo</option>
-        <option value="SIN ACCESO AL PORTAL DE CALIDAD SGC">Sin acceso al portal de calidad SGC</option>
-        <option value="SIN INTERNET EN EL DEPARTAMENTO JURIDICO">Sin internet en el departamento jurídico</option>
-        <option value="SIN INTERNET EN EL DEPARTAMENTO DE OPERACIONES">Sin internet en el departamento de operaciones</option>
-        <option value="SIN ACCESO AL SERVICIO DE CARPETAS COMPARTIDAS">Sin acceso al servicio de carpetas compartidas</option>
-        <option value="AFECTACION GENERAL ESTACIONES Y CORPORATIVO">Afectación general estaciones y corporativo</option>
-        <option value="SIN AFECTACION A LA OPERACION">Sin afectación a la operación</option>
-        <option value="AFECTACION MINIMA Y SOLO AL DEPARTAMENTO">Afectación mínima y solo al departamento</option>
-        <option value="AFECTACION MINIMA SIN ACCESO A LAS CARPETAS COMPARTIDAS">Afectación mínima sin acceso a las carpetas compartidas</option>
-        <option value="NINGUNA">Ninguna</option>
-    </select>
-</div>
-
+                <div class="col-md-3">
+                    <label for="afectacion" class="form-label">Afectación</label>
+                    <select class="form-select" id="afectacion" name="afectacion">
+                        <option value="">Seleccione una afectación</option>
+                        <option value="SIN AFECTACION AL MOMENTO">Sin afectación al momento</option>
+                        <option value="SIN ACCESO AL PORTAL DE TICKET GLPI">Sin acceso al portal de ticket GLPI</option>
+                        <option value="SIN RED LOCAL E INTERNET EN EL CORPORATIVO">Sin red local e internet en el corporativo</option>
+                        <option value="SIN ACCESO AL PORTAL DE CALIDAD SGC">Sin acceso al portal de calidad SGC</option>
+                        <option value="SIN INTERNET EN EL DEPARTAMENTO JURIDICO">Sin internet en el departamento jurídico</option>
+                        <option value="SIN INTERNET EN EL DEPARTAMENTO DE OPERACIONES">Sin internet en el departamento de operaciones</option>
+                        <option value="SIN ACCESO AL SERVICIO DE CARPETAS COMPARTIDAS">Sin acceso al servicio de carpetas compartidas</option>
+                        <option value="AFECTACION GENERAL ESTACIONES Y CORPORATIVO">Afectación general estaciones y corporativo</option>
+                        <option value="SIN AFECTACION A LA OPERACION">Sin afectación a la operación</option>
+                        <option value="AFECTACION MINIMA Y SOLO AL DEPARTAMENTO">Afectación mínima y solo al departamento</option>
+                        <option value="AFECTACION MINIMA SIN ACCESO A LAS CARPETAS COMPARTIDAS">Afectación mínima sin acceso a las carpetas compartidas</option>
+                        <option value="NINGUNA">Ninguna</option>
+                    </select>
+                </div>
                 <div class="col-md-3">
                     <label class="form-label">Serie/Folio Hoja</label>
                     <input type="text" class="form-control" name="serie_folio_hoja[]" placeholder="Serie/Folio Hoja">

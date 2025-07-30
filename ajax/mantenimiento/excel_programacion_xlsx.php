@@ -429,6 +429,10 @@ for ($i = 0; $i < count($servicioHeaders); $i++) {
         $sheet->getColumnDimension($colLetter)->setWidth(2.5);
     } elseif ($i === 0 || ($i >= 2 && $i <= 3)) { // Día, Mes, Año
         $sheet->getColumnDimension($colLetter)->setWidth(4);
+    } elseif ($i === 6) { // Servidor/Site
+        $sheet->getColumnDimension($colLetter)->setWidth(16);
+    } elseif ($i === 8 || $i === 9) { // Afectaciones y Serie Folio Hoja Servicio
+        $sheet->getColumnDimension($colLetter)->setWidth(21);
     } else {
         $sheet->getColumnDimension($colLetter)->setWidth(8);
     }

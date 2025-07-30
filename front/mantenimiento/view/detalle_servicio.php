@@ -28,6 +28,13 @@ if (!$servicio) {
 $programacionManager = new ProgramacionManager();
 $programacion = $programacionManager->getById($servicio['id_programacion']);
 
+// Imprimir en consola el id_programacion y el estado de la programación
+if ($programacion && isset($programacion['estado'])) {
+    echo "<script>console.log('id_programacion: " . htmlspecialchars($servicio['id_programacion']) . "');console.log('estado programacion: " . htmlspecialchars($programacion['estado']) . "');</script>";
+} else {
+    echo "<script>console.log('id_programacion: " . htmlspecialchars($servicio['id_programacion']) . "');console.log('No se pudo obtener el estado de la programación');</script>";
+}
+
 // Mapear el estado numérico a texto
 $estadoTexto = '';
 $estadoColor = '';
@@ -137,10 +144,12 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
     <div class="mt-3">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
-        <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
-            data-bs-target="#modalFormularioPuesto">
-            Llenar Hoja de servicio
-        </button>
+        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
+            <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
+                data-bs-target="#modalFormularioPuesto">
+                Llenar Hoja de servicio
+            </button>
+        <?php endif; ?>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>
 

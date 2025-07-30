@@ -58,7 +58,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
 
             <div class="d-flex">
-                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi3/front/mantenimiento/view/servicio.php?id=" . $servicio['id_programacion']); ?>
+                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/servicio.php?id=" . $servicio['id_programacion']); ?>
 
                 <input type="text" class="form-control me-2 ms-2" placeholder="Buscar..." style="width: 250px;">
                 <?php echo ButtonComponent::search(); ?>

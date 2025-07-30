@@ -166,29 +166,50 @@ class ProgramacionManager
      * @param string $firmaRevisor Nombre o ruta de la firma del revisor
      * @return bool Devuelve true si la actualización fue exitosa, false si falló
      */
-    public function markAsReviewed($id, $idRevisor)
+    public function markAsReviewed($id, $idRevisor, $firmaRevisor)
     {
         // Consulta SQL con marcadores ? para los valores que se enviarán después
         $query = "UPDATE programacion
               SET estado = 1,               -- Se cambia el estado a 'revisado'
-                  id_reviso = ?            -- Se asigna el ID del revisor
+                  id_reviso = ?,            -- Se asigna el ID del revisor
+                  firma_reviso = ?          -- Se asigna la firma del revisor
               WHERE id = ?";                // Solo se actualiza la fila con el ID indicado
 
-        // Prepara la consulta para evitar inyecciones SQL
         $stmt = $this->db->prepare($query);
-
-        // Verifica si la preparación de la consulta fue exitosa
         if (!$stmt) {
-            // Si falla, lanza una excepción con el error del servidor MySQL
             throw new Exception("Error al preparar la consulta: " . $this->db->error);
         }
-
-        // Enlaza los parámetros a la consulta:
-        // "i" = entero, "s" = string → entonces: entero, string, entero
-        $stmt->bind_param("ii", $idRevisor, $id);
-
-        // Ejecuta la consulta y devuelve true si fue exitosa, false si falló
+        $stmt->bind_param("isi", $idRevisor, $firmaRevisor, $id);
         return $stmt->execute();
+    }
+
+    /**
+     * Marcar como autorizado una programación
+     * 
+     * @param int $id ID del registro en la tabla programacion
+     * @param int $idAutoriza ID del usuario que autoriza
+     * @param string $firmaAutoriza Nombre o ruta de la firma del autorizador
+     * @return bool Devuelve true si la actualización fue exitosa, false si falló
+     */
+    public function markAsAuthorized($id, $idAutoriza, $firmaAutoriza)
+    {
+        // Consulta SQL con marcadores ? para los valores que se enviarán después
+        $query = "UPDATE programacion
+              SET estado = 2,               -- Se cambia el estado a 'autorizado'
+                  id_autorizo = ?,          -- Se asigna el ID del autorizador
+                  firma_autorizo = ?        -- Se asigna la firma del autorizador
+              WHERE id = ?";
+
+        $stmt = $this->db->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta: " . $this->db->error);
+        }
+        // id_autorizo (int), firma_autorizo (string), id (int)
+        $stmt->bind_param("isi", $idAutoriza, $firmaAutoriza, $id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+        }
+        return $stmt->affected_rows > 0;
     }
 
 

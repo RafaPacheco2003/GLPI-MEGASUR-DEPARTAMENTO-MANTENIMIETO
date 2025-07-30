@@ -43,39 +43,54 @@ if (!$programacion) {
 Html::header("Servicio", $_SERVER['PHP_SELF']);
 ?>
 
+
 <!-- Header-->
 <div class="center">
     <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-
-
-            <div class="d-flex">
-                <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi3/front/mantenimiento/view/programacion.php#"); ?>
-
-                <form class="d-flex" method="GET" action="">
-                    <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">
-                    <input type="text" name="search" class="form-control me-2 ms-2" placeholder="Buscar por servidor..."
-                        style="width: 250px;"
-                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <?php echo ButtonComponent::search(); ?>
-                </form>
-            </div>
-
-            <div>
-                <button type="button" class="btn" id="btnMarcarRevisado"
-                    style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
-                    onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
-                    onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';">
-                    <i class="me-2"></i> Marcar como revisado
-                </button>
-
-                <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
-                    <i class="me-2 fas fa-edit"></i> Editar programacion
-                </button>
-                <button type="button" class="btn btn-exportar" id="btnExportar" onclick="exportarProgramacion()">
-                    <i class="me-2 fas fa-file-excel"></i> Exportar a Excel
-                </button>
-                <?php echo ButtonComponent::custom('Nueva servicio', 'fas fa-plus'); ?>
+        <div class="card-header px-3 py-3">
+            <div class="row g-2 align-items-center flex-column flex-md-row">
+                <!-- Columna izquierda: Volver y buscador -->
+                <div class="col-12 col-md-7 d-flex flex-column flex-md-row align-items-stretch align-items-md-center mb-2 mb-md-0 gap-2">
+                    <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/programacion.php#"); ?>
+                    <form class="d-flex flex-grow-1" method="GET" action="">
+                        <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">
+                        <input type="text" name="search" class="form-control me-2 ms-2" placeholder="Buscar por servidor..."
+                            style="width: 100%; min-width: 0; max-width: 350px;"
+                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <?php echo ButtonComponent::search(); ?>
+                    </form>
+                </div>
+                <!-- Columna derecha: Botones -->
+                <div class="col-12 col-md-5 d-flex flex-wrap justify-content-md-end gap-2">
+                    <?php if (isset($programacion) && isset($programacion['estado'])): ?>
+                        <?php $estado = (int) $programacion['estado']; ?>
+                        <?php if ($estado != 1 && $estado != 2): ?>
+                            <button type="button" class="btn" id="btnMarcarRevisado"
+                                style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
+                                onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
+                                onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';">
+                                <i class="me-2"></i> Marcar como revisado
+                            </button>
+                        <?php endif; ?>
+                        <?php if ($estado === 1): ?>
+                            <button type="button" class="btn" id="btnMarcarAutorizado"
+                                style="background-color: white; color: #2563eb; border: 1px solid #2563eb;"
+                                onmouseover="this.style.borderColor='#1d4ed8'; this.style.color='#1d4ed8';"
+                                onmouseout="this.style.borderColor='#2563eb'; this.style.color='#2563eb';"
+                                data-usuario="<?php echo htmlspecialchars($_SESSION['glpiname'] ?? ''); ?>"
+                                data-id="<?php echo htmlspecialchars($_SESSION['glpiID'] ?? ''); ?>">
+                                <i class="me-2"></i> Marcar como autorizado
+                            </button>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                    <button type="button" class="btn btn-editar-prog" id="btnEditarProg">
+                        <i class="me-2 fas fa-edit"></i> Editar programacion
+                    </button>
+                    <button type="button" class="btn btn-exportar" id="btnExportar">
+                        <i class="me-2 fas fa-file-excel"></i> Exportar a Excel
+                    </button>
+                    <?php echo ButtonComponent::custom('Nueva servicio', 'fas fa-plus'); ?>
+                </div>
             </div>
         </div>
     </div>
@@ -171,7 +186,7 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
         // Incluir los estilos de paginación para que se vea igual que en programacion.php
         echo ProgramacionPagination::getStyles();
         // Mantener el parámetro id en la URL
-        $currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $currentPage = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $paginationHtml = ProgramacionPagination::render($currentPage, $totalPaginas);
         // Reemplazar los links para mantener el id de la programación
         $paginationHtml = preg_replace('/href="\?page=(\d+)"/', 'href="?id=' . $id_programacion . '&page=$1"', $paginationHtml);
@@ -201,141 +216,319 @@ include '../componentes/programacion/RevisionModal.php';
 ?>
 
 <script>
+    // --- FUNCIONES GLOBALES ---
+    window.exportarProgramacion = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id_programacion = urlParams.get('id');
+        if (!id_programacion) {
+            alert('No se encontró el ID de la programación');
+            return;
+        }
+        window.location.href = '../../../ajax/mantenimiento/excel_programacion_xlsx.php?id=' + id_programacion;
+    };
+
+    // --- EVENTOS DOM ---
     document.addEventListener('DOMContentLoaded', function () {
+        const btnMarcar = document.getElementById('btnMarcarRevisado');
+        if (btnMarcar) {
+            const modalElement = document.getElementById('modalRevisado');
+            if (modalElement) {
+                btnMarcar.addEventListener('click', function () {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                });
+            }
+        }
 
-        document.getElementById('btnMarcarRevisado').addEventListener('click', function () {
-            // Mostrar el modal de revisión
-            const modal = new bootstrap.Modal(document.getElementById('modalRevisado'));
-            modal.show();
+        // --- LÓGICA DE AUTORIZACIÓN CENTRALIZADA ---
+        document.body.addEventListener('click', function (e) {
+            if (e.target.closest('#btnGuardarAutorizar')) {
+                e.preventDefault();
+                // Obtener datos necesarios
+                const autorizador = document.getElementById('autorizador');
+                const idUsuario = document.getElementById('id_usuario_logueado');
+                // Obtener el id de la programación desde la URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const idProgramacion = urlParams.get('id');
+                // Obtener la firma (base64) del global o del input oculto
+                let firma = null;
+                if (window.autorizacionSignatureDataUrl) {
+                    firma = window.autorizacionSignatureDataUrl;
+                } else if (window.autorizacionSignatureFileName) {
+                    // Si se usa upload_signature.php y se guarda el nombre del archivo
+                    firma = window.autorizacionSignatureFileName;
+                }
+                if (!idProgramacion) {
+                    alert('No se encontró el ID de la programación.');
+                    return;
+                }
+                if (!idUsuario || !idUsuario.value) {
+                    alert('No se encontró el usuario logueado.');
+                    return;
+                }
+                if (!firma) {
+                    alert('Por favor, realiza y guarda una firma antes de autorizar.');
+                    return;
+                }
+                // Preparar datos para el endpoint
+                const payload = {
+                    id: idProgramacion,
+                    id_autorizo: idUsuario.value,
+                    firma_autorizo: firma
+                };
+                fetch('../../../ajax/mantenimiento/mark_autorizado.php', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                    .then(async response => {
+                        const data = await response.json();
+                        if (response.ok && data.success) {
+                            alert('✅ Programación autorizada correctamente.');
+                            // Cerrar modal si está abierto
+                            const modal = document.getElementById('modalAutorizar');
+                            if (modal) {
+                                const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                                modalInstance.hide();
+                            }
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (data.message || 'No se pudo autorizar la programación.'));
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error al guardar la autorización: ' + error.message);
+                    });
+            }
         });
 
-        // Inicializar los modales
-        const nuevoServicioModal = new bootstrap.Modal(document.getElementById('nuevoServicioModal'));
-        // El modal de edición de programación se inicializa en su propio componente, no aquí.
+        const btnMarcarAutorizado = document.getElementById('btnMarcarAutorizado');
+        if (btnMarcarAutorizado) {
+            btnMarcarAutorizado.addEventListener('click', function () {
+                let modalAutorizar = document.getElementById('modalAutorizar');
+                const usuario = btnMarcarAutorizado.getAttribute('data-usuario') || '';
+                const idUsuario = btnMarcarAutorizado.getAttribute('data-id') || '';
 
-        // Agregar event listeners para los botones de guardar
-        document.getElementById('btnGuardarEdicionProgramacion').addEventListener('click', function () {
-            window.guardarEdicionProgramacion();
-        });
+                const asignarValoresFirma = () => {
+                    const autorizadorInput = document.getElementById('autorizador');
+                    const idUsuarioInput = document.getElementById('id_usuario_logueado');
+                    if (autorizadorInput) autorizadorInput.value = usuario;
+                    if (idUsuarioInput) idUsuarioInput.value = idUsuario;
+                };
 
-        // (Eliminado para evitar doble guardado, la asignación está en el modal)
+                if (!modalAutorizar) {
+                    fetch('../componentes/programacion/AutorizarModal.php')
+                        .then(response => response.text())
+                        .then(html => {
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = html;
 
-        // Obtener el botón "Nueva servicio"
-        const btnNuevoServicio = document.querySelector('button:has(i.fas.fa-plus)');
-        if (btnNuevoServicio) {
-            btnNuevoServicio.addEventListener('click', function () {
-                // Establecer la fecha actual como valor predeterminado
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                            const modalAutorizarElem = tempDiv.querySelector('#modalAutorizar');
+                            const modalFirmaElem = tempDiv.querySelector('#autorizacionSignatureModal');
 
-                // Establecer fecha actual
-                document.getElementById('fecha_servicio').value = now.toISOString().split('T')[0];
+                            if (modalAutorizarElem) document.body.appendChild(modalAutorizarElem);
+                            if (modalFirmaElem) document.body.appendChild(modalFirmaElem);
 
-                // Establecer hora actual
-                const horaActual = now.toTimeString().slice(0, 5);
-                document.getElementById('hora_inicio').value = horaActual;
+                            asignarValoresFirma();
 
-                // Establecer hora final una hora después por defecto
-                const horaFinal = new Date(now.getTime() + 60 * 60000).toTimeString().slice(0, 5);
-                document.getElementById('hora_final').value = horaFinal;
+                            if (typeof initAutorizacionSignaturePad === 'function') {
+                                setTimeout(() => { initAutorizacionSignaturePad(); }, 100);
+                            }
 
-                nuevoServicioModal.show();
+                            const modal = new bootstrap.Modal(document.getElementById('modalAutorizar'));
+                            modal.show();
+                        });
+                } else {
+                    asignarValoresFirma();
+                    const modal = new bootstrap.Modal(modalAutorizar);
+                    modal.show();
+                }
             });
         }
 
-        // Agregar el manejador para el botón de editar programación
-        document.getElementById('btnEditarProg').addEventListener('click', function () {
-            cargarDatosProgramacion();
-        });
+        const nuevoServicioModalElem = document.getElementById('nuevoServicioModal');
+        let nuevoServicioModal;
+        if (nuevoServicioModalElem) {
+            nuevoServicioModal = new bootstrap.Modal(nuevoServicioModalElem);
+        }
 
-        // Asignar las funciones a window para que estén disponibles globalmente
-        // Las funciones de programación se han movido al componente EditarProgramacionModal
-
-        window.guardarServicio = async function () {
-            try {
-                const form = document.getElementById('nuevoServicioForm');
-                const urlParams = new URLSearchParams(window.location.search);
-                const id_programacion = urlParams.get('id');
-
-                // Obtener fecha y horas
-                const fecha = document.getElementById('fecha_servicio').value;
-                const horaInicio = document.getElementById('hora_inicio').value;
-                const horaFinal = document.getElementById('hora_final').value;
-
-                // Crear objetos Date para fecha_inicio y fecha_final
-                const fecha_inicio = new Date(fecha + 'T' + horaInicio);
-                const fecha_final = new Date(fecha + 'T' + horaFinal);
-
-                // Formatear fechas para MySQL (YYYY-MM-DD HH:mm:ss)
-                const formatearFecha = (fecha) => {
-                    return fecha.toISOString().slice(0, 19).replace('T', ' ');
-                };
-
-                const formData = {
-                    fecha_inicio: formatearFecha(fecha_inicio),
-                    fecha_final: formatearFecha(fecha_final),
-                    servidor_site: document.getElementById('servidor_site').value,
-                    serie_id: document.getElementById('serie_id').value,
-                    estatus: document.getElementById('estatus').value,
-                    afectacion: document.getElementById('afectacion').value,
-                    serie_folio_hoja_servicio: document.getElementById('serie_folio_hoja_servicio').value,
-                    id_programacion: id_programacion
-                };
-
-                // Validar que la hora final sea después de la hora inicial
-                if (fecha_final <= fecha_inicio) {
-                    alert('La hora final debe ser posterior a la hora de inicio');
-                    return;
+        const btnGuardarEdicion = document.getElementById('btnGuardarEdicionProgramacion');
+        if (btnGuardarEdicion) {
+            btnGuardarEdicion.addEventListener('click', function () {
+                if (typeof window.guardarEdicionProgramacion === 'function') {
+                    window.guardarEdicionProgramacion();
                 }
+            });
+        }
 
-                // Validar campos requeridos
-                for (const [key, value] of Object.entries(formData)) {
-                    if (!value) {
-                        alert('Por favor, complete todos los campos requeridos');
-                        return;
+        const btnNuevoServicio = document.querySelector('button:has(i.fas.fa-plus)');
+        if (btnNuevoServicio) {
+            btnNuevoServicio.addEventListener('click', function () {
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                const fechaInput = document.getElementById('fecha_servicio');
+                const horaInicioInput = document.getElementById('hora_inicio');
+                const horaFinalInput = document.getElementById('hora_final');
+
+                if (fechaInput) fechaInput.value = now.toISOString().split('T')[0];
+                const horaActual = now.toTimeString().slice(0, 5);
+                if (horaInicioInput) horaInicioInput.value = horaActual;
+                const horaFinal = new Date(now.getTime() + 60 * 60000).toTimeString().slice(0, 5);
+                if (horaFinalInput) horaFinalInput.value = horaFinal;
+
+                if (nuevoServicioModal) nuevoServicioModal.show();
+            });
+        }
+
+        const btnEditarProg = document.getElementById('btnEditarProg');
+        if (btnEditarProg) {
+            btnEditarProg.addEventListener('click', function () {
+                if (typeof cargarDatosProgramacion === 'function') {
+                    cargarDatosProgramacion();
+                }
+            });
+        }
+
+        const btnExportar = document.getElementById('btnExportar');
+        if (btnExportar) {
+            btnExportar.addEventListener('click', function () {
+                if (typeof window.exportarProgramacion === 'function') {
+                    window.exportarProgramacion();
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Script global para la firma de autorización, siempre disponible -->
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script>
+    // --- LÓGICA DEL MODAL DE AUTORIZACIÓN Y FIRMA ---
+    let autorizacionSignaturePad, autorizacionSignatureModal;
+    let autorizacionSignatureDataUrl = null;
+
+    // Inicializar la firma y eventos del modal
+    function initAutorizacionSignaturePad() {
+        console.log('[Firma] Ejecutando initAutorizacionSignaturePad');
+        const modalElem = document.getElementById('autorizacionSignatureModal');
+        const img = document.getElementById('autorizacionSignatureImg');
+        if (!modalElem) { console.error('[Firma] No se encontró el modalElem'); return; }
+        if (!img) { console.error('[Firma] No se encontró el img'); return; }
+        autorizacionSignatureModal = new bootstrap.Modal(modalElem);
+
+        // Solo registrar una vez
+        if (!window._autorizacionSignaturePadDelegated) {
+            document.body.addEventListener('click', function (e) {
+                // Abrir modal al hacer click en el preview
+                if (e.target.closest('#autorizacionSignaturePreview')) {
+                    console.log('[Firma] Click en preview, abriendo modal de firma...');
+                    autorizacionSignatureModal.show();
+                    setTimeout(() => {
+                        const canvas = document.getElementById('autorizacionSignaturePad');
+                        if (!canvas) { console.error('[Firma] No se encontró el canvas'); return; }
+                        resizeAutorizacionSignatureCanvas(canvas);
+                        autorizacionSignaturePad = new SignaturePad(canvas, { penColor: 'rgb(0,0,0)' });
+                        if (autorizacionSignatureDataUrl) {
+                            const image = new window.Image();
+                            image.onload = function () {
+                                const ctx = canvas.getContext('2d');
+                                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+                            };
+                            image.src = autorizacionSignatureDataUrl;
+                        } else {
+                            autorizacionSignaturePad.clear();
+                        }
+                        console.log('[Firma] Modal de firma abierto y canvas inicializado');
+                    }, 200);
+                }
+                // Limpiar firma
+                if (e.target.closest('#clearAutorizacionSignature')) {
+                    console.log('[Firma] Click en limpiar firma');
+                    if (autorizacionSignaturePad) autorizacionSignaturePad.clear();
+                }
+                // Guardar firma
+                if (e.target.closest('#saveAutorizacionSignature')) {
+                    console.log('[Firma] Click en guardar firma');
+                    const preview = document.getElementById('autorizacionSignaturePreview');
+                    const imgNew = document.getElementById('autorizacionSignatureImg');
+                    const placeholderNew = preview ? preview.querySelector('.placeholder-text') : null;
+                    if (autorizacionSignaturePad && !autorizacionSignaturePad.isEmpty()) {
+                        autorizacionSignatureDataUrl = autorizacionSignaturePad.toDataURL('image/png');
+                        fetch('/glpi/ajax/mantenimiento/upload_signature.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ image: autorizacionSignatureDataUrl })
+                        })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success && result.fileName) {
+                                    imgNew.src = autorizacionSignatureDataUrl;
+                                    imgNew.style.display = 'block';
+                                    if (placeholderNew) placeholderNew.style.display = 'none';
+                                    autorizacionSignatureModal.hide();
+                                    window.autorizacionSignatureFileName = result.fileName;
+                                    console.log('[Firma] Firma guardada correctamente');
+                                } else {
+                                    alert('Error al guardar la firma: ' + (result.message || 'Error desconocido'));
+                                    console.error('[Firma] Error al guardar la firma', result);
+                                }
+                            })
+                            .catch(e => {
+                                alert('Error de conexión al guardar la firma: ' + e.message);
+                                console.error('[Firma] Error de conexión al guardar la firma', e);
+                            });
+                    } else {
+                        alert('Por favor, realiza una firma antes de guardar.');
+                        console.warn('[Firma] Intento de guardar sin firma');
                     }
                 }
-
-                // Enviar los datos al servidor
-                const response = await fetch('/glpi/ajax/mantenimiento/create_servicio.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
+                // Guardar autorización (botón Guardar del modal)
+                if (e.target.closest('#btnGuardarAutorizar')) {
+                    console.log('[Autorizar] Click en Guardar autorización');
+                    // Aquí puedes poner la lógica que desees, por ejemplo:
+                    const autorizador = document.getElementById('autorizador');
+                    const idUsuario = document.getElementById('id_usuario_logueado');
+                    if (!autorizacionSignatureDataUrl) {
+                        alert('Por favor, realiza y guarda una firma antes de autorizar.');
+                        return;
+                    }
+                    alert('Autorización guardada para: ' + (autorizador ? autorizador.value : '') + '\nID usuario: ' + (idUsuario ? idUsuario.value : ''));
+                    // Cerrar modal principal
+                    const modal = document.getElementById('modalAutorizar');
+                    if (modal) {
+                        const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                        modalInstance.hide();
+                    }
                 }
+            });
+            window._autorizacionSignaturePadDelegated = true;
+        }
+    }
 
-                const result = await response.json();
+    function resizeAutorizacionSignatureCanvas(canvas) {
+        if (!canvas) { console.error('[Firma] No se puede redimensionar: canvas no encontrado'); return; }
+        const container = canvas.parentElement;
+        let width = container.offsetWidth;
+        let height = container.offsetHeight;
+        if (window.innerWidth >= 992) {
+            height = Math.max(window.innerHeight * 0.7, 400);
+        } else {
+            height = Math.max(window.innerHeight * 0.5, 200);
+        }
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.getContext('2d').scale(ratio, ratio);
+        console.log('[Firma] Canvas redimensionado', { width, height, ratio });
+    }
 
-                if (result.success) {
-                    // Cerrar el modal y recargar la página
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('nuevoServicioModal'));
-                    modal.hide();
-                    window.location.reload();
-                } else {
-                    alert(result.message || 'Error al guardar el servicio');
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-                console.error('Error completo:', error);
-            }
-        };
-
-        window.exportarProgramacion = function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const id_programacion = urlParams.get('id');
-
-            if (!id_programacion) {
-                alert('No se encontró el ID de la programación');
-                return;
-            }
-
-            // Crear y descargar el archivo Excel
-            window.location.href = '../../../ajax/mantenimiento/export_programacion.php?id=' + id_programacion;
+    window.addEventListener('resize', function () {
+        const canvas = document.getElementById('autorizacionSignaturePad');
+        if (autorizacionSignatureModal && canvas && autorizacionSignatureModal._isShown) {
+            resizeAutorizacionSignatureCanvas(canvas);
         }
     });
 </script>

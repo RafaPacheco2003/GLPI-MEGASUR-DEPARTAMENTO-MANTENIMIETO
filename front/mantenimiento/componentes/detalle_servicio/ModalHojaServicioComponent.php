@@ -403,7 +403,7 @@
                                         const fileName = await uploadFirmaTecnicoImage(dataURL);
                                         firmaTecnicoFileName = fileName;
                                         const firmaTecnicoPreview = document.getElementById('firmaTecnicoPreview');
-                                        firmaTecnicoPreview.src = '/glpi3/files/firmas/' + fileName;
+                                        firmaTecnicoPreview.src = '/glpi/files/firmas/' + fileName;
                                         firmaTecnicoPreview.style.display = 'block';
                                         const placeholder = document.querySelector('#firmaTecnicoContainer .placeholder-text');
                                         if (placeholder) placeholder.style.display = 'none';
@@ -446,7 +446,7 @@
                                         const fileName = await uploadFirmaTecnicoImage(dataURL);
                                         firmaRecibidoFileName = fileName;
                                         const firmaRecibidoPreview = document.getElementById('firmaRecibidoPreview');
-                                        firmaRecibidoPreview.src = '/glpi3/files/firmas/' + fileName;
+                                        firmaRecibidoPreview.src = '/glpi/files/firmas/' + fileName;
                                         firmaRecibidoPreview.style.display = 'block';
                                         const placeholder = document.querySelector('#firmaRecibidoContainer .placeholder-text');
                                         if (placeholder) placeholder.style.display = 'none';

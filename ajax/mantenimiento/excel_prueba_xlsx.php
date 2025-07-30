@@ -1,48 +1,62 @@
 <?php
-// Script para exportar un Excel .xlsx con imagen usando PhpSpreadsheet
-require __DIR__ . '/../../vendor/autoload.php';
+// Script básico para exportar un Excel .xlsx con un texto usando PhpSpreadsheet
+// Asegurarse de que no haya salida previa
+require __DIR__ . '/../../lib/PhpSpreadsheet/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
-$sheet->setTitle('Prueba');
 
-// Datos de ejemplo
-$sheet->setCellValue('A1', 'Columna 1');
-$sheet->setCellValue('B1', 'Columna 2');
-$sheet->setCellValue('C1', 'Columna 3');
-$sheet->setCellValue('A2', 'Dato 1');
-$sheet->setCellValue('B2', 'Dato 2');
-$sheet->setCellValue('C2', 'Dato 3');
-$sheet->setCellValue('A3', 'Otro 1');
-$sheet->setCellValue('B3', 'Otro 2');
-$sheet->setCellValue('C3', 'Otro 3');
+$sheet->setTitle('Hoja1');
+$sheet->setCellValue('A1', '¡Hola, este es un Excel de prueba!');
 
-// Descargar imagen de internet y guardarla temporalmente
-$imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Wikimedia_Brand_Guidelines_Update_2022_Wikimedia_Logo_Brandmark.png';
-$tmpImage = tempnam(sys_get_temp_dir(), 'img');
-file_put_contents($tmpImage, file_get_contents($imageUrl));
+// Encabezado de hoja de diseño (encabezado de página, no celda)
+$sheet->getHeaderFooter()->setOddHeader('&C&BUno de prueba - Encabezado de diseño&C');
 
-// Insertar imagen en la hoja
+// --- Agregar imagen desde internet ---
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+
+
+$imageUrl = __DIR__ . '/../../files/firmas/firma_6883e075053cc.png'; // Imagen desde la ruta local del servidor
+$tempImage = sys_get_temp_dir() . '/temp_excel_img.png';
+// Copiar la imagen desde la ruta local a la ruta temporal
+if (file_exists($imageUrl)) {
+    copy($imageUrl, $tempImage);
+} else {
+    die('No se encontró la imagen en la ruta especificada.');
+}
+
+
+// Ajustar ancho de columna B y altura de fila 3
+$sheet->getColumnDimension('B')->setWidth(25); // Puedes ajustar el valor
+$sheet->getRowDimension(3)->setRowHeight(100); // Puedes ajustar el valor
+
 $drawing = new Drawing();
-$drawing->setName('Logo');
-$drawing->setDescription('Logo de prueba');
-$drawing->setPath($tmpImage);
-$drawing->setHeight(68);
-$drawing->setCoordinates('B5');
+$drawing->setName('ImagenPrueba');
+$drawing->setDescription('Imagen adjunta por el usuario');
+$drawing->setPath($tempImage);
+$drawing->setHeight(100); // Igual a la altura de la fila
+$drawing->setWidth(120);  // Aproximadamente igual al ancho de la columna (puedes ajustar)
+$drawing->setCoordinates('B3'); // Celda donde se insertará la imagen
 $drawing->setWorksheet($sheet);
 
-// Enviar el archivo al navegador
+
+
+
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment;filename="excel_prueba.xlsx"');
 header('Cache-Control: max-age=0');
+header('Pragma: public');
+header('Expires: 0');
 
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
 
 // Eliminar imagen temporal
-@unlink($tmpImage);
+if (file_exists($tempImage)) {
+    unlink($tempImage);
+}
+exit;
 ?>

@@ -15,7 +15,7 @@ Html::header("404 - Página no encontrada", $_SERVER['PHP_SELF']);
         <h1>404</h1>
         <h2>Página no encontrada</h2>
         <p>Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
-        <a href="/glpi3/front/mantenimiento/view/programacion.php" class="btn-return">
+        <a href="/glpi/front/mantenimiento/view/programacion.php" class="btn-return">
             <i class="fas fa-home"></i>
             Volver al inicio
         </a>

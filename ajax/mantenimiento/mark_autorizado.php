@@ -62,11 +62,25 @@ try {
         throw new Exception('No se pudo marcar la programación como autorizada');
     }
 
+    // Enviar correo de notificación al marcar como autorizado
+    require_once __DIR__ . '/send_email.php';
+    $to = 'rafael.chi@gmegasur.com.mx';
+    $subject = 'Programación AUTORIZADA en GLPI Mantenimiento';
+    $body = '<b>La programación con ID ' . htmlspecialchars($data['id']) . ' ha sido <span style="color:green;">AUTORIZADA</span>.</b><br>' .
+        'ID de programación: ' . htmlspecialchars($data['id']) . '<br>' .
+        'ID de quien autorizó: ' . htmlspecialchars($data['id_autorizo']) . '<br><br>' .
+        '<div style="margin-top:32px; padding-top:16px; border-top:1px solid #eee;">
+            <img src="https://files.mega-digital.net/GLPI-MEGASUR-DEPARTAMENTO-MANTENIMIETO/firmas/enme-megasur-25.png" alt="Firma Grupo Megasur" style="max-width: 100%; height: auto; border-radius: 8px; margin-top: 8px;">
+        </div>';
+    $from = 'rodrigorafaelchipacheco@gmail.com';
+    $fromName = 'GLPI Mantenimiento';
+    sendEmail($to, $subject, $body, $from, $fromName);
+
     // Devolver respuesta exitosa
     http_response_code(200); // Asegurar que el código de estado sea 200 OK
     echo json_encode([
         'success' => true,
-        'message' => 'Programación actualizada exitosamente'
+        'message' => 'La programación ha sido autorizada.'
     ]);
 
 } catch (Exception $e) {

@@ -87,7 +87,37 @@ echo ProgramacionPagination::getStyles();
                 <?php echo ButtonComponent::search(); ?>
             </form>
 
-            <div>
+            <div class="d-flex gap-2">
+                <?php
+                    // Botón Importar con color de ColorConfig
+                    echo '
+<style>
+    .btn-importar-excel {
+        background: #fff !important;
+        color: #217346 !important;
+        border: 2px solid #217346 !important;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-importar-excel:hover, .btn-importar-excel:focus {
+        background: #fff !important;
+        color: #14532d !important;
+        border-color: #14532d !important;
+    }
+    .btn-importar-excel .excel-icon {
+        color: #217346;
+        margin-right: 6px;
+        font-size: 1.1em;
+        vertical-align: middle;
+        transition: color 0.2s;
+    }
+    .btn-importar-excel:hover .excel-icon, .btn-importar-excel:focus .excel-icon {
+        color: #14532d;
+    }
+</style>';
+                    echo '<button type="button" class="btn btn-importar-excel" onclick="openImportarModal()">'
+                        . '<i class="fa-solid fa-file-excel excel-icon"></i>Importar</button>';
+                ?>
                 <?php echo ButtonComponent::custom('Nueva programacion', 'fas fa-plus', '', 'openNewProgramacionModal()'); ?>
             </div>
         </div>

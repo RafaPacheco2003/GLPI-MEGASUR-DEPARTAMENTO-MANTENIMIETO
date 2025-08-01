@@ -23,7 +23,7 @@ if (!Session::haveRight("config", READ) || !Session::haveRight("config", UPDATE)
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     // Redirigir a la página 404
     header("Location: 404.php");
-    exit;
+    exit; 
 }
 
 // Obtener el ID de la programación de la URL
@@ -285,8 +285,7 @@ include '../componentes/programacion/RevisionModal.php';
                     .then(async response => {
                         const data = await response.json();
                         if (response.ok && data.success) {
-                            alert('✅ Programación autorizada correctamente.');
-                            // Cerrar modal si está abierto
+                       
                             const modal = document.getElementById('modalAutorizar');
                             if (modal) {
                                 const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);

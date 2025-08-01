@@ -196,27 +196,29 @@ class ServiciosAccordion
                 async function cargarSucursalesEnSelect(idSelect) {
                     try {
                         // Consumir el endpoint PHP local
-                        const response = await fetch('../config/get_sucursales.php');
-                        const data = await response.json();
-                        const select = document.getElementById(idSelect);
-                        if (!select) return;
-                        select.innerHTML = '<option value="">Seleccione una estación</option>';
-                        // Guardar los datos en un Map para acceso rápido por id
-                        const estacionesMap = new Map();
-                        data.forEach(item => {
-                            estacionesMap.set(String(item.IdSucursal), item);
-                            const option = document.createElement('option');
-                            option.value = item.IdSucursal; // El id que se guarda en la BD
-                            option.textContent = item.NombreSucursal; // El nombre que ve el usuario
-                            select.appendChild(option);
-                        });
-                        // Evento para imprimir en consola los datos de la estación seleccionada
-                        select.addEventListener('change', function() {
-                            const id = select.value;
-                            if (id && estacionesMap.has(id)) {
-                                console.log('Estación seleccionada:', estacionesMap.get(id));
-                            }
-                        });
+                    const response = await fetch('../config/get_sucursales.php');
+                    const data = await response.json();
+                    // Imprimir en consola la cantidad de sucursales obtenidas
+                    console.log('Cantidad de sucursales obtenidas:', Array.isArray(data) ? data.length : 0);
+                    const select = document.getElementById(idSelect);
+                    if (!select) return;
+                    select.innerHTML = '<option value="">Seleccione una estación</option>';
+                    // Guardar los datos en un Map para acceso rápido por id
+                    const estacionesMap = new Map();
+                    data.forEach(item => {
+                        estacionesMap.set(String(item.IdSucursal), item);
+                        const option = document.createElement('option');
+                        option.value = item.IdSucursal; // El id que se guarda en la BD
+                        option.textContent = item.NombreSucursal; // El nombre que ve el usuario
+                        select.appendChild(option);
+                    });
+                    // Evento para imprimir en consola los datos de la estación seleccionada
+                    select.addEventListener('change', function() {
+                        const id = select.value;
+                        if (id && estacionesMap.has(id)) {
+                            console.log('Estación seleccionada:', estacionesMap.get(id));
+                        }
+                    });
 
                         // Guardar el id_estacion en el input oculto para el formulario
                         // Si no existe, lo crea

@@ -14,11 +14,12 @@ class ServiciosAccordion
         ?>
 
 
-        <h6 class="section-title"><i class="fas fa-server me-2"></i> Servicios</h6>
-
-        <button type="button" class="btn btn-sm btn-success mb-2" id="btnAgregarServicio">
-            <i class="fas fa-plus"></i> Agregar servicio
-        </button>
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <h6 class="section-title mb-0"><i class="fas fa-server me-2"></i> Servicios</h6>
+            <button type="button" class="btn btn-sm btn-success" id="btnAgregarServicio">
+                <i class="fas fa-plus"></i> Agregar servicio
+            </button>
+        </div>
 
         <div class="accordion" id="serviciosAccordion"
             style="border-radius: 10px; background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 8px 0;">
@@ -332,23 +333,24 @@ class ServiciosAccordion
 
         <style>
             #serviciosAccordion {
-                border-radius: 8px;
+                border-radius: 4px;
                 background: #fff;
                 box-shadow: none !important;
-                padding: 4px 0;
+                padding: 2px 0;
+                max-width: 100%;
             }
 
             #serviciosAccordion .accordion-item {
-                border-radius: 8px;
+                border-radius: 4px;
                 border: 1px solid #e3e8ee;
-                margin-bottom: 8px;
+                margin-bottom: 4px;
                 background: #fff;
-                font-size: 0.92rem;
+                font-size: 0.90rem;
             }
 
             #serviciosAccordion .accordion-header {
                 background: #fff;
-                padding: 0.5rem 0.8rem;
+                padding: 0.25rem 0.5rem;
                 border-bottom: 1px solid #e3e8ee;
             }
 
@@ -358,36 +360,36 @@ class ServiciosAccordion
                 background: transparent;
                 border: none;
                 box-shadow: none !important;
-                font-size: 0.98rem;
-                padding: 0.3rem 0.5rem;
+                font-size: 0.95rem;
+                padding: 0.15rem 0.3rem;
             }
 
             #serviciosAccordion .accordion-body {
                 background: #fff;
-                border-radius: 0 0 8px 8px;
-                padding: 0.8rem;
+                border-radius: 0 0 4px 4px;
+                padding: 0.4rem;
             }
 
             #serviciosAccordion label.form-label,
             #serviciosAccordion input.form-control {
-                font-size: 0.92rem;
+                font-size: 0.90rem;
                 color: #222;
             }
 
             #serviciosAccordion input.form-control {
-                border-radius: 6px;
+                border-radius: 4px;
                 border: 1px solid #d1d1d1;
-                height: 32px;
-                padding: 4px 8px;
+                height: 28px;
+                padding: 2px 6px;
                 background: #fff;
             }
 
             .btnQuitarServicio,
             #btnAgregarServicio {
-                border-radius: 6px;
+                border-radius: 4px;
                 font-weight: 500;
-                font-size: 0.92rem;
-                padding: 2px 10px;
+                font-size: 0.90rem;
+                padding: 1px 8px;
                 border: 1px solid #e3e8ee;
                 background: #fff;
                 color: #444;
@@ -403,7 +405,7 @@ class ServiciosAccordion
 
             .btnQuitarServicio i,
             #btnAgregarServicio i {
-                font-size: 0.95rem;
+                font-size: 0.90rem;
             }
         </style>
         <?php

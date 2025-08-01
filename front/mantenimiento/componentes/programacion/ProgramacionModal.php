@@ -221,7 +221,7 @@ class ProgramacionModal
                 color: #1d4ed8;
                 border-color: #1d4ed8;
             }
-            }
+            
 
             /* Estilos para el pad de firma */
             .signature-pad-container {
@@ -245,38 +245,8 @@ class ProgramacionModal
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
-                    // Si ya hay una firma previa, ocultar el placeholder
-                    const signaturePreview = document.getElementById('signaturePreview');
-                    const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                    if (signaturePreview && signaturePreview.style.display === 'block') {
-                        if (placeholder) placeholder.style.display = 'none';
-                    }
-                    document.getElementById('clearSignature').onclick = function () {
-                        signaturePad.clear();
-                        // Mostrar el texto de placeholder si se limpia la firma
-                        if (placeholder) placeholder.style.display = 'block';
-                        // Ocultar la imagen de la firma
-                        if (signaturePreview) signaturePreview.style.display = 'none';
-                    };
-                    document.getElementById('saveSignature').onclick = async function () {
-                        if (signaturePad.isEmpty()) {
-                            alert('Por favor, realiza una firma antes de guardar.');
-                            return;
-                        }
-                        const dataURL = signaturePad.toDataURL('image/png');
-                        try {
-                            const fileName = await uploadSignatureImage(dataURL);
-                            signatureFileName = fileName;
-                            signaturePreview.src = '/glpi/files/firmas/' + fileName;
-                            signaturePreview.style.display = 'block';
-                            // Ocultar el texto de placeholder si existe
-                            if (placeholder) placeholder.style.display = 'none';
-                            signatureModal.hide();
-                        } catch (err) {
-                            alert('Error al guardar la firma: ' + err);
-                        }
-                    };
-                }
+                   
+                
 
                 #signatureModal .modal-content {
                     height: 100vh !important;
@@ -340,43 +310,44 @@ class ProgramacionModal
                                 <div class="mb-4">
                                     <h6 class="section-title"><i class="fas fa-info-circle me-2"></i> Información General</h6>
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label for="fechaEmision" class="form-label">Fecha de Emisión</label>
-                                            <input type="date" class="form-control" id="fechaEmision" required>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="fechaEmision" class="form-label">Fecha de Emisión</label>
+                                                <input type="date" class="form-control" id="fechaEmision" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="nombreProgramacion" class="form-label">Nombre de la Programación</label>
+                                                <input type="text" class="form-control" id="nombreProgramacion" readonly disabled required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="empresa" class="form-label">Empresa</label>
+                                                <input type="text" class="form-control" id="empresa" required>
+                                            </div>
+                                          
+                                            <div class="mb-3">
+                                                <label for="elaborador" class="form-label">Responsable / Elaboró</label>
+                                                <input type="text" class="form-control" id="elaborador" readonly
+                                                    placeholder="Nombre del responsable" value="<?php echo htmlspecialchars(isset($_SESSION['glpiname']) ? $_SESSION['glpiname'] : ''); ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Firma del responsable</label>
+                                                <div id="signatureContainer"
+                                                    style="border: 2px dashed #2563eb; background: #f8f9fa; cursor: pointer; min-height: 80px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                                    <img id="signaturePreview"
+                                                        style="display: none; max-width: 180px; max-height: 60px; object-fit: contain;"
+                                                        alt="Firma">
+                                                    <span class="placeholder-text d-block"
+                                                        style="color: #2563eb; font-weight: 500;">Click aquí para ingresar
+                                                        firma</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-8 mb-3">
-                                            <label for="nombreProgramacion" class="form-label">Nombre de la Programación</label>
-                                            <input type="text" class="form-control" id="nombreProgramacion" readonly disabled
-                                                required>
-                                        </div>
-                                        <div class="col-md-12 mb-3">
-                                            <label for="empresa" class="form-label">Empresa</label>
-                                            <input type="text" class="form-control" id="empresa" required>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12 mb-3">
+                                        <div class="col-md-8 d-flex align-items-start" style="padding-top:0;">
+                                            <div class="w-100" style="margin-top:-14px;">
                                                 <?php
                                                 require_once __DIR__ . '/ServiciosAccordion.php';
                                                 echo ServiciosAccordion::render();
                                                 ?>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 mb-3">
-                                            <label for="elaborador" class="form-label">Responsable / Elaboró</label>
-                                            <input type="text" class="form-control" id="elaborador" readonly
-                                                placeholder="Nombre del responsable" value="<?php echo htmlspecialchars(isset($_SESSION['glpiname']) ? $_SESSION['glpiname'] : ''); ?>">
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label">Firma del responsable</label>
-                                            <div id="signatureContainer"
-                                                style="border: 2px dashed #2563eb; border-radius: 8px; background: #f8f9fa; cursor: pointer; min-height: 80px; display: flex; align-items: center; justify-content: center; position: relative;">
-                                                <img id="signaturePreview"
-                                                    style="display: none; max-width: 180px; max-height: 60px; object-fit: contain;"
-                                                    alt="Firma">
-                                                <span class="placeholder-text d-block"
-                                                    style="color: #2563eb; font-weight: 500;">Click aquí para ingresar
-                                                    firma</span>
                                             </div>
                                         </div>
                                     </div>

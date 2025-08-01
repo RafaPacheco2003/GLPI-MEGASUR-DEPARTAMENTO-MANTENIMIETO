@@ -343,7 +343,7 @@ class ProgramacionModal
                                             </div>
                                         </div>
                                         <div class="col-md-8 d-flex align-items-start" style="padding-top:0;">
-                                            <div class="w-100" style="margin-top:-14px;">
+                                            <div class="w-100" style="margin-top:-5px;">
                                                 <?php
                                                 require_once __DIR__ . '/ServiciosAccordion.php';
                                                 echo ServiciosAccordion::render();

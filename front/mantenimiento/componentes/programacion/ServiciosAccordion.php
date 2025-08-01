@@ -12,55 +12,59 @@ class ServiciosAccordion
     {
         ob_start();
         ?>
-
-
+        <!-- Servicios Accordion Header -->
         <div class="d-flex align-items-center justify-content-between mb-2">
-            <h6 class="section-title mb-0"><i class="fas fa-server me-2"></i> Servicios</h6>
+            <h6 class="section-title mb-0">
+                <i class="fas fa-server me-2"></i> Servicios
+            </h6>
             <button type="button" class="btn btn-sm btn-success" id="btnAgregarServicio">
                 <i class="fas fa-plus"></i> Agregar servicio
             </button>
         </div>
 
-        <div class="accordion" id="serviciosAccordion"
-            style="border-radius: 10px; background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 8px 0;">
-        </div>
+        <!-- Accordion Container -->
+        <div class="accordion" id="serviciosAccordion" style="border-radius: 10px; background: transparent; box-shadow: none; padding: 0;"></div>
 
+        <!-- JavaScript: Servicios Accordion Logic -->
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const serviciosAccordion = document.getElementById('serviciosAccordion');
-                const btnAgregarServicio = document.getElementById('btnAgregarServicio');
-                const nombreProgramacion = document.getElementById('nombreProgramacion');
-                const cardsContainer = document.getElementById('cardsProgramacion');
-                let servicioCount = 0;
-                let tipoProgramacionActual = nombreProgramacion?.value || '';
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element references
+            const serviciosAccordion = document.getElementById('serviciosAccordion');
+            const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+            const nombreProgramacion = document.getElementById('nombreProgramacion');
+            const cardsContainer = document.getElementById('cardsProgramacion');
+            let servicioCount = 0;
+            let tipoProgramacionActual = nombreProgramacion?.value || '';
 
-                if (cardsContainer && nombreProgramacion) {
-                    cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
-                        card.addEventListener('click', function () {
-                            tipoProgramacionActual = this.dataset.nombre;
-                            serviciosAccordion.innerHTML = '';
-                            servicioCount = 0;
-                            crearServicioAcordeon();
-                        });
+            // Card selection event: reset accordion on program type change
+            if (cardsContainer && nombreProgramacion) {
+                cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
+                    card.addEventListener('click', function () {
+                        tipoProgramacionActual = this.dataset.nombre;
+                        serviciosAccordion.innerHTML = '';
+                        servicioCount = 0;
+                        crearServicioAcordeon();
                     });
-                }
+                });
+            }
 
-                const crearServicioAcordeon = (nombre = '') => {
-                    servicioCount++;
-                    const id = `servicioAcordeon${servicioCount}`;
-                    const plantilla = tipoProgramacionActual === 'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO Y RED (UENS)'
-                        ? plantillaUENS(id, nombre)
-                        : plantillaDefault(id, nombre);
+            // Add new service accordion item
+            const crearServicioAcordeon = (nombre = '') => {
+                servicioCount++;
+                const id = `servicioAcordeon${servicioCount}`;
+                const plantilla = tipoProgramacionActual === 'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO Y RED (UENS)'
+                    ? plantillaUENS(id, nombre)
+                    : plantillaDefault(id, nombre);
 
-                    const temp = document.createElement('div');
-                    temp.innerHTML = plantilla;
-                    const item = temp.firstElementChild;
+                const temp = document.createElement('div');
+                temp.innerHTML = plantilla;
+                const item = temp.firstElementChild;
+                item.querySelector('.btnQuitarServicio')?.addEventListener('click', () => item.remove());
+                serviciosAccordion.appendChild(item);
+            };
 
-                    item.querySelector('.btnQuitarServicio')?.addEventListener('click', () => item.remove());
-                    serviciosAccordion.appendChild(item);
-                };
-
-                const generarCamposUENS = (nombre, id) => `
+            // Service fields for UENS type
+            const generarCamposUENS = (nombre, id) => `
                 <div class="col-md-3">
                     <label class="form-label">Estación</label>
                     <select class="form-select select-estacion" name="estacion[]" id="selectEstacion_${id}">
@@ -97,7 +101,8 @@ class ServiciosAccordion
                 </div>
             `;
 
-                const generarCamposDefault = (nombre, id) => `
+            // Service fields for default type
+            const generarCamposDefault = (nombre, id) => `
                 <div class="col-md-3">
                     <label class="form-label">Fecha de Servicio</label>
                     <input type="date" class="form-control" name="fecha_servicio[]">
@@ -146,7 +151,8 @@ class ServiciosAccordion
                 </div>
             `;
 
-                const plantillaUENS = (id, nombre) => `
+            // Accordion item template for UENS
+            const plantillaUENS = (id, nombre) => `
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header" id="heading${id}">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
@@ -168,7 +174,8 @@ class ServiciosAccordion
                 </div>
             `;
 
-                const plantillaDefault = (id, nombre) => `
+            // Accordion item template for default
+            const plantillaDefault = (id, nombre) => `
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header" id="heading${id}">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
@@ -190,147 +197,123 @@ class ServiciosAccordion
                 </div>
             `;
 
-                btnAgregarServicio?.addEventListener('click', () => crearServicioAcordeon());
-                crearServicioAcordeon(); // inicial
+            // Add service event
+            btnAgregarServicio?.addEventListener('click', () => crearServicioAcordeon());
+            crearServicioAcordeon(); // inicial
 
-                // Función para cargar sucursales en todos los selects de estación
-                async function cargarSucursalesEnSelect(idSelect) {
-                    try {
-                        // Consumir el endpoint PHP local
+            // Load stations into select
+            async function cargarSucursalesEnSelect(idSelect) {
+                try {
                     const response = await fetch('../config/get_sucursales.php');
                     const data = await response.json();
-                    // Imprimir en consola la cantidad de sucursales obtenidas
                     console.log('Cantidad de sucursales obtenidas:', Array.isArray(data) ? data.length : 0);
                     const select = document.getElementById(idSelect);
                     if (!select) return;
                     select.innerHTML = '<option value="">Seleccione una estación</option>';
-                    // Guardar los datos en un Map para acceso rápido por id
                     const estacionesMap = new Map();
                     data.forEach(item => {
                         estacionesMap.set(String(item.IdSucursal), item);
                         const option = document.createElement('option');
-                        option.value = item.IdSucursal; // El id que se guarda en la BD
-                        option.textContent = item.NombreSucursal; // El nombre que ve el usuario
+                        option.value = item.IdSucursal;
+                        option.textContent = item.NombreSucursal;
                         select.appendChild(option);
                     });
-                    // Evento para imprimir en consola los datos de la estación seleccionada
                     select.addEventListener('change', function() {
                         const id = select.value;
                         if (id && estacionesMap.has(id)) {
                             console.log('Estación seleccionada:', estacionesMap.get(id));
                         }
                     });
-
-                        // Guardar el id_estacion en el input oculto para el formulario
-                        // Si no existe, lo crea
-                        let hiddenInput = select.parentElement.querySelector('input[type="hidden"][name="id_estacion[]"]');
-                        if (!hiddenInput) {
-                            hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.name = 'id_estacion[]';
-                            select.parentElement.appendChild(hiddenInput);
-                        }
-                        // Actualizar el valor cada vez que cambie el select
-                        select.addEventListener('change', function() {
-                            hiddenInput.value = select.value;
-                        });
-                        // Inicializar el valor al cargar
-                        hiddenInput.value = select.value;
-
-                        // --- Envío correcto del id_estacion al backend ---
-                        // Si tienes un botón para guardar el servicio, aquí se asegura que se envíe el id correcto
-                        // Ejemplo: document.getElementById('btnGuardarServicio').onclick = function() { ... }
-                        // Si usas AJAX/fetch, agrega esto en el JS de envío:
-                        window.getIdEstacionSeleccionada = function() {
-                            return hiddenInput.value;
-                        };
-                    } catch (err) {
-                        // Si hay error, mostrar opción de error
-                        const select = document.getElementById(idSelect);
-                        if (select) select.innerHTML = '<option value="">Error al cargar estaciones</option>';
+                    let hiddenInput = select.parentElement.querySelector('input[type="hidden"][name="id_estacion[]"]');
+                    if (!hiddenInput) {
+                        hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'id_estacion[]';
+                        select.parentElement.appendChild(hiddenInput);
                     }
+                    select.addEventListener('change', function() {
+                        hiddenInput.value = select.value;
+                    });
+                    hiddenInput.value = select.value;
+                    window.getIdEstacionSeleccionada = function() {
+                        return hiddenInput.value;
+                    };
+                } catch (err) {
+                    const select = document.getElementById(idSelect);
+                    if (select) select.innerHTML = '<option value="">Error al cargar estaciones</option>';
                 }
+            }
 
-                // Observer para cargar sucursales en cada select de estación cuando se agregue
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(mutation => {
-                        mutation.addedNodes.forEach(node => {
-                            if (node.nodeType === 1) {
-                                const selects = node.querySelectorAll('.select-estacion');
-                                selects.forEach(sel => {
-                                    cargarSucursalesEnSelect(sel.id);
-                                });
-                            }
-                        });
+            // Observer for dynamic select loading
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1) {
+                            const selects = node.querySelectorAll('.select-estacion');
+                            selects.forEach(sel => {
+                                cargarSucursalesEnSelect(sel.id);
+                            });
+                        }
                     });
                 });
-                observer.observe(serviciosAccordion, { childList: true });
             });
+            observer.observe(serviciosAccordion, { childList: true });
+        });
 
-            // --- Envío de servicio al backend ---
-            // Ejemplo de función para guardar el servicio
-            const btnGuardarServicio = document.getElementById('btnGuardarServicio');
-            if (btnGuardarServicio) {
-                btnGuardarServicio.addEventListener('click', async function() {
-                    // Recolecta los datos del formulario
-                    const form = document.getElementById('nuevoServicioForm');
-                    const id_programacion = document.getElementById('id_programacion')?.value || '';
-                    const fecha_servicio = form.querySelector('input[name="fecha_servicio[]"]')?.value || form.querySelector('input[name="fecha_servicio"]')?.value || '';
-                    const hora_inicio = form.querySelector('input[name="hora_inicio[]"]')?.value || form.querySelector('input[name="hora_inicio"]')?.value || '';
-                    const hora_fin = form.querySelector('input[name="hora_fin[]"]')?.value || form.querySelector('input[name="hora_fin"]')?.value || '';
-                    const servidor_site = form.querySelector('input[name="servidor_site[]"]')?.value || form.querySelector('input[name="servidor_site"]')?.value || '';
-                    const serie_id = form.querySelector('input[name="serie_id[]"]')?.value || form.querySelector('input[name="serie_id"]')?.value || '';
-                    const estatus = form.querySelector('input[name="estatus[]"]')?.value || form.querySelector('input[name="estatus"]')?.value || '';
-                    const afectacion = form.querySelector('select[name="afectacion"]')?.value || '';
-                    const serie_folio_hoja_servicio = form.querySelector('input[name="serie_folio_hoja[]"]')?.value || form.querySelector('input[name="serie_folio_hoja_servicio"]')?.value || '';
-                    const quien = form.querySelector('input[name="quien[]"]')?.value || form.querySelector('input[name="quien"]')?.value || '';
-                    // id_estacion (IdSucursal)
-                    const id_estacion = window.getIdEstacionSeleccionada();
-
-                    // Formatear fechas para MySQL
-                    const fecha_inicio = fecha_servicio && hora_inicio ? (fecha_servicio + ' ' + hora_inicio + ':00') : '';
-                    const fecha_final = fecha_servicio && hora_fin ? (fecha_servicio + ' ' + hora_fin + ':00') : '';
-
-                    const formData = {
-                        fecha_inicio,
-                        fecha_final,
-                        servidor_site,
-                        serie_id,
-                        estatus,
-                        afectacion,
-                        serie_folio_hoja_servicio,
-                        id_estacion,
-                        quien,
-                        id_programacion
-                    };
-                    // Monitoreo: mostrar en consola el id_estacion y el objeto formData
-                    console.log('Valor id_estacion a enviar:', formData.id_estacion);
-                    console.log('Objeto formData a enviar:', formData);
-                    // --- ejemplo de envío ---
-                    try {
-                        const response = await fetch('../ajax/mantenimiento/create_servicio.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        });
-                        const result = await response.json();
-                        if (result.success) {
-                            alert('Servicio guardado correctamente');
-                        } else {
-                            alert('Error: ' + result.message);
-                        }
-                    } catch (err) {
-                        alert('Error al guardar servicio');
+        // Guardar servicio al backend
+        const btnGuardarServicio = document.getElementById('btnGuardarServicio');
+        if (btnGuardarServicio) {
+            btnGuardarServicio.addEventListener('click', async function() {
+                const form = document.getElementById('nuevoServicioForm');
+                const id_programacion = document.getElementById('id_programacion')?.value || '';
+                const fecha_servicio = form.querySelector('input[name="fecha_servicio[]"]')?.value || form.querySelector('input[name="fecha_servicio"]')?.value || '';
+                const hora_inicio = form.querySelector('input[name="hora_inicio[]"]')?.value || form.querySelector('input[name="hora_inicio"]')?.value || '';
+                const hora_fin = form.querySelector('input[name="hora_fin[]"]')?.value || form.querySelector('input[name="hora_fin"]')?.value || '';
+                const servidor_site = form.querySelector('input[name="servidor_site[]"]')?.value || form.querySelector('input[name="servidor_site"]')?.value || '';
+                const serie_id = form.querySelector('input[name="serie_id[]"]')?.value || form.querySelector('input[name="serie_id"]')?.value || '';
+                const estatus = form.querySelector('input[name="estatus[]"]')?.value || form.querySelector('input[name="estatus"]')?.value || '';
+                const afectacion = form.querySelector('select[name="afectacion"]')?.value || '';
+                const serie_folio_hoja_servicio = form.querySelector('input[name="serie_folio_hoja[]"]')?.value || form.querySelector('input[name="serie_folio_hoja_servicio"]')?.value || '';
+                const quien = form.querySelector('input[name="quien[]"]')?.value || form.querySelector('input[name="quien"]')?.value || '';
+                const id_estacion = window.getIdEstacionSeleccionada();
+                const fecha_inicio = fecha_servicio && hora_inicio ? (fecha_servicio + ' ' + hora_inicio + ':00') : '';
+                const fecha_final = fecha_servicio && hora_fin ? (fecha_servicio + ' ' + hora_fin + ':00') : '';
+                const formData = {
+                    fecha_inicio,
+                    fecha_final,
+                    servidor_site,
+                    serie_id,
+                    estatus,
+                    afectacion,
+                    serie_folio_hoja_servicio,
+                    id_estacion,
+                    quien,
+                    id_programacion
+                };
+                console.log('Valor id_estacion a enviar:', formData.id_estacion);
+                console.log('Objeto formData a enviar:', formData);
+                try {
+                    const response = await fetch('../ajax/mantenimiento/create_servicio.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Servicio guardado correctamente');
+                    } else {
+                        alert('Error: ' + result.message);
                     }
-                });
-            }
+                } catch (err) {
+                    alert('Error al guardar servicio');
+                }
+            });
+        }
         </script>
 
-
-
-
+        <!-- CSS: Servicios Accordion Styles -->
         <style>
             #serviciosAccordion {
                 border-radius: 4px;
@@ -339,7 +322,6 @@ class ServiciosAccordion
                 padding: 2px 0;
                 max-width: 100%;
             }
-
             #serviciosAccordion .accordion-item {
                 border-radius: 4px;
                 border: 1px solid #e3e8ee;
@@ -347,13 +329,11 @@ class ServiciosAccordion
                 background: #fff;
                 font-size: 0.90rem;
             }
-
             #serviciosAccordion .accordion-header {
                 background: #fff;
                 padding: 0.25rem 0.5rem;
                 border-bottom: 1px solid #e3e8ee;
             }
-
             #serviciosAccordion .accordion-button {
                 font-weight: 500;
                 color: #222;
@@ -363,19 +343,16 @@ class ServiciosAccordion
                 font-size: 0.95rem;
                 padding: 0.15rem 0.3rem;
             }
-
             #serviciosAccordion .accordion-body {
                 background: #fff;
                 border-radius: 0 0 4px 4px;
                 padding: 0.4rem;
             }
-
             #serviciosAccordion label.form-label,
             #serviciosAccordion input.form-control {
                 font-size: 0.90rem;
                 color: #222;
             }
-
             #serviciosAccordion input.form-control {
                 border-radius: 4px;
                 border: 1px solid #d1d1d1;
@@ -383,7 +360,6 @@ class ServiciosAccordion
                 padding: 2px 6px;
                 background: #fff;
             }
-
             .btnQuitarServicio,
             #btnAgregarServicio {
                 border-radius: 4px;
@@ -395,14 +371,12 @@ class ServiciosAccordion
                 color: #444;
                 box-shadow: none !important;
             }
-
             .btnQuitarServicio:hover,
             #btnAgregarServicio:hover {
                 background: #ececec;
                 border-color: #bbb;
                 color: #222;
             }
-
             .btnQuitarServicio i,
             #btnAgregarServicio i {
                 font-size: 0.90rem;

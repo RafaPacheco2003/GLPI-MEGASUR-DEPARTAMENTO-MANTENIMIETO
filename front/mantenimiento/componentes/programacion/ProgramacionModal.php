@@ -71,8 +71,12 @@ class ProgramacionModal
             }
 
             .modern-modal .modal-body {
-                padding: 1.2rem;
+                padding: 1.2rem 1.2rem 0 1.2rem !important;
                 background-color: #fff;
+            }
+            /* Extra: fuerza el padding-bottom a 0 en cualquier modal-body */
+            .modern-modal .modal-body, .modal-body {
+                padding-bottom: 0 !important;
             }
 
             .modern-modal .section-container {
@@ -188,9 +192,10 @@ class ProgramacionModal
             }
 
             .modern-modal .modal-footer {
-                border-top: 1px solid #eee;
-                padding: 1.2rem;
+                border-top: none;
+                padding: 0rem 1.2rem 0.4rem 1.2rem;
                 border-radius: 0 0 20px 20px;
+                margin-top: 0;
             }
 
             /* Botón Guardar: azul */
@@ -317,7 +322,9 @@ class ProgramacionModal
                                             </div>
                                             <div class="mb-3">
                                                 <label for="nombreProgramacion" class="form-label">Nombre de la Programación</label>
-                                                <input type="text" class="form-control" id="nombreProgramacion" readonly disabled required>
+                                                <input type="text" class="form-control" id="nombreProgramacion" name="nombreProgramacion" readonly disabled required>
+                                                <!-- Campo oculto para el tipo de programación seleccionado -->
+                                                <input type="hidden" id="tipoProgramacionSeleccionada" name="tipoProgramacionSeleccionada" value="<?php echo isset($_POST['tipoProgramacionSeleccionada']) ? htmlspecialchars($_POST['tipoProgramacionSeleccionada']) : ''; ?>">
                                             </div>
                                             <div class="mb-3">
                                                 <label for="empresa" class="form-label">Empresa</label>
@@ -341,11 +348,12 @@ class ProgramacionModal
                                                         firma</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> 
                                         <div class="col-md-8 d-flex align-items-start" style="padding-top:0;">
-                                            <div class="w-100" style="margin-top:-5px;">
+                                            <div class="w-100" style="margin-top:-13px;">
                                                 <?php
                                                 require_once __DIR__ . '/ServiciosAccordion.php';
+                                                // La cantidad de acordeones la determina ServiciosAccordion.php (PHP)
                                                 echo ServiciosAccordion::render();
                                                 ?>
                                             </div>
@@ -377,7 +385,7 @@ class ProgramacionModal
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
 
-                    <div class="modal-body d-flex flex-column justify-content-center align-items-center" style="flex: 1;">
+                    <div class="modal-body d-flex flex-column justify-content-center align-items-center pb-0" style="flex: 1;">
                         <div class="w-100" style="max-width: 1000px; flex: 1;">
                             <canvas id="signaturePad"
                                 style="width:100%; height:400px; border-radius:12px; border: 1px solid #ccc;"></canvas>
@@ -415,6 +423,16 @@ class ProgramacionModal
             window.openNewProgramacionModal = openNewProgramacionModal;
 
             document.addEventListener('DOMContentLoaded', function () {
+                // Sincronizar el campo oculto con el tipo seleccionado en JS
+                const hiddenTipo = document.getElementById('tipoProgramacionSeleccionada');
+                // Obtener cantidad de estaciones y crear acordeón dinámicamente
+                let estacionesCantidad = null;
+                fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        estacionesCantidad = Array.isArray(data) ? data.length : 0;
+                        console.log('PROGRAMACION ESTACIONES:', estacionesCantidad);
+                    });
                 signatureModal = new bootstrap.Modal(document.getElementById('signatureModal'));
                 programacionModal = new bootstrap.Modal(document.getElementById('newProgramacionModal'));
                 // ...existing code...
@@ -447,6 +465,8 @@ class ProgramacionModal
                 const cardsProgramacionContainer = document.getElementById('cardsProgramacionContainer');
                 const serviciosSection1 = document.getElementById('serviciosSection1');
                 const serviciosSection2 = document.getElementById('serviciosSection2');
+                // Variable global para el tipo seleccionado
+                window.tipoProgramacionSeleccionado = '';
                 if (cardsContainer && nombreProgramacion && sectionRestante && sectionEleccion) {
                     cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
                         card.addEventListener('click', function () {
@@ -455,6 +475,12 @@ class ProgramacionModal
                             this.classList.add('selected');
                             // Sincronizar valor y bloquear campo
                             nombreProgramacion.value = this.getAttribute('data-nombre');
+                            // Guardar tipo seleccionado en variable global y en el campo oculto
+                            window.tipoProgramacionSeleccionada = this.getAttribute('data-nombre').trim();
+                            if (hiddenTipo) hiddenTipo.value = window.tipoProgramacionSeleccionada;
+                            // Imprimir en consola que se ha guardado y mostrar cómo se guardó
+                            console.log('TIPO DE PROGRAMACION SELECCIONADO GUARDADO:', window.tipoProgramacionSeleccionada);
+                            console.log('Se guardó el tipo de programación en la variable window.tipoProgramacionSeleccionada:', window.tipoProgramacionSeleccionada);
                             nombreProgramacion.readOnly = true;
                             nombreProgramacion.disabled = true;
 
@@ -471,16 +497,17 @@ class ProgramacionModal
                             sectionRestante.style.display = 'block';
                             sectionEleccion.style.display = 'none';
                             // Mostrar/ocultar secciones de servicios según selección
-                            if (this.getAttribute('data-nombre').toLowerCase() === 'servidores y redes') {
+                            if (window.tipoProgramacionSeleccionada.toLowerCase() === 'servidores y redes') {
                                 if (serviciosSection1) serviciosSection1.style.display = 'block';
                                 if (serviciosSection2) serviciosSection2.style.display = 'none';
-                            } else if (this.getAttribute('data-nombre').toLowerCase() === 'servidores') {
+                            } else if (window.tipoProgramacionSeleccionada.toLowerCase() === 'servidores') {
                                 if (serviciosSection1) serviciosSection1.style.display = 'none';
                                 if (serviciosSection2) serviciosSection2.style.display = 'block';
                             } else {
                                 if (serviciosSection1) serviciosSection1.style.display = 'none';
                                 if (serviciosSection2) serviciosSection2.style.display = 'none';
                             }
+
                             // Desplazar a la siguiente sección
                             setTimeout(function () {
                                 sectionRestante.scrollIntoView({ behavior: 'smooth', block: 'start' });

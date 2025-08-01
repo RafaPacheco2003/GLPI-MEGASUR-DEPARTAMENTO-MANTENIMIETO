@@ -8,42 +8,93 @@ class ServiciosAccordion
      * Renderiza el acordeón de servicios y el botón para agregar
      * @return string HTML del acordeón y botón
      */
-    public static function render()
+    public static function render($cantidad = null)
     {
+        // Si no se pasa cantidad, obtenerla desde el backend (PHP)
+        if ($cantidad === null) {
+            $cantidad = 1;
+            $url = $_SERVER['DOCUMENT_ROOT'] . '/glpi/front/mantenimiento/config/get_sucursales.php';
+            if (file_exists($url)) {
+                $data = @file_get_contents($url);
+                if ($data !== false) {
+                    $json = @json_decode($data, true);
+                    if (is_array($json)) {
+                        $cantidad = count($json);
+                    }
+                }
+            }
+        }
+        // Guardar la cantidad en un atributo data para que JS lo lea y lo imprima en consola
         ob_start();
         ?>
         <!-- Servicios Accordion Header -->
-        <div class="d-flex align-items-center justify-content-between mb-2">
-            <h6 class="section-title mb-0">
-                <i class="fas fa-server me-2"></i> Servicios
-            </h6>
-            <button type="button" class="btn btn-sm btn-success" id="btnAgregarServicio">
-                <i class="fas fa-plus"></i> Agregar servicio
-            </button>
+        <div class="mb-0" style="margin-bottom:0;">
+            <div class="d-flex justify-content-end" style="margin-bottom: 0.7rem;">
+                <button type="button" class="btn btn-sm btn-success mt-1" id="btnAgregarServicio" style="margin-bottom:0;">
+                    <i class="fas fa-plus"></i> Agregar servicio
+                </button>
+            </div>
         </div>
 
         <!-- Accordion Container -->
-        <div class="accordion" id="serviciosAccordion" style="border-radius: 10px; background: transparent; box-shadow: none; padding: 0;"></div>
+        <div class="accordion w-100" id="serviciosAccordion" data-cantidad-inicial="<?php echo (int)$cantidad; ?>" data-cantidad-estaciones="<?php echo (int)$cantidad; ?>" style="border-radius: 8px; background: transparent; box-shadow: none; padding: 0; min-height:38px; height:402px; max-width:100%; overflow-y:auto;"></div>
 
         <!-- JavaScript: Servicios Accordion Logic -->
         <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Element references
             const serviciosAccordion = document.getElementById('serviciosAccordion');
+            // Imprimir en consola la cantidad de estaciones obtenida en el servidor (PHP)
+            if (serviciosAccordion) {
+                const cantidadEstaciones = serviciosAccordion.getAttribute('data-cantidad-estaciones');
+                console.log('[SERVIDOR] Cantidad de estaciones obtenidas en PHP:', cantidadEstaciones);
+            }
             const btnAgregarServicio = document.getElementById('btnAgregarServicio');
             const nombreProgramacion = document.getElementById('nombreProgramacion');
             const cardsContainer = document.getElementById('cardsProgramacion');
             let servicioCount = 0;
             let tipoProgramacionActual = nombreProgramacion?.value || '';
 
+            // Lógica: obtener cantidad de estaciones desde el backend vía fetch
+            let estacionesCantidad = 1;
+            fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                .then(response => response.json())
+                .then(data => {
+                    estacionesCantidad = Array.isArray(data) ? data.length : 1;
+                    inicializarAcordeones();
+                })
+                .catch(() => {
+                    inicializarAcordeones();
+                });
+
+            function inicializarAcordeones() {
+                // Si el tipo de programación es UENS, usar estacionesCantidad, si no, mostrar 2
+                let cantidadInicial = 2;
+                if (tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS')) {
+                    cantidadInicial = estacionesCantidad;
+                }
+                serviciosAccordion.innerHTML = '';
+                servicioCount = 0;
+                for (let i = 0; i < cantidadInicial; i++) {
+                    crearServicioAcordeon();
+                }
+            }
+
             // Card selection event: reset accordion on program type change
             if (cardsContainer && nombreProgramacion) {
                 cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
                     card.addEventListener('click', function () {
                         tipoProgramacionActual = this.dataset.nombre;
-                        serviciosAccordion.innerHTML = '';
-                        servicioCount = 0;
-                        crearServicioAcordeon();
+                        // Recalcular acordeones según tipo
+                        fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                            .then(response => response.json())
+                            .then(data => {
+                                estacionesCantidad = Array.isArray(data) ? data.length : 1;
+                                inicializarAcordeones();
+                            })
+                            .catch(() => {
+                                inicializarAcordeones();
+                            });
                     });
                 });
             }
@@ -52,7 +103,7 @@ class ServiciosAccordion
             const crearServicioAcordeon = (nombre = '') => {
                 servicioCount++;
                 const id = `servicioAcordeon${servicioCount}`;
-                const plantilla = tipoProgramacionActual === 'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO Y RED (UENS)'
+                const plantilla = tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS')
                     ? plantillaUENS(id, nombre)
                     : plantillaDefault(id, nombre);
 
@@ -199,14 +250,17 @@ class ServiciosAccordion
 
             // Add service event
             btnAgregarServicio?.addEventListener('click', () => crearServicioAcordeon());
-            crearServicioAcordeon(); // inicial
+            const cantidadInicial = parseInt(serviciosAccordion.getAttribute('data-cantidad-inicial')) || 1;
+            for (let i = 0; i < cantidadInicial; i++) {
+                crearServicioAcordeon();
+            }
 
             // Load stations into select
             async function cargarSucursalesEnSelect(idSelect) {
                 try {
                     const response = await fetch('../config/get_sucursales.php');
                     const data = await response.json();
-                    console.log('Cantidad de sucursales obtenidas:', Array.isArray(data) ? data.length : 0);
+                    console.log('Cantidad de sucursales obtenidas EN SERVICIO:', Array.isArray(data) ? data.length : 0);
                     const select = document.getElementById(idSelect);
                     if (!select) return;
                     select.innerHTML = '<option value="">Seleccione una estación</option>';
@@ -316,18 +370,40 @@ class ServiciosAccordion
         <!-- CSS: Servicios Accordion Styles -->
         <style>
             #serviciosAccordion {
-                border-radius: 4px;
+                border-radius: 8px;
                 background: #fff;
                 box-shadow: none !important;
                 padding: 2px 0;
                 max-width: 100%;
+                min-height:38px;
+                height:320px;
+                overflow-y: auto;
+                overflow-x: hidden;
             }
             #serviciosAccordion .accordion-item {
                 border-radius: 4px;
                 border: 1px solid #e3e8ee;
-                margin-bottom: 4px;
+                margin-bottom: 8px;
                 background: #fff;
                 font-size: 0.90rem;
+                min-height: 38px;
+                transition: height 0.2s;
+                overflow: visible;
+            }
+            #serviciosAccordion .accordion-header {
+                min-height: 38px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+            }
+            #serviciosAccordion .accordion-item .accordion-collapse {
+                display: none;
+            }
+            #serviciosAccordion .accordion-item .accordion-collapse.show {
+                display: block;
+                height: auto;
+                margin-top: 0.5rem;
+                margin-bottom: 0.5rem;
             }
             #serviciosAccordion .accordion-header {
                 background: #fff;

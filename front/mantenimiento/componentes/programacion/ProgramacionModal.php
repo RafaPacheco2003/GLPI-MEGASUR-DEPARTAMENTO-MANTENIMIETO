@@ -289,21 +289,124 @@ class ProgramacionModal
                 z-index: 3;
             }
 
-            @media (min-width: 992px) {
-                #signatureModal .modal-dialog {
-                    max-width: 100vw !important;
+            /* Responsive para modal de firma digital */
+            #signatureModal .modal-dialog {
+                max-width: 100vw !important;
+                margin: 0;
+                width: 100vw;
+            }
+            #signatureModal .modal-content {
+                height: 100vh !important;
+                width: 100vw;
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+                background: linear-gradient(135deg,#f8faff 60%,#e0e7ff 100%);
+            }
+            #signatureModal .modal-header {
+                border-radius: 18px 18px 0 0;
+                border-bottom: 1.5px solid #e0e7ff;
+                background: rgba(37,99,235,0.07);
+            }
+            #signatureModal .modal-title {
+                font-weight: 700;
+                color: #2563eb;
+            }
+            #signatureModal .modal-body {
+                height: calc(100vh - 120px) !important;
+                flex: 1;
+                width: 100vw;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                width: 96vw;
+                max-width: 700px;
+                height: 100%;
+                min-height: 340px;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0;
+                border-radius: 18px;
+                background: #fff;
+                border: 2.5px solid #2563eb;
+                box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            }
+            #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                width: 100% !important;
+                height: 60vh !important;
+                min-height: 220px;
+                border-radius: 14px;
+                border: none;
+                background: #f8fafc;
+            }
+            #signatureModal .signature-controls {
+                width: 96vw;
+                max-width: 700px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 0 0.5vw;
+                gap: 12px;
+            }
+            @media (max-width: 991.98px) {
+                #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                    max-width: 98vw;
+                    min-height: 180px;
+                    border-radius: 12px;
                 }
-
+                #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                    height: 32vh !important;
+                    min-height: 120px;
+                    border-radius: 10px;
+                }
+                #signatureModal .signature-controls {
+                    max-width: 98vw;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 10px;
+                    padding: 0 2vw;
+                }
+            }
+            @media (max-width: 600px) {
                 #signatureModal .modal-content {
-                    height: 100vh !important;
+                    border-radius: 0;
                 }
-
-                #signatureModal .modal-body {
-                    height: calc(100vh - 120px) !important;
+                #signatureModal .modal-header {
+                    border-radius: 0;
+                    padding: 0.7rem 0.7rem 0.7rem 1rem;
                 }
-
-                #signatureModal .signature-pad-fullscreen {
-                    min-height: 400px !important;
+                #signatureModal .modal-title span {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 5px;
+                }
+                #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                    width: 99vw;
+                    max-width: 99vw;
+                    min-height: 100px;
+                    border-radius: 6px;
+                }
+                #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                    height: 22vh !important;
+                    min-height: 70px;
+                    border-radius: 6px;
+                }
+                #signatureModal .signature-controls {
+                    width: 99vw;
+                    max-width: 99vw;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 8px;
+                    padding: 0 2vw;
+                }
+                #signatureModal .signature-controls button {
+                    font-size: 0.98rem;
+                    padding: 8px 0;
                 }
             }
 
@@ -399,26 +502,33 @@ class ProgramacionModal
         </div>
         <!-- Modal Firma -->
         <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width: 100vw;">
-                <div class="modal-content" style="height: 90vh;">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="signatureModalLabel">
-                            <i class="fas fa-signature me-2"></i> Firma Digital
+            <div class="modal-dialog modal-fullscreen" style="margin:0; max-width:100vw; width:100vw;">
+                <div class="modal-content" style="height:100vh; width:100vw; border-radius:18px; box-shadow:0 8px 32px rgba(37,99,235,0.10); background:linear-gradient(135deg,#f8faff 60%,#e0e7ff 100%);">
+                    <div class="modal-header" style="border-radius:18px 18px 0 0; border-bottom:1.5px solid #e0e7ff; background:rgba(37,99,235,0.07);">
+                        <h5 class="modal-title d-flex align-items-center gap-2" id="signatureModalLabel" style="font-weight:700; color:#2563eb;">
+                            <span style="display:inline-flex; align-items:center; justify-content:center; background:#e0e7ff; border-radius:50%; width:38px; height:38px; margin-right:8px;">
+                                <i class="fas fa-signature" style="font-size:1.3rem; color:#2563eb;"></i>
+                            </span>
+                            Firma Digital
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter:brightness(0.7);"></button>
                     </div>
-
-                    <div class="modal-body d-flex flex-column justify-content-center align-items-center pb-0" style="flex: 1;">
-                        <div class="w-100" style="max-width: 1000px; flex: 1;">
-                            <canvas id="signaturePad"
-                                style="width:100%; height:400px; border-radius:12px; border: 1px solid #ccc;"></canvas>
+                    <div class="modal-body d-flex flex-column justify-content-center align-items-center pb-0" style="height:calc(100vh - 120px); flex:1; width:100vw; padding:0;">
+                        <div class="signature-pad-container signature-pad-fullscreen shadow-lg">
+                            <canvas id="signaturePad"></canvas>
                         </div>
-                        <div class="mt-3 d-flex justify-content-end w-100" style="max-width:1000px;">
-                            <button type="button" class="btn btn-outline-secondary me-2" id="clearSignature">
-                                <i class="fas fa-eraser"></i> Limpiar
+                        <div class="signature-controls mt-4 d-flex gap-3">
+                            <button type="button" class="btn btn-light d-flex align-items-center gap-2 shadow-sm" id="clearSignature"
+                                style="background:#fff; color:#2563eb; border:2px solid #2563eb; font-weight:600; border-radius:8px; font-size:1rem; padding:8px 20px; transition:all 0.18s; box-shadow:0 2px 8px rgba(37,99,235,0.04);"
+                                onmouseover="this.style.background='#e0e7ff'; this.style.color='#1d4ed8'; this.style.borderColor='#1d4ed8';"
+                                onmouseout="this.style.background='#fff'; this.style.color='#2563eb'; this.style.borderColor='#2563eb';">
+                                <i class="fas fa-eraser" style="font-size:1.1rem; margin-right:6px;"></i> Limpiar
                             </button>
-                            <button type="button" class="btn btn-primary" id="saveSignature">
-                                <i class="fas fa-save"></i> Guardar Firma
+                            <button type="button" class="btn d-flex align-items-center gap-2 shadow-sm" id="saveSignature"
+                                style="background:linear-gradient(90deg,#2563eb 60%,#1d4ed8 100%); color:#fff; border:none; font-weight:600; border-radius:8px; font-size:1rem; padding:8px 24px; box-shadow:0 2px 8px rgba(37,99,235,0.08); transition:all 0.18s;"
+                                onmouseover="this.style.background='#1d4ed8'; this.style.boxShadow='0 4px 16px rgba(37,99,235,0.13)';"
+                                onmouseout="this.style.background='linear-gradient(90deg,#2563eb 60%,#1d4ed8 100%)'; this.style.boxShadow='0 2px 8px rgba(37,99,235,0.08)';">
+                                <i class="fas fa-save" style="font-size:1.1rem; margin-right:6px;"></i> Guardar Firma
                             </button>
                         </div>
                     </div>

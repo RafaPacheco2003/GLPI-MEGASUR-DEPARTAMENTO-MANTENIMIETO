@@ -41,10 +41,10 @@ class ServiciosAccordion
 
         <!-- JavaScript: Servicios Accordion Logic -->
         <script>
+
         document.addEventListener('DOMContentLoaded', () => {
             // Element references
             const serviciosAccordion = document.getElementById('serviciosAccordion');
-            // Imprimir en consola la cantidad de estaciones obtenida en el servidor (PHP)
             if (serviciosAccordion) {
                 const cantidadEstaciones = serviciosAccordion.getAttribute('data-cantidad-estaciones');
                 console.log('[SERVIDOR] Cantidad de estaciones obtenidas en PHP:', cantidadEstaciones);
@@ -55,12 +55,16 @@ class ServiciosAccordion
             let servicioCount = 0;
             let tipoProgramacionActual = nombreProgramacion?.value || '';
 
-            // Lógica: obtener cantidad de estaciones desde el backend vía fetch
+            // Guardar estaciones globalmente para asignar una diferente a cada servicio
+            let estacionesData = [];
             let estacionesCantidad = 1;
+
+            // Lógica: obtener cantidad y datos de estaciones desde el backend vía fetch
             fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
                 .then(response => response.json())
                 .then(data => {
-                    estacionesCantidad = Array.isArray(data) ? data.length : 1;
+                    estacionesData = Array.isArray(data) ? data : [];
+                    estacionesCantidad = estacionesData.length || 1;
                     inicializarAcordeones();
                 })
                 .catch(() => {
@@ -76,7 +80,12 @@ class ServiciosAccordion
                 serviciosAccordion.innerHTML = '';
                 servicioCount = 0;
                 for (let i = 0; i < cantidadInicial; i++) {
-                    crearServicioAcordeon();
+                    // Para UENS, pasar el id de estación correspondiente (si existe)
+                    let estacionIdDefault = null;
+                    if (tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS') && estacionesData[i]) {
+                        estacionIdDefault = estacionesData[i].IdSucursal;
+                    }
+                    crearServicioAcordeon('', estacionIdDefault);
                 }
             }
 
@@ -85,11 +94,11 @@ class ServiciosAccordion
                 cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
                     card.addEventListener('click', function () {
                         tipoProgramacionActual = this.dataset.nombre;
-                        // Recalcular acordeones según tipo
                         fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
                             .then(response => response.json())
                             .then(data => {
-                                estacionesCantidad = Array.isArray(data) ? data.length : 1;
+                                estacionesData = Array.isArray(data) ? data : [];
+                                estacionesCantidad = estacionesData.length || 1;
                                 inicializarAcordeones();
                             })
                             .catch(() => {
@@ -100,7 +109,7 @@ class ServiciosAccordion
             }
 
             // Add new service accordion item
-            const crearServicioAcordeon = (nombre = '') => {
+            const crearServicioAcordeon = (nombre = '', estacionIdDefault = null) => {
                 servicioCount++;
                 const id = `servicioAcordeon${servicioCount}`;
                 const plantilla = tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS')
@@ -111,6 +120,10 @@ class ServiciosAccordion
                 temp.innerHTML = plantilla;
                 const item = temp.firstElementChild;
                 item.querySelector('.btnQuitarServicio')?.addEventListener('click', () => item.remove());
+                // Guardar el id de estación por defecto en un atributo data para usarlo al llenar el select
+                if (estacionIdDefault) {
+                    item.setAttribute('data-estacion-default', estacionIdDefault);
+                }
                 serviciosAccordion.appendChild(item);
             };
 
@@ -258,9 +271,8 @@ class ServiciosAccordion
             // Load stations into select
             async function cargarSucursalesEnSelect(idSelect) {
                 try {
-                    const response = await fetch('../config/get_sucursales.php');
-                    const data = await response.json();
-                    console.log('Cantidad de sucursales obtenidas EN SERVICIO:', Array.isArray(data) ? data.length : 0);
+                    // Usar estacionesData global si está disponible
+                    const data = estacionesData.length ? estacionesData : await (await fetch('../config/get_sucursales.php')).json();
                     const select = document.getElementById(idSelect);
                     if (!select) return;
                     select.innerHTML = '<option value="">Seleccione una estación</option>';
@@ -272,6 +284,15 @@ class ServiciosAccordion
                         option.textContent = item.NombreSucursal;
                         select.appendChild(option);
                     });
+                    // Seleccionar automáticamente la estación si el acordeón tiene data-estacion-default
+                    const parentAcordeon = select.closest('.accordion-item');
+                    if (parentAcordeon && parentAcordeon.hasAttribute('data-estacion-default')) {
+                        const defaultId = parentAcordeon.getAttribute('data-estacion-default');
+                        if (defaultId) {
+                            select.value = defaultId;
+                        }
+                    }
+                    select.dispatchEvent(new Event('change'));
                     select.addEventListener('change', function() {
                         const id = select.value;
                         if (id && estacionesMap.has(id)) {

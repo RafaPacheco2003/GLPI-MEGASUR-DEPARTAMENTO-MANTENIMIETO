@@ -144,9 +144,13 @@ class ProgramacionModal
 
             .modern-modal .signature-container {
                 width: 100%;
-                background: #fff;
+                background: #f4f8ff;
                 border-radius: 8px;
                 overflow: hidden;
+                border: 2px dashed #2563eb;
+                margin-bottom: 10px;
+                position: relative;
+                min-height: 80px;
             }
 
             .modern-modal .signature-pad-container {
@@ -245,25 +249,44 @@ class ProgramacionModal
 
             .signature-preview {
                 width: 100%;
-                height: 150px;
-                border: 1px solid #ccc;
+                height: 80px;
+                border: none;
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
-                   
-                
+                justify-content: center;
+                background: transparent;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+            }
 
-                #signatureModal .modal-content {
-                    height: 100vh !important;
-                }
+            .signature-preview .placeholder-text {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2563eb;
+                font-weight: 500;
+                font-size: 1.05rem;
+                letter-spacing: 0.2px;
+                background: transparent;
+                z-index: 2;
+                pointer-events: none;
+                transition: opacity 0.2s;
+                opacity: 1;
+            }
 
-                #signatureModal .modal-body {
-                    height: calc(100vh - 120px) !important;
-                }
-
-                #signatureModal .signature-pad-fullscreen {
-                    min-height: 200px !important;
-                }
+            .signature-preview img {
+                width: 100%;
+                height: 80px;
+                object-fit: contain;
+                display: none;
+                z-index: 3;
             }
 
             @media (min-width: 992px) {
@@ -528,9 +551,9 @@ class ProgramacionModal
                     });
                     document.getElementById('clearSignature').onclick = function () {
                         signaturePad.clear();
-                        // Mostrar el texto de placeholder si se limpia la firma
+                        // Mostrar el texto de placeholder centrado y absoluto
                         const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                        if (placeholder) placeholder.style.display = 'block';
+                        if (placeholder) placeholder.style.opacity = '1';
                         // Ocultar la imagen de la firma
                         const signaturePreview = document.getElementById('signaturePreview');
                         if (signaturePreview) signaturePreview.style.display = 'none';
@@ -547,9 +570,12 @@ class ProgramacionModal
                             const signaturePreview = document.getElementById('signaturePreview');
                             signaturePreview.src = '/glpi/files/firmas/' + fileName;
                             signaturePreview.style.display = 'block';
-                            // Ocultar el texto de placeholder si existe
+                            signaturePreview.style.width = '100%';
+                            signaturePreview.style.height = '100%';
+                            signaturePreview.style.objectFit = 'contain';
+                            // Ocultar el texto de placeholder centrado
                             const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                            if (placeholder) placeholder.style.display = 'none';
+                            if (placeholder) placeholder.style.opacity = '0';
                             signatureModal.hide();
                         } catch (err) {
                             alert('Error al guardar la firma: ' + err);

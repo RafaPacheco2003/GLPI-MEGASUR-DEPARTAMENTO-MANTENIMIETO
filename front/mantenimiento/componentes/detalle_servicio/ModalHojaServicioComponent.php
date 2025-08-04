@@ -941,10 +941,7 @@ $servicio = $servicioManager->getById($_GET['id']);
                         if (modal) modal.hide();
                     } else if (isJson && result && result.message) {
                         alert('Error: ' + result.message);
-                    } else {
-                        // Si no es JSON, mostrar el texto plano de la respuesta
-                        alert('Error al guardar hoja de servicio (raw):\n' + text);
-                    }
+                    } // Si no es JSON o no hay success, no mostrar alert de error
                 } catch (err) {
                     alert('Error al guardar hoja de servicio: ' + (err && err.message ? err.message : ''));
                 }

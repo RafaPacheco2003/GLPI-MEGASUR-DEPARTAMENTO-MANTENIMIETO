@@ -62,7 +62,13 @@ class HojaServicio {
 
             $this->db->commit();
             file_put_contents($logfile, date('c') . " - [HojaServicio] EXITO insert id: $insertId\n", FILE_APPEND);
-            return $insertId;
+            // Imprimir respuesta de éxito para el frontend
+            echo json_encode([
+                'success' => true,
+                'message' => 'Servicio creado exitosamente',
+                'id' => $insertId
+            ]);
+            exit;
         } catch (Exception $e) {
             $this->db->rollback();
             file_put_contents($logfile, date('c') . " - [HojaServicio] ERROR: " . $e->getMessage() . "\n", FILE_APPEND);

@@ -232,7 +232,7 @@
                                     <label for="firmaCliente" class="form-label">Entregado</label>
                                     <div class="input-with-icon">
                                         <input type="text" class="form-control" id="firmaCliente" name="firmaCliente"
-                                            placeholder="Nombre del cliente" required>
+                                            placeholder="Nombre del cliente" required readonly style="background:#f5f5f5;">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
@@ -666,8 +666,17 @@
                     horaFinInput.min = minFin;
                     horaFinInput.disabled = false;
                     // Si la hora_fin actual es menor o igual, la limpia
-                    if (horaFinInput.value && horaFinInput.value <= inicio) {
+                    if (horaFinInput.value && horaFinInput.value < minFin) {
                         horaFinInput.value = '';
+                    }
+                    // Establecer automáticamente una hora después como valor por defecto
+                    let hFin = parseInt(inicio.split(":")[0], 10) + 1;
+                    let mFin = parseInt(inicio.split(":")[1], 10);
+                    if (hFin >= 24) hFin = 0;
+                    let sugerido = (hFin < 10 ? '0' : '') + hFin + ':' + (mFin < 10 ? '0' : '') + mFin;
+                    // Solo poner el valor sugerido si está vacío o es menor al mínimo
+                    if (!horaFinInput.value || horaFinInput.value < minFin) {
+                        horaFinInput.value = sugerido;
                     }
                 } else {
                     horaFinInput.min = '';
@@ -681,9 +690,13 @@
             const inicio = horaInicioInput.value;
             const fin = horaFinInput.value;
             if (inicio && fin) {
-                if (fin <= inicio) {
+                // Calcular el mínimo permitido (1 minuto después de inicio)
+                let [h, m] = inicio.split(":").map(Number);
+                m++;
+                if (m >= 60) { h++; m = 0; }
+                let minFin = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                if (fin < minFin) {
                     horaFinInput.setCustomValidity('La hora de fin debe ser mayor que la hora de inicio.');
-                    // Limpiar el campo y mostrar mensaje visual inmediato
                     horaFinInput.value = '';
                     mostrarErrorHoraFin('La hora de fin debe ser mayor que la hora de inicio.');
                 } else {
@@ -814,6 +827,12 @@
             const dd = String(today.getDate()).padStart(2, '0');
             fechaInput.value = `${yyyy}-${mm}-${dd}`;
             fechaInput.readOnly = true;
+
+            // Auto-rellenar el campo Nombre entregado (firmaCliente) con el nombre del usuario logueado
+            const firmaClienteInput = document.getElementById('firmaCliente');
+            if (firmaClienteInput) {
+                firmaClienteInput.value = <?php echo json_encode($_SESSION['glpiname'] ?? ''); ?>;
+            }
         });
         // Inicializar Select2 después de llenar el select
         function initSelect2Estacion() {

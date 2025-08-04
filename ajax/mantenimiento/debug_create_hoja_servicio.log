@@ -1,0 +1,28 @@
+2025-08-04T23:19:15+02:00 - INICIO create_hoja_servicio.php
+2025-08-04T23:19:15+02:00 - Incluyendo includes.php
+2025-08-04T23:19:16+02:00 - Incluyendo HojaServicio.php
+2025-08-04T23:19:16+02:00 - RAW POST: {"id_estacion":"14655","id_servicio":"51","id_material":1,"folio":"12","serie":"12","fecha_inicio":"2025-08-04 15:18:00","fecha_fin":"2025-08-04 16:18:00","descripcion":"OIWOI2 | QW","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_689123cdd85db.png","firma_recibido":"firma_689123d09802c.png","tipo_servicio":"instalacion"}
+2025-08-04T23:19:16+02:00 - Instanciando HojaServicio
+2025-08-04T23:19:16+02:00 - Llamando crearHojaServicio
+2025-08-04T23:19:16+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-04T23:19:16+02:00 - [HojaServicio] Iniciando transacción
+2025-08-04T23:27:26+02:00 - INICIO create_hoja_servicio.php
+2025-08-04T23:27:26+02:00 - Incluyendo includes.php
+2025-08-04T23:27:26+02:00 - Incluyendo HojaServicio.php
+2025-08-04T23:27:26+02:00 - RAW POST: {"id_estacion":"14655","id_servicio":"51","id_material":1,"folio":"12","serie":"21","fecha_inicio":"2025-08-04 17:26:00","fecha_fin":"2025-08-04 18:26:00","descripcion":"OIWOI2 | DSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_689125b797ac5.png","firma_recibido":"firma_689125bcbb7fc.png","tipo_servicio":"instalacion"}
+2025-08-04T23:27:26+02:00 - Instanciando HojaServicio
+2025-08-04T23:27:26+02:00 - Llamando crearHojaServicio
+2025-08-04T23:27:26+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-04T23:27:26+02:00 - [HojaServicio] Antes de beginTransaction
+2025-08-04T23:32:08+02:00 - INICIO create_hoja_servicio.php
+2025-08-04T23:32:08+02:00 - Incluyendo includes.php
+2025-08-04T23:32:09+02:00 - Incluyendo HojaServicio.php
+2025-08-04T23:32:09+02:00 - RAW POST: {"id_estacion":"14655","id_servicio":"51","id_material":1,"folio":"12","serie":"12","fecha_inicio":"2025-08-04 15:31:00","fecha_fin":"2025-08-04 16:31:00","descripcion":"OIWOI2 | ADDA","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_689126d2cc2e4.png","firma_recibido":"firma_689126d73d9e1.png","tipo_servicio":"instalacion"}
+2025-08-04T23:32:09+02:00 - Instanciando HojaServicio
+2025-08-04T23:32:09+02:00 - Llamando crearHojaServicio
+2025-08-04T23:32:09+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-04T23:32:09+02:00 - [HojaServicio] Iniciando transacción
+2025-08-04T23:32:09+02:00 - [HojaServicio] Ejecutando query
+2025-08-04T23:32:09+02:00 - [HojaServicio] EXITO insert id: 1
+2025-08-04T23:32:09+02:00 - EXITO id: 1
+2025-08-04T23:32:09+02:00 - FIN SIN RESPUESTA

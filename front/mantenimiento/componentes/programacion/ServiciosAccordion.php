@@ -353,6 +353,14 @@ class ServiciosAccordion
                 const id_estacion = window.getIdEstacionSeleccionada();
                 const fecha_inicio = fecha_servicio && hora_inicio ? (fecha_servicio + ' ' + hora_inicio + ':00') : '';
                 const fecha_final = fecha_servicio && hora_fin ? (fecha_servicio + ' ' + hora_fin + ':00') : '';
+
+                // Obtener id_servicio de la URL
+                function getIdServicioFromUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    return params.get('id') || '';
+                }
+                const id_servicio = getIdServicioFromUrl();
+
                 const formData = {
                     fecha_inicio,
                     fecha_final,
@@ -363,7 +371,8 @@ class ServiciosAccordion
                     serie_folio_hoja_servicio,
                     id_estacion,
                     quien,
-                    id_programacion
+                    id_programacion,
+                    id_servicio
                 };
                 console.log('Valor id_estacion a enviar:', formData.id_estacion);
                 console.log('Objeto formData a enviar:', formData);

@@ -215,3 +215,55 @@
 [2025-08-04 19:05:50] glpiphplog.ALERT:   *** PHP Compile Error (64): Cannot declare class ServicioManager, because the name is already in use in C:\xampp\htdocs\glpi\inc\mantenimiento\servicioManager.php at line 6  
 [2025-08-04 19:07:22] glpiphplog.ALERT:   *** PHP Compile Error (64): Cannot declare class ServicioManager, because the name is already in use in C:\xampp\htdocs\glpi\inc\mantenimiento\servicioManager.php at line 6  
 [2025-08-04 19:08:17] glpiphplog.ALERT:   *** PHP Compile Error (64): Cannot declare class ServicioManager, because the name is already in use in C:\xampp\htdocs\glpi\inc\mantenimiento\servicioManager.php at line 6  
+[2025-08-04 22:29:56] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:50     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:30:00] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:50     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:38:06] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:50     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:38:47] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:50     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:42:51] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:50     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:47:05] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:48     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:48:56] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:48     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 22:57:20] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:48     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 23:02:42] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:48     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 23:06:54] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:63     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 23:13:45] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 22
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 23:19:16] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 25
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-04 23:27:26] glpiphplog.CRITICAL:   *** Uncaught Exception Error: Call to undefined method MantenimientoConnection::beginTransaction() in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 25
+  Backtrace :
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  

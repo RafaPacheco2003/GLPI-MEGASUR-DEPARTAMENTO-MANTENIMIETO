@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Componente: Modal Hoja de Servicio (wizard)
@@ -5,6 +6,17 @@
  *
  * Este componente contiene el modal completo para la hoja de servicio, con toda la estructura, estilos y scripts necesarios.
  */
+
+require_once '../../../inc/mantenimiento/ServicioManager.php';
+
+
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    Html::displayErrorAndDie(__('Invalid ID'));
+}
+
+
+$servicioManager = new ServicioManager();
+$servicio = $servicioManager->getById($_GET['id']);
 ?>
 
 <!-- Modal Formulario hoja de servicio (wizard) -->
@@ -758,15 +770,28 @@
         }
 
         document.getElementById('btnNext1').addEventListener('click', function () {
+            // Cerrar Select2 de articuloSelect si está abierto
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step2, controls2);
         });
         document.getElementById('btnBack1').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step1, controls1);
         });
         document.getElementById('btnNext2').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step3, controls3);
         });
         document.getElementById('btnBack2').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step2, controls2);
         });
         document.getElementById('btnGuardarPuesto').addEventListener('click', function () {
@@ -792,33 +817,48 @@
             }
             // Mantener el wizard en el paso de firmas al cerrar el modal de firma
             window._mantenerPasoFirmas = true;
-            // Llenar el select de estación desde la API PHP solo si no se ha llenado antes
+            // Llenar el select de estación desde la API PHP SIEMPRE que se abre el modal (para evitar problemas visuales)
             const estacionSelect = document.getElementById('estacion');
-            if (!estacionSelect.hasAttribute('data-loaded')) {
-                estacionSelect.innerHTML = '<option value="">Seleccione una estación</option>';
-                fetch('../config/get_sucursales.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (Array.isArray(data)) {
-                            sucursalesData = data;
-                            data.forEach(function (item) {
-                                const option = document.createElement('option');
-                                option.value = item.IdSucursal;
-                                option.textContent = item.NombreSucursal;
-                                // Guardar el índice para fácil acceso
-                                option.setAttribute('data-index', sucursalesData.indexOf(item));
-                                estacionSelect.appendChild(option);
-                            });
-                            estacionSelect.setAttribute('data-loaded', 'true');
-                            setTimeout(initSelect2Estacion, 100);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar estaciones:', error);
-                    });
-            } else {
-                setTimeout(initSelect2Estacion, 100);
+            // Si ya tiene Select2, destruirlo antes de manipular el select
+            if (window.jQuery && $(estacionSelect).data('select2')) {
+                $(estacionSelect).select2('destroy');
             }
+            estacionSelect.innerHTML = '<option value="">Seleccione una estación</option>';
+            fetch('../config/get_sucursales.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        sucursalesData = data;
+                        // Imprimir todas las estaciones en la consola
+                        console.log('Estaciones obtenidas:');
+                        data.forEach(function (item) {
+                            console.log('IdSucursal:', item.IdSucursal, '| NombreSucursal:', item.NombreSucursal);
+                        });
+                        data.forEach(function (item) {
+                            const option = document.createElement('option');
+                            option.value = item.IdSucursal;
+                            option.textContent = item.NombreSucursal;
+                            // Guardar el índice para fácil acceso
+                            option.setAttribute('data-index', sucursalesData.indexOf(item));
+                            estacionSelect.appendChild(option);
+                        });
+                        // Seleccionar automáticamente la estación si coincide con el id_estacion del servicio
+                        var idEstacionServicio = <?php echo json_encode($servicio['id_estacion'] ?? null); ?>;
+                        if (idEstacionServicio) {
+                            estacionSelect.value = idEstacionServicio;
+                        }
+                        setTimeout(initSelect2Estacion, 100);
+                        // Si se usa Select2, también actualizar visualmente después de inicializar
+                        setTimeout(function() {
+                            if (window.jQuery && $(estacionSelect).data('select2') && idEstacionServicio) {
+                                $(estacionSelect).val(idEstacionServicio).trigger('change');
+                            }
+                        }, 200);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estaciones:', error);
+                });
             // Establecer la fecha de hoy y hacerla no editable
             const fechaInput = document.getElementById('fecha');
             const today = new Date();
@@ -833,6 +873,9 @@
             if (firmaClienteInput) {
                 firmaClienteInput.value = <?php echo json_encode($_SESSION['glpiname'] ?? ''); ?>;
             }
+
+            // Imprimir el id_estacion del servicio en la consola al abrir el modal
+            console.log('id_estacion:', <?php echo json_encode($servicio['id_estacion'] ?? null); ?>);
         });
         // Inicializar Select2 después de llenar el select
         function initSelect2Estacion() {

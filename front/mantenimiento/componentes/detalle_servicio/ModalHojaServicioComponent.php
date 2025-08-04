@@ -35,22 +35,8 @@
                                         <span class="input-group-text"
                                             style="padding: 0.375rem 0.75rem; color: #757575;"><i
                                                 class="fas fa-hashtag fa-sm"></i></span>
-                                        <input type="text" class="form-control" id="folio" name="folio" maxlength="5"
+                                        <input type="text" class="form-control" id="folio" name="folio" maxlength="20"
                                             required placeholder="Folio">
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                // Validar solo números en Folio
-                                                const folioInput = document.getElementById('folio');
-                                                folioInput.addEventListener('input', function () {
-                                                    this.value = this.value.replace(/[^0-9]/g, '');
-                                                });
-                                                // Validar solo letras en Serie
-                                                const serieInput = document.getElementById('serie');
-                                                serieInput.addEventListener('input', function () {
-                                                    this.value = this.value.replace(/[^a-zA-Z]/g, '');
-                                                });
-                                            });
-                                        </script>
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
@@ -664,6 +650,83 @@
 
         let sucursalesData = [];
 
+        // Validación y restricción de hora de inicio y fin
+        const horaInicioInput = document.getElementById('hora_inicio');
+        const horaFinInput = document.getElementById('hora_fin');
+
+        function ajustarMinHoraFin() {
+            if (horaInicioInput && horaFinInput) {
+                const inicio = horaInicioInput.value;
+                if (inicio) {
+                    // El valor mínimo de hora_fin debe ser 1 minuto después de hora_inicio
+                    let [h, m] = inicio.split(":").map(Number);
+                    m++;
+                    if (m >= 60) { h++; m = 0; }
+                    let minFin = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                    horaFinInput.min = minFin;
+                    horaFinInput.disabled = false;
+                    // Si la hora_fin actual es menor o igual, la limpia
+                    if (horaFinInput.value && horaFinInput.value <= inicio) {
+                        horaFinInput.value = '';
+                    }
+                } else {
+                    horaFinInput.min = '';
+                    horaFinInput.value = '';
+                    horaFinInput.disabled = true;
+                }
+            }
+        }
+
+        function validarHoras() {
+            const inicio = horaInicioInput.value;
+            const fin = horaFinInput.value;
+            if (inicio && fin) {
+                if (fin <= inicio) {
+                    horaFinInput.setCustomValidity('La hora de fin debe ser mayor que la hora de inicio.');
+                    // Limpiar el campo y mostrar mensaje visual inmediato
+                    horaFinInput.value = '';
+                    mostrarErrorHoraFin('La hora de fin debe ser mayor que la hora de inicio.');
+                } else {
+                    horaFinInput.setCustomValidity('');
+                    ocultarErrorHoraFin();
+                }
+            } else {
+                horaFinInput.setCustomValidity('');
+                ocultarErrorHoraFin();
+            }
+        }
+
+        // Mensaje visual inmediato
+        function mostrarErrorHoraFin(msg) {
+            let error = document.getElementById('horaFinError');
+            if (!error) {
+                error = document.createElement('div');
+                error.id = 'horaFinError';
+                error.className = 'invalid-feedback d-block';
+                horaFinInput.parentElement.appendChild(error);
+            }
+            error.textContent = msg;
+        }
+        function ocultarErrorHoraFin() {
+            let error = document.getElementById('horaFinError');
+            if (error) error.remove();
+        }
+
+        if (horaInicioInput && horaFinInput) {
+            // Al inicio, deshabilitar hora_fin
+            if (!horaInicioInput.value) {
+                horaFinInput.disabled = true;
+            }
+            horaInicioInput.addEventListener('change', function() {
+                ajustarMinHoraFin();
+                validarHoras();
+            });
+            horaFinInput.addEventListener('input', validarHoras);
+            horaFinInput.addEventListener('change', validarHoras);
+            // Al cargar, también ajustar
+            ajustarMinHoraFin();
+        }
+
         function showStep(stepToShow, controlsToShow) {
             // Ocultar todos los pasos
             [step1, step2, step3].forEach(step => {
@@ -695,6 +758,7 @@
         });
         document.getElementById('btnGuardarPuesto').addEventListener('click', function () {
             const form = document.getElementById('formHoja');
+            validarHoras(); // Validar antes de guardar
             if (form.checkValidity()) {
                 alert('Formulario guardado correctamente');
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalFormularioPuesto'));
@@ -713,8 +777,8 @@
             } else {
                 showStep(step1, controls1);
             }
-                                        // Mantener el wizard en el paso de firmas al cerrar el modal de firma
-                                        window._mantenerPasoFirmas = true;
+            // Mantener el wizard en el paso de firmas al cerrar el modal de firma
+            window._mantenerPasoFirmas = true;
             // Llenar el select de estación desde la API PHP solo si no se ha llenado antes
             const estacionSelect = document.getElementById('estacion');
             if (!estacionSelect.hasAttribute('data-loaded')) {

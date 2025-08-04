@@ -901,13 +901,7 @@ $servicio = $servicioManager->getById($_GET['id']);
                 allowClear: true,
                 dropdownAutoWidth: true
             });
-            // Solución robusta: Evitar que el dropdown se cierre al hacer scroll en el modal
-            // Usar mousedown en el modal para evitar el cierre
-            $('#modalFormularioPuesto').on('mousedown', function (e) {
-                if ($('.select2-container--open').length) {
-                    e.stopPropagation();
-                }
-            });
+            // (Eliminado el handler de mousedown para evitar interferencia con Select2)
             // Handler para llenar los campos relacionados a la estación
             function fillEstacionFields(selectedId) {
                 const selected = sucursalesData.find(item => String(item.IdSucursal) === String(selectedId));

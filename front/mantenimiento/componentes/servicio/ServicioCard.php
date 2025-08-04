@@ -16,9 +16,12 @@ class ServicioCard {
      * @param string $url URL para el enlace de la card (opcional)
      * @return string HTML de la card
      */
-    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#') {
+    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#', $serie_id = null) {
         // Escapar valores para prevenir XSS
         $tituloSeguro = htmlspecialchars($titulo);
+        if (strtoupper(trim($tituloSeguro)) === 'N/A') {
+        $tituloSeguro = $serie_id ? 'Serie: ' . htmlspecialchars($serie_id) : 'No tiene titulo';
+    }   
         $afectacionSegura = htmlspecialchars($afectacion);
         $estadoSeguro = htmlspecialchars($estado);
         $urlSegura = htmlspecialchars($url);

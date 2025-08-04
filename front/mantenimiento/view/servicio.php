@@ -162,7 +162,8 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
                     $servicio['afectacion'],
                     $estadoTexto,
                     $progreso,
-                    "detalle_servicio.php?id=" . $servicio['id']
+                    "detalle_servicio.php?id=" . $servicio['id'],
+                    $servicio['serie_id'] ?? null
                 );
             }
         } else {

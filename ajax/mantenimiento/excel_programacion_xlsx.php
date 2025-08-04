@@ -82,8 +82,11 @@ function obtenerFirmaPath($firmaArchivo, $defaultFirmaPath) {
     return null;
 }
 
+
 $firmaPathFinal = obtenerFirmaPath($programacion['firma_elaboro'] ?? '', __DIR__ . '/../../files/firmas/firma_6883e075053cc.png');
+$firmaAutorizoPathFinal = obtenerFirmaPath($programacion['firma_autorizo'] ?? '', __DIR__ . '/../../files/firmas/firma_6883e075053cc.png');
 $tempImage = null;
+$tempImageAutorizo = null;
 
 
 
@@ -155,6 +158,28 @@ if ($firmaRevisoPath && file_exists($firmaRevisoPath)) {
     $drawingReviso->setWorksheet($sheet);
 }
 
+// Firma de quien autorizó (misma altura, en columna J)
+if ($firmaAutorizoPathFinal && file_exists($firmaAutorizoPathFinal)) {
+    $tempImageAutorizo = sys_get_temp_dir() . '/temp_excel_img_autorizo.png';
+    copy($firmaAutorizoPathFinal, $tempImageAutorizo);
+
+    // Texto "Autorizó" arriba de la firma, en columna J
+    $autorizoCol = 'J';
+    $sheet->mergeCells($autorizoCol . ($elaboroRow) . ':' . $autorizoCol . ($elaboroRow));
+    $sheet->setCellValue($autorizoCol . ($elaboroRow), 'Autorizó');
+    $sheet->getStyle($autorizoCol . ($elaboroRow))->getFont()->setSize(8);
+    $sheet->getStyle($autorizoCol . ($elaboroRow))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+    $drawingAutorizo = new Drawing();
+    $drawingAutorizo->setName('FirmaAutorizo');
+    $drawingAutorizo->setDescription('Firma de quien autorizó');
+    $drawingAutorizo->setPath($tempImageAutorizo);
+    $drawingAutorizo->setHeight(120);
+    $drawingAutorizo->setWidth(150);
+    $drawingAutorizo->setCoordinates('I' . $firmaRow);
+    $drawingAutorizo->setWorksheet($sheet);
+}
+
 // Ajustar la altura de la fila 3 para que sea delgada
 $sheet->getRowDimension(2)->setRowHeight(10);
 $sheet->getRowDimension(3)->setRowHeight(10);
@@ -220,6 +245,7 @@ $sheet->getStyle('F2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\
 
 
 
+
 // Mostrar el nombre de quien elaboró JUSTO debajo de la firma y centrado con el texto 'Elaboró'
 if ($firmaPathFinal && $idElaboro) {
     $mysqli = new mysqli('localhost', 'root', '', 'glpi'); // Cambia usuario, contraseña y base si es necesario
@@ -241,6 +267,29 @@ if ($firmaPathFinal && $idElaboro) {
     $sheet->setCellValue('E' . $nombreRow, $nombreElaboro);
     $sheet->getStyle('E' . $nombreRow)->getFont()->setSize(8);
     $sheet->getStyle('E' . $nombreRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+}
+
+// Mostrar el nombre de quien autorizó debajo de la firma y centrado con el texto 'Autorizó'
+$idAutorizo = $programacion['id_autorizo'] ?? '';
+$nombreAutorizo = '';
+if ($firmaAutorizoPathFinal && $idAutorizo) {
+    $mysqli = new mysqli('localhost', 'root', '', 'glpi');
+    if (!$mysqli->connect_errno) {
+        $stmt = $mysqli->prepare('SELECT name FROM glpi_users WHERE id = ? LIMIT 1');
+        $stmt->bind_param('i', $idAutorizo);
+        $stmt->execute();
+        $stmt->bind_result($loginAutorizo);
+        if ($stmt->fetch()) {
+            $nombreAutorizo = $loginAutorizo;
+        }
+        $stmt->close();
+        $mysqli->close();
+    }
+    $nombreRowAutorizo = $firmaRow + 4;
+    $sheet->mergeCells('J' . $nombreRowAutorizo . ':J' . $nombreRowAutorizo);
+    $sheet->setCellValue('J' . $nombreRowAutorizo, $nombreAutorizo);
+    $sheet->getStyle('J' . $nombreRowAutorizo)->getFont()->setSize(8);
+    $sheet->getStyle('J' . $nombreRowAutorizo)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 }
 
 
@@ -380,6 +429,10 @@ for ($i = 0; $i < count($servicioHeaders); $i++) {
         $sheet->getColumnDimension($colLetter)->setWidth(2.5);
     } elseif ($i === 0 || ($i >= 2 && $i <= 3)) { // Día, Mes, Año
         $sheet->getColumnDimension($colLetter)->setWidth(4);
+    } elseif ($i === 6) { // Servidor/Site
+        $sheet->getColumnDimension($colLetter)->setWidth(16);
+    } elseif ($i === 8 || $i === 9) { // Afectaciones y Serie Folio Hoja Servicio
+        $sheet->getColumnDimension($colLetter)->setWidth(21);
     } else {
         $sheet->getColumnDimension($colLetter)->setWidth(8);
     }

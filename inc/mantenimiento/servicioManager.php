@@ -32,6 +32,14 @@ public function crearServicioServidorRed($data)
         $this->connection->begin_transaction();
 
 
+        // Permitir valores nulos para campos opcionales
+        $serie_id = isset($data['serie_id']) && $data['serie_id'] !== '' ? $data['serie_id'] : null;
+        $estatus = isset($data['estatus']) && $data['estatus'] !== '' ? $data['estatus'] : null;
+        $serie_folio_hoja_servicio = isset($data['serie_folio_hoja_servicio']) && $data['serie_folio_hoja_servicio'] !== '' ? $data['serie_folio_hoja_servicio'] : null;
+        $id_estacion = isset($data['id_estacion']) && $data['id_estacion'] !== '' ? $data['id_estacion'] : null;
+        $quien = isset($data['quien']) && $data['quien'] !== '' ? $data['quien'] : null;
+        $id_programacion = isset($data['id_programacion']) && $data['id_programacion'] !== '' ? $data['id_programacion'] : null;
+
         $query = "INSERT INTO servicio (
             fecha_inicio,
             fecha_final,
@@ -56,27 +64,26 @@ public function crearServicioServidorRed($data)
             'fecha_inicio' => $data['fecha_inicio'],
             'fecha_final' => $data['fecha_final'],
             'servidor_site' => $data['servidor_site'],
-            'serie_id' => $data['serie_id'],
-            'estatus' => $data['estatus'],
+            'serie_id' => $serie_id,
+            'estatus' => $estatus,
             'afectacion' => $data['afectacion'],
-            'serie_folio_hoja_servicio' => $data['serie_folio_hoja_servicio'],
-            'id_estacion' => $data['id_estacion'],
-            'quien' => $data['quien'],
-            'id_programacion' => $data['id_programacion']
+            'serie_folio_hoja_servicio' => $serie_folio_hoja_servicio,
+            'id_estacion' => $id_estacion,
+            'quien' => $quien,
+            'id_programacion' => $id_programacion
         ]));
 
-        // Vincular parámetros
         $bindResult = $stmt->bind_param("sssssssssi",
             $data['fecha_inicio'],
             $data['fecha_final'],
             $data['servidor_site'],
-            $data['serie_id'],
-            $data['estatus'],
+            $serie_id,
+            $estatus,
             $data['afectacion'],
-            $data['serie_folio_hoja_servicio'],
-            $data['id_estacion'],
-            $data['quien'],
-            $data['id_programacion']
+            $serie_folio_hoja_servicio,
+            $id_estacion,
+            $quien,
+            $id_programacion
         );
 
         if (!$bindResult) {

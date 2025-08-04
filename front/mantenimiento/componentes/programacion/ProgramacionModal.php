@@ -71,8 +71,12 @@ class ProgramacionModal
             }
 
             .modern-modal .modal-body {
-                padding: 1.2rem;
+                padding: 1.2rem 1.2rem 0 1.2rem !important;
                 background-color: #fff;
+            }
+            /* Extra: fuerza el padding-bottom a 0 en cualquier modal-body */
+            .modern-modal .modal-body, .modal-body {
+                padding-bottom: 0 !important;
             }
 
             .modern-modal .section-container {
@@ -140,9 +144,13 @@ class ProgramacionModal
 
             .modern-modal .signature-container {
                 width: 100%;
-                background: #fff;
+                background: #f4f8ff;
                 border-radius: 8px;
                 overflow: hidden;
+                border: 2px dashed #2563eb;
+                margin-bottom: 10px;
+                position: relative;
+                min-height: 80px;
             }
 
             .modern-modal .signature-pad-container {
@@ -188,9 +196,10 @@ class ProgramacionModal
             }
 
             .modern-modal .modal-footer {
-                border-top: 1px solid #eee;
-                padding: 1.2rem;
+                border-top: none;
+                padding: 0rem 1.2rem 0.4rem 1.2rem;
                 border-radius: 0 0 20px 20px;
+                margin-top: 0;
             }
 
             /* Botón Guardar: azul */
@@ -221,7 +230,7 @@ class ProgramacionModal
                 color: #1d4ed8;
                 border-color: #1d4ed8;
             }
-            }
+            
 
             /* Estilos para el pad de firma */
             .signature-pad-container {
@@ -240,72 +249,164 @@ class ProgramacionModal
 
             .signature-preview {
                 width: 100%;
-                height: 150px;
-                border: 1px solid #ccc;
+                height: 80px;
+                border: none;
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
-                    // Si ya hay una firma previa, ocultar el placeholder
-                    const signaturePreview = document.getElementById('signaturePreview');
-                    const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                    if (signaturePreview && signaturePreview.style.display === 'block') {
-                        if (placeholder) placeholder.style.display = 'none';
-                    }
-                    document.getElementById('clearSignature').onclick = function () {
-                        signaturePad.clear();
-                        // Mostrar el texto de placeholder si se limpia la firma
-                        if (placeholder) placeholder.style.display = 'block';
-                        // Ocultar la imagen de la firma
-                        if (signaturePreview) signaturePreview.style.display = 'none';
-                    };
-                    document.getElementById('saveSignature').onclick = async function () {
-                        if (signaturePad.isEmpty()) {
-                            alert('Por favor, realiza una firma antes de guardar.');
-                            return;
-                        }
-                        const dataURL = signaturePad.toDataURL('image/png');
-                        try {
-                            const fileName = await uploadSignatureImage(dataURL);
-                            signatureFileName = fileName;
-                            signaturePreview.src = '/glpi/files/firmas/' + fileName;
-                            signaturePreview.style.display = 'block';
-                            // Ocultar el texto de placeholder si existe
-                            if (placeholder) placeholder.style.display = 'none';
-                            signatureModal.hide();
-                        } catch (err) {
-                            alert('Error al guardar la firma: ' + err);
-                        }
-                    };
-                }
-
-                #signatureModal .modal-content {
-                    height: 100vh !important;
-                }
-
-                #signatureModal .modal-body {
-                    height: calc(100vh - 120px) !important;
-                }
-
-                #signatureModal .signature-pad-fullscreen {
-                    min-height: 200px !important;
-                }
+                justify-content: center;
+                background: transparent;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
             }
 
-            @media (min-width: 992px) {
-                #signatureModal .modal-dialog {
-                    max-width: 100vw !important;
-                }
+            .signature-preview .placeholder-text {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #2563eb;
+                font-weight: 500;
+                font-size: 1.05rem;
+                letter-spacing: 0.2px;
+                background: transparent;
+                z-index: 2;
+                pointer-events: none;
+                transition: opacity 0.2s;
+                opacity: 1;
+            }
 
+            .signature-preview img {
+                width: 100%;
+                height: 80px;
+                object-fit: contain;
+                display: none;
+                z-index: 3;
+            }
+
+            /* Responsive para modal de firma digital */
+            #signatureModal .modal-dialog {
+                max-width: 100vw !important;
+                margin: 0;
+                width: 100vw;
+            }
+            #signatureModal .modal-content {
+                height: 100vh !important;
+                width: 100vw;
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+                background: linear-gradient(135deg,#f8faff 60%,#e0e7ff 100%);
+            }
+            #signatureModal .modal-header {
+                border-radius: 18px 18px 0 0;
+                border-bottom: 1.5px solid #e0e7ff;
+                background: rgba(37,99,235,0.07);
+            }
+            #signatureModal .modal-title {
+                font-weight: 700;
+                color: #2563eb;
+            }
+            #signatureModal .modal-body {
+                height: calc(100vh - 120px) !important;
+                flex: 1;
+                width: 100vw;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                width: 96vw;
+                max-width: 700px;
+                height: 100%;
+                min-height: 340px;
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0;
+                border-radius: 18px;
+                background: #fff;
+                border: 2.5px solid #2563eb;
+                box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            }
+            #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                width: 100% !important;
+                height: 60vh !important;
+                min-height: 220px;
+                border-radius: 14px;
+                border: none;
+                background: #f8fafc;
+            }
+            #signatureModal .signature-controls {
+                width: 96vw;
+                max-width: 700px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                padding: 0 0.5vw;
+                gap: 12px;
+            }
+            @media (max-width: 991.98px) {
+                #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                    max-width: 98vw;
+                    min-height: 180px;
+                    border-radius: 12px;
+                }
+                #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                    height: 32vh !important;
+                    min-height: 120px;
+                    border-radius: 10px;
+                }
+                #signatureModal .signature-controls {
+                    max-width: 98vw;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 10px;
+                    padding: 0 2vw;
+                }
+            }
+            @media (max-width: 600px) {
                 #signatureModal .modal-content {
-                    height: 100vh !important;
+                    border-radius: 0;
                 }
-
-                #signatureModal .modal-body {
-                    height: calc(100vh - 120px) !important;
+                #signatureModal .modal-header {
+                    border-radius: 0;
+                    padding: 0.7rem 0.7rem 0.7rem 1rem;
                 }
-
-                #signatureModal .signature-pad-fullscreen {
-                    min-height: 400px !important;
+                #signatureModal .modal-title span {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 5px;
+                }
+                #signatureModal .signature-pad-container.signature-pad-fullscreen {
+                    width: 99vw;
+                    max-width: 99vw;
+                    min-height: 100px;
+                    border-radius: 6px;
+                }
+                #signatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                    height: 22vh !important;
+                    min-height: 70px;
+                    border-radius: 6px;
+                }
+                #signatureModal .signature-controls {
+                    width: 99vw;
+                    max-width: 99vw;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 8px;
+                    padding: 0 2vw;
+                }
+                #signatureModal .signature-controls button {
+                    font-size: 0.98rem;
+                    padding: 8px 0;
                 }
             }
 
@@ -340,43 +441,47 @@ class ProgramacionModal
                                 <div class="mb-4">
                                     <h6 class="section-title"><i class="fas fa-info-circle me-2"></i> Información General</h6>
                                     <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label for="fechaEmision" class="form-label">Fecha de Emisión</label>
-                                            <input type="date" class="form-control" id="fechaEmision" required>
-                                        </div>
-                                        <div class="col-md-8 mb-3">
-                                            <label for="nombreProgramacion" class="form-label">Nombre de la Programación</label>
-                                            <input type="text" class="form-control" id="nombreProgramacion" readonly disabled
-                                                required>
-                                        </div>
-                                        <div class="col-md-12 mb-3">
-                                            <label for="empresa" class="form-label">Empresa</label>
-                                            <input type="text" class="form-control" id="empresa" required>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12 mb-3">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="fechaEmision" class="form-label">Fecha de Emisión</label>
+                                                <input type="date" class="form-control" id="fechaEmision" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="nombreProgramacion" class="form-label">Nombre de la Programación</label>
+                                                <input type="text" class="form-control" id="nombreProgramacion" name="nombreProgramacion" readonly disabled required>
+                                                <!-- Campo oculto para el tipo de programación seleccionado -->
+                                                <input type="hidden" id="tipoProgramacionSeleccionada" name="tipoProgramacionSeleccionada" value="<?php echo isset($_POST['tipoProgramacionSeleccionada']) ? htmlspecialchars($_POST['tipoProgramacionSeleccionada']) : ''; ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="empresa" class="form-label">Empresa</label>
+                                                <input type="text" class="form-control" id="empresa" required>
+                                            </div>
+                                          
+                                            <div class="mb-3">
+                                                <label for="elaborador" class="form-label">Responsable / Elaboró</label>
+                                                <input type="text" class="form-control" id="elaborador" readonly
+                                                    placeholder="Nombre del responsable" value="<?php echo htmlspecialchars(isset($_SESSION['glpiname']) ? $_SESSION['glpiname'] : ''); ?>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Firma del responsable</label>
+                                                <div id="signatureContainer"
+                                                    style="border: 2px dashed #2563eb; background: #f8f9fa; cursor: pointer; min-height: 80px; display: flex; align-items: center; justify-content: center; position: relative;">
+                                                    <img id="signaturePreview"
+                                                        style="display: none; max-width: 180px; max-height: 60px; object-fit: contain;"
+                                                        alt="Firma">
+                                                    <span class="placeholder-text d-block"
+                                                        style="color: #2563eb; font-weight: 500;">Click aquí para ingresar
+                                                        firma</span>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                        <div class="col-md-8 d-flex align-items-start" style="padding-top:0;">
+                                            <div class="w-100" style="margin-top:-13px;">
                                                 <?php
                                                 require_once __DIR__ . '/ServiciosAccordion.php';
+                                                // La cantidad de acordeones la determina ServiciosAccordion.php (PHP)
                                                 echo ServiciosAccordion::render();
                                                 ?>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 mb-3">
-                                            <label for="elaborador" class="form-label">Responsable / Elaboró</label>
-                                            <input type="text" class="form-control" id="elaborador" readonly
-                                                placeholder="Nombre del responsable" value="<?php echo htmlspecialchars(isset($_SESSION['glpiname']) ? $_SESSION['glpiname'] : ''); ?>">
-                                        </div>
-                                        <div class="col-12 mb-3">
-                                            <label class="form-label">Firma del responsable</label>
-                                            <div id="signatureContainer"
-                                                style="border: 2px dashed #2563eb; border-radius: 8px; background: #f8f9fa; cursor: pointer; min-height: 80px; display: flex; align-items: center; justify-content: center; position: relative;">
-                                                <img id="signaturePreview"
-                                                    style="display: none; max-width: 180px; max-height: 60px; object-fit: contain;"
-                                                    alt="Firma">
-                                                <span class="placeholder-text d-block"
-                                                    style="color: #2563eb; font-weight: 500;">Click aquí para ingresar
-                                                    firma</span>
                                             </div>
                                         </div>
                                     </div>
@@ -397,26 +502,33 @@ class ProgramacionModal
         </div>
         <!-- Modal Firma -->
         <div class="modal fade" id="signatureModal" tabindex="-1" aria-labelledby="signatureModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" style="max-width: 100vw;">
-                <div class="modal-content" style="height: 90vh;">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="signatureModalLabel">
-                            <i class="fas fa-signature me-2"></i> Firma Digital
+            <div class="modal-dialog modal-fullscreen" style="margin:0; max-width:100vw; width:100vw;">
+                <div class="modal-content" style="height:100vh; width:100vw; border-radius:18px; box-shadow:0 8px 32px rgba(37,99,235,0.10); background:linear-gradient(135deg,#f8faff 60%,#e0e7ff 100%);">
+                    <div class="modal-header" style="border-radius:18px 18px 0 0; border-bottom:1.5px solid #e0e7ff; background:rgba(37,99,235,0.07);">
+                        <h5 class="modal-title d-flex align-items-center gap-2" id="signatureModalLabel" style="font-weight:700; color:#2563eb;">
+                            <span style="display:inline-flex; align-items:center; justify-content:center; background:#e0e7ff; border-radius:50%; width:38px; height:38px; margin-right:8px;">
+                                <i class="fas fa-signature" style="font-size:1.3rem; color:#2563eb;"></i>
+                            </span>
+                            Firma Digital
                         </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" style="filter:brightness(0.7);"></button>
                     </div>
-
-                    <div class="modal-body d-flex flex-column justify-content-center align-items-center" style="flex: 1;">
-                        <div class="w-100" style="max-width: 1000px; flex: 1;">
-                            <canvas id="signaturePad"
-                                style="width:100%; height:400px; border-radius:12px; border: 1px solid #ccc;"></canvas>
+                    <div class="modal-body d-flex flex-column justify-content-center align-items-center pb-0" style="height:calc(100vh - 120px); flex:1; width:100vw; padding:0;">
+                        <div class="signature-pad-container signature-pad-fullscreen shadow-lg">
+                            <canvas id="signaturePad"></canvas>
                         </div>
-                        <div class="mt-3 d-flex justify-content-end w-100" style="max-width:1000px;">
-                            <button type="button" class="btn btn-outline-secondary me-2" id="clearSignature">
-                                <i class="fas fa-eraser"></i> Limpiar
+                        <div class="signature-controls mt-4 d-flex gap-3">
+                            <button type="button" class="btn btn-light d-flex align-items-center gap-2 shadow-sm" id="clearSignature"
+                                style="background:#fff; color:#2563eb; border:2px solid #2563eb; font-weight:600; border-radius:8px; font-size:1rem; padding:8px 20px; transition:all 0.18s; box-shadow:0 2px 8px rgba(37,99,235,0.04);"
+                                onmouseover="this.style.background='#e0e7ff'; this.style.color='#1d4ed8'; this.style.borderColor='#1d4ed8';"
+                                onmouseout="this.style.background='#fff'; this.style.color='#2563eb'; this.style.borderColor='#2563eb';">
+                                <i class="fas fa-eraser" style="font-size:1.1rem; margin-right:6px;"></i> Limpiar
                             </button>
-                            <button type="button" class="btn btn-primary" id="saveSignature">
-                                <i class="fas fa-save"></i> Guardar Firma
+                            <button type="button" class="btn d-flex align-items-center gap-2 shadow-sm" id="saveSignature"
+                                style="background:linear-gradient(90deg,#2563eb 60%,#1d4ed8 100%); color:#fff; border:none; font-weight:600; border-radius:8px; font-size:1rem; padding:8px 24px; box-shadow:0 2px 8px rgba(37,99,235,0.08); transition:all 0.18s;"
+                                onmouseover="this.style.background='#1d4ed8'; this.style.boxShadow='0 4px 16px rgba(37,99,235,0.13)';"
+                                onmouseout="this.style.background='linear-gradient(90deg,#2563eb 60%,#1d4ed8 100%)'; this.style.boxShadow='0 2px 8px rgba(37,99,235,0.08)';">
+                                <i class="fas fa-save" style="font-size:1.1rem; margin-right:6px;"></i> Guardar Firma
                             </button>
                         </div>
                     </div>
@@ -444,6 +556,16 @@ class ProgramacionModal
             window.openNewProgramacionModal = openNewProgramacionModal;
 
             document.addEventListener('DOMContentLoaded', function () {
+                // Sincronizar el campo oculto con el tipo seleccionado en JS
+                const hiddenTipo = document.getElementById('tipoProgramacionSeleccionada');
+                // Obtener cantidad de estaciones y crear acordeón dinámicamente
+                let estacionesCantidad = null;
+                fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                    .then(response => response.json())
+                    .then(data => {
+                        estacionesCantidad = Array.isArray(data) ? data.length : 0;
+                        console.log('PROGRAMACION ESTACIONES:', estacionesCantidad);
+                    });
                 signatureModal = new bootstrap.Modal(document.getElementById('signatureModal'));
                 programacionModal = new bootstrap.Modal(document.getElementById('newProgramacionModal'));
                 // ...existing code...
@@ -476,6 +598,8 @@ class ProgramacionModal
                 const cardsProgramacionContainer = document.getElementById('cardsProgramacionContainer');
                 const serviciosSection1 = document.getElementById('serviciosSection1');
                 const serviciosSection2 = document.getElementById('serviciosSection2');
+                // Variable global para el tipo seleccionado
+                window.tipoProgramacionSeleccionado = '';
                 if (cardsContainer && nombreProgramacion && sectionRestante && sectionEleccion) {
                     cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
                         card.addEventListener('click', function () {
@@ -484,6 +608,12 @@ class ProgramacionModal
                             this.classList.add('selected');
                             // Sincronizar valor y bloquear campo
                             nombreProgramacion.value = this.getAttribute('data-nombre');
+                            // Guardar tipo seleccionado en variable global y en el campo oculto
+                            window.tipoProgramacionSeleccionada = this.getAttribute('data-nombre').trim();
+                            if (hiddenTipo) hiddenTipo.value = window.tipoProgramacionSeleccionada;
+                            // Imprimir en consola que se ha guardado y mostrar cómo se guardó
+                            console.log('TIPO DE PROGRAMACION SELECCIONADO GUARDADO:', window.tipoProgramacionSeleccionada);
+                            console.log('Se guardó el tipo de programación en la variable window.tipoProgramacionSeleccionada:', window.tipoProgramacionSeleccionada);
                             nombreProgramacion.readOnly = true;
                             nombreProgramacion.disabled = true;
 
@@ -500,16 +630,17 @@ class ProgramacionModal
                             sectionRestante.style.display = 'block';
                             sectionEleccion.style.display = 'none';
                             // Mostrar/ocultar secciones de servicios según selección
-                            if (this.getAttribute('data-nombre').toLowerCase() === 'servidores y redes') {
+                            if (window.tipoProgramacionSeleccionada.toLowerCase() === 'servidores y redes') {
                                 if (serviciosSection1) serviciosSection1.style.display = 'block';
                                 if (serviciosSection2) serviciosSection2.style.display = 'none';
-                            } else if (this.getAttribute('data-nombre').toLowerCase() === 'servidores') {
+                            } else if (window.tipoProgramacionSeleccionada.toLowerCase() === 'servidores') {
                                 if (serviciosSection1) serviciosSection1.style.display = 'none';
                                 if (serviciosSection2) serviciosSection2.style.display = 'block';
                             } else {
                                 if (serviciosSection1) serviciosSection1.style.display = 'none';
                                 if (serviciosSection2) serviciosSection2.style.display = 'none';
                             }
+
                             // Desplazar a la siguiente sección
                             setTimeout(function () {
                                 sectionRestante.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -530,9 +661,9 @@ class ProgramacionModal
                     });
                     document.getElementById('clearSignature').onclick = function () {
                         signaturePad.clear();
-                        // Mostrar el texto de placeholder si se limpia la firma
+                        // Mostrar el texto de placeholder centrado y absoluto
                         const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                        if (placeholder) placeholder.style.display = 'block';
+                        if (placeholder) placeholder.style.opacity = '1';
                         // Ocultar la imagen de la firma
                         const signaturePreview = document.getElementById('signaturePreview');
                         if (signaturePreview) signaturePreview.style.display = 'none';
@@ -549,9 +680,12 @@ class ProgramacionModal
                             const signaturePreview = document.getElementById('signaturePreview');
                             signaturePreview.src = '/glpi/files/firmas/' + fileName;
                             signaturePreview.style.display = 'block';
-                            // Ocultar el texto de placeholder si existe
+                            signaturePreview.style.width = '100%';
+                            signaturePreview.style.height = '100%';
+                            signaturePreview.style.objectFit = 'contain';
+                            // Ocultar el texto de placeholder centrado
                             const placeholder = document.querySelector('#signatureContainer .placeholder-text');
-                            if (placeholder) placeholder.style.display = 'none';
+                            if (placeholder) placeholder.style.opacity = '0';
                             signatureModal.hide();
                         } catch (err) {
                             alert('Error al guardar la firma: ' + err);
@@ -674,11 +808,11 @@ class ProgramacionModal
                                 afectacion = item.querySelector('select[name="afectacion"]')?.value || 'N/A';
                                 serie_folio_hoja_servicio = item.querySelector('input[name="serie_folio_hoja[]"]')?.value || 'N/A';
                             }
-                            // Validar campos requeridos (los que exige create_servicio.php)
-                            if (!fecha_servicio || !hora_inicio || !hora_fin || !serie_id || !estatus) {
-                                alert('Faltan campos obligatorios en uno de los servicios. Verifica todos los datos.');
-                                continue;
-                            }
+                        // Validar solo los campos realmente requeridos por el backend
+                        if (!fecha_servicio || !hora_inicio || !hora_fin || !servidor_site || !afectacion) {
+                            alert('Faltan campos obligatorios en uno de los servicios. Verifica fecha, horas, servidor y afectación.');
+                            continue;
+                        }
                             // Formatear fechas
                             const fecha_inicio = new Date(fecha_servicio + 'T' + hora_inicio);
                             const fecha_final = new Date(fecha_servicio + 'T' + hora_fin);

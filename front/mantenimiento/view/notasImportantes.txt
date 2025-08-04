@@ -1,0 +1,8 @@
+campo de sucursal para indicar si es una estacion:
+
+Grupo= liquidaciones
+estatus = Alta
+
+
+alta = datetime
+

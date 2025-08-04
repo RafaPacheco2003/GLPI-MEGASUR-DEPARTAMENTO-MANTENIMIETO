@@ -8,58 +8,127 @@ class ServiciosAccordion
      * Renderiza el acordeón de servicios y el botón para agregar
      * @return string HTML del acordeón y botón
      */
-    public static function render()
+    public static function render($cantidad = null)
     {
+        // Si no se pasa cantidad, obtenerla desde el backend (PHP)
+        if ($cantidad === null) {
+            $cantidad = 1;
+            $url = $_SERVER['DOCUMENT_ROOT'] . '/glpi/front/mantenimiento/config/get_sucursales.php';
+            if (file_exists($url)) {
+                $data = @file_get_contents($url);
+                if ($data !== false) {
+                    $json = @json_decode($data, true);
+                    if (is_array($json)) {
+                        $cantidad = count($json);
+                    }
+                }
+            }
+        }
+        // Guardar la cantidad en un atributo data para que JS lo lea y lo imprima en consola
         ob_start();
         ?>
-
-
-        <h6 class="section-title"><i class="fas fa-server me-2"></i> Servicios</h6>
-
-        <button type="button" class="btn btn-sm btn-success mb-2" id="btnAgregarServicio">
-            <i class="fas fa-plus"></i> Agregar servicio
-        </button>
-
-        <div class="accordion" id="serviciosAccordion"
-            style="border-radius: 10px; background: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.04); padding: 8px 0;">
+        <!-- Servicios Accordion Header -->
+        <div class="mb-0" style="margin-bottom:0;">
+            <div class="d-flex justify-content-end" style="margin-bottom: 0.7rem;">
+                <button type="button" class="btn btn-sm btn-success mt-1" id="btnAgregarServicio" style="margin-bottom:0;">
+                    <i class="fas fa-plus"></i> Agregar servicio
+                </button>
+            </div>
         </div>
 
+        <!-- Accordion Container -->
+        <div class="accordion w-100" id="serviciosAccordion" data-cantidad-inicial="<?php echo (int)$cantidad; ?>" data-cantidad-estaciones="<?php echo (int)$cantidad; ?>" style="border-radius: 8px; background: transparent; box-shadow: none; padding: 0; min-height:38px; height:402px; max-width:100%; overflow-y:auto;"></div>
+
+        <!-- JavaScript: Servicios Accordion Logic -->
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const serviciosAccordion = document.getElementById('serviciosAccordion');
-                const btnAgregarServicio = document.getElementById('btnAgregarServicio');
-                const nombreProgramacion = document.getElementById('nombreProgramacion');
-                const cardsContainer = document.getElementById('cardsProgramacion');
-                let servicioCount = 0;
-                let tipoProgramacionActual = nombreProgramacion?.value || '';
 
-                if (cardsContainer && nombreProgramacion) {
-                    cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
-                        card.addEventListener('click', function () {
-                            tipoProgramacionActual = this.dataset.nombre;
-                            serviciosAccordion.innerHTML = '';
-                            servicioCount = 0;
-                            crearServicioAcordeon();
-                        });
-                    });
+        document.addEventListener('DOMContentLoaded', () => {
+            // Element references
+            const serviciosAccordion = document.getElementById('serviciosAccordion');
+            if (serviciosAccordion) {
+                const cantidadEstaciones = serviciosAccordion.getAttribute('data-cantidad-estaciones');
+                console.log('[SERVIDOR] Cantidad de estaciones obtenidas en PHP:', cantidadEstaciones);
+            }
+            const btnAgregarServicio = document.getElementById('btnAgregarServicio');
+            const nombreProgramacion = document.getElementById('nombreProgramacion');
+            const cardsContainer = document.getElementById('cardsProgramacion');
+            let servicioCount = 0;
+            let tipoProgramacionActual = nombreProgramacion?.value || '';
+
+            // Guardar estaciones globalmente para asignar una diferente a cada servicio
+            let estacionesData = [];
+            let estacionesCantidad = 1;
+
+            // Lógica: obtener cantidad y datos de estaciones desde el backend vía fetch
+            fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                .then(response => response.json())
+                .then(data => {
+                    estacionesData = Array.isArray(data) ? data : [];
+                    estacionesCantidad = estacionesData.length || 1;
+                    inicializarAcordeones();
+                })
+                .catch(() => {
+                    inicializarAcordeones();
+                });
+
+            function inicializarAcordeones() {
+                // Si el tipo de programación es UENS, usar estacionesCantidad, si no, mostrar 2
+                let cantidadInicial = 2;
+                if (tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS')) {
+                    cantidadInicial = estacionesCantidad;
                 }
+                serviciosAccordion.innerHTML = '';
+                servicioCount = 0;
+                for (let i = 0; i < cantidadInicial; i++) {
+                    // Para UENS, pasar el id de estación correspondiente (si existe)
+                    let estacionIdDefault = null;
+                    if (tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS') && estacionesData[i]) {
+                        estacionIdDefault = estacionesData[i].IdSucursal;
+                    }
+                    crearServicioAcordeon('', estacionIdDefault);
+                }
+            }
 
-                const crearServicioAcordeon = (nombre = '') => {
-                    servicioCount++;
-                    const id = `servicioAcordeon${servicioCount}`;
-                    const plantilla = tipoProgramacionActual === 'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO Y RED (UENS)'
-                        ? plantillaUENS(id, nombre)
-                        : plantillaDefault(id, nombre);
+            // Card selection event: reset accordion on program type change
+            if (cardsContainer && nombreProgramacion) {
+                cardsContainer.querySelectorAll('.card-programacion').forEach(card => {
+                    card.addEventListener('click', function () {
+                        tipoProgramacionActual = this.dataset.nombre;
+                        fetch('/glpi/front/mantenimiento/config/get_sucursales.php')
+                            .then(response => response.json())
+                            .then(data => {
+                                estacionesData = Array.isArray(data) ? data : [];
+                                estacionesCantidad = estacionesData.length || 1;
+                                inicializarAcordeones();
+                            })
+                            .catch(() => {
+                                inicializarAcordeones();
+                            });
+                    });
+                });
+            }
 
-                    const temp = document.createElement('div');
-                    temp.innerHTML = plantilla;
-                    const item = temp.firstElementChild;
+            // Add new service accordion item
+            const crearServicioAcordeon = (nombre = '', estacionIdDefault = null) => {
+                servicioCount++;
+                const id = `servicioAcordeon${servicioCount}`;
+                const plantilla = tipoProgramacionActual && tipoProgramacionActual.toUpperCase().includes('UENS')
+                    ? plantillaUENS(id, nombre)
+                    : plantillaDefault(id, nombre);
 
-                    item.querySelector('.btnQuitarServicio')?.addEventListener('click', () => item.remove());
-                    serviciosAccordion.appendChild(item);
-                };
+                const temp = document.createElement('div');
+                temp.innerHTML = plantilla;
+                const item = temp.firstElementChild;
+                item.querySelector('.btnQuitarServicio')?.addEventListener('click', () => item.remove());
+                // Guardar el id de estación por defecto en un atributo data para usarlo al llenar el select
+                if (estacionIdDefault) {
+                    item.setAttribute('data-estacion-default', estacionIdDefault);
+                }
+                serviciosAccordion.appendChild(item);
+            };
 
-                const generarCamposUENS = (nombre, id) => `
+            // Service fields for UENS type
+            const generarCamposUENS = (nombre, id) => `
                 <div class="col-md-3">
                     <label class="form-label">Estación</label>
                     <select class="form-select select-estacion" name="estacion[]" id="selectEstacion_${id}">
@@ -96,7 +165,8 @@ class ServiciosAccordion
                 </div>
             `;
 
-                const generarCamposDefault = (nombre, id) => `
+            // Service fields for default type
+            const generarCamposDefault = (nombre, id) => `
                 <div class="col-md-3">
                     <label class="form-label">Fecha de Servicio</label>
                     <input type="date" class="form-control" name="fecha_servicio[]">
@@ -121,32 +191,32 @@ class ServiciosAccordion
                     <label class="form-label">Estatus</label>
                     <input type="text" class="form-control" name="estatus[]" placeholder="Estatus">
                 </div>
-               <div class="col-md-3">
-    <label for="afectacion" class="form-label">Afectación</label>
-    <select class="form-select" id="afectacion" name="afectacion" required>
-        <option value="">Seleccione una afectación</option>
-        <option value="SIN AFECTACION AL MOMENTO">Sin afectación al momento</option>
-        <option value="SIN ACCESO AL PORTAL DE TICKET GLPI">Sin acceso al portal de ticket GLPI</option>
-        <option value="SIN RED LOCAL E INTERNET EN EL CORPORATIVO">Sin red local e internet en el corporativo</option>
-        <option value="SIN ACCESO AL PORTAL DE CALIDAD SGC">Sin acceso al portal de calidad SGC</option>
-        <option value="SIN INTERNET EN EL DEPARTAMENTO JURIDICO">Sin internet en el departamento jurídico</option>
-        <option value="SIN INTERNET EN EL DEPARTAMENTO DE OPERACIONES">Sin internet en el departamento de operaciones</option>
-        <option value="SIN ACCESO AL SERVICIO DE CARPETAS COMPARTIDAS">Sin acceso al servicio de carpetas compartidas</option>
-        <option value="AFECTACION GENERAL ESTACIONES Y CORPORATIVO">Afectación general estaciones y corporativo</option>
-        <option value="SIN AFECTACION A LA OPERACION">Sin afectación a la operación</option>
-        <option value="AFECTACION MINIMA Y SOLO AL DEPARTAMENTO">Afectación mínima y solo al departamento</option>
-        <option value="AFECTACION MINIMA SIN ACCESO A LAS CARPETAS COMPARTIDAS">Afectación mínima sin acceso a las carpetas compartidas</option>
-        <option value="NINGUNA">Ninguna</option>
-    </select>
-</div>
-
+                <div class="col-md-3">
+                    <label for="afectacion" class="form-label">Afectación</label>
+                    <select class="form-select" id="afectacion" name="afectacion">
+                        <option value="">Seleccione una afectación</option>
+                        <option value="SIN AFECTACION AL MOMENTO">Sin afectación al momento</option>
+                        <option value="SIN ACCESO AL PORTAL DE TICKET GLPI">Sin acceso al portal de ticket GLPI</option>
+                        <option value="SIN RED LOCAL E INTERNET EN EL CORPORATIVO">Sin red local e internet en el corporativo</option>
+                        <option value="SIN ACCESO AL PORTAL DE CALIDAD SGC">Sin acceso al portal de calidad SGC</option>
+                        <option value="SIN INTERNET EN EL DEPARTAMENTO JURIDICO">Sin internet en el departamento jurídico</option>
+                        <option value="SIN INTERNET EN EL DEPARTAMENTO DE OPERACIONES">Sin internet en el departamento de operaciones</option>
+                        <option value="SIN ACCESO AL SERVICIO DE CARPETAS COMPARTIDAS">Sin acceso al servicio de carpetas compartidas</option>
+                        <option value="AFECTACION GENERAL ESTACIONES Y CORPORATIVO">Afectación general estaciones y corporativo</option>
+                        <option value="SIN AFECTACION A LA OPERACION">Sin afectación a la operación</option>
+                        <option value="AFECTACION MINIMA Y SOLO AL DEPARTAMENTO">Afectación mínima y solo al departamento</option>
+                        <option value="AFECTACION MINIMA SIN ACCESO A LAS CARPETAS COMPARTIDAS">Afectación mínima sin acceso a las carpetas compartidas</option>
+                        <option value="NINGUNA">Ninguna</option>
+                    </select>
+                </div>
                 <div class="col-md-3">
                     <label class="form-label">Serie/Folio Hoja</label>
                     <input type="text" class="form-control" name="serie_folio_hoja[]" placeholder="Serie/Folio Hoja">
                 </div>
             `;
 
-                const plantillaUENS = (id, nombre) => `
+            // Accordion item template for UENS
+            const plantillaUENS = (id, nombre) => `
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header" id="heading${id}">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
@@ -168,7 +238,8 @@ class ServiciosAccordion
                 </div>
             `;
 
-                const plantillaDefault = (id, nombre) => `
+            // Accordion item template for default
+            const plantillaDefault = (id, nombre) => `
                 <div class="accordion-item mb-3">
                     <h2 class="accordion-header" id="heading${id}">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
@@ -190,219 +261,222 @@ class ServiciosAccordion
                 </div>
             `;
 
-                btnAgregarServicio?.addEventListener('click', () => crearServicioAcordeon());
-                crearServicioAcordeon(); // inicial
+            // Add service event
+            btnAgregarServicio?.addEventListener('click', () => crearServicioAcordeon());
+            const cantidadInicial = parseInt(serviciosAccordion.getAttribute('data-cantidad-inicial')) || 1;
+            for (let i = 0; i < cantidadInicial; i++) {
+                crearServicioAcordeon();
+            }
 
-                // Función para cargar sucursales en todos los selects de estación
-                async function cargarSucursalesEnSelect(idSelect) {
-                    try {
-                        // Consumir el endpoint PHP local
-                        const response = await fetch('../config/get_sucursales.php');
-                        const data = await response.json();
-                        const select = document.getElementById(idSelect);
-                        if (!select) return;
-                        select.innerHTML = '<option value="">Seleccione una estación</option>';
-                        // Guardar los datos en un Map para acceso rápido por id
-                        const estacionesMap = new Map();
-                        data.forEach(item => {
-                            estacionesMap.set(String(item.IdSucursal), item);
-                            const option = document.createElement('option');
-                            option.value = item.IdSucursal; // El id que se guarda en la BD
-                            option.textContent = item.NombreSucursal; // El nombre que ve el usuario
-                            select.appendChild(option);
-                        });
-                        // Evento para imprimir en consola los datos de la estación seleccionada
-                        select.addEventListener('change', function() {
-                            const id = select.value;
-                            if (id && estacionesMap.has(id)) {
-                                console.log('Estación seleccionada:', estacionesMap.get(id));
-                            }
-                        });
-
-                        // Guardar el id_estacion en el input oculto para el formulario
-                        // Si no existe, lo crea
-                        let hiddenInput = select.parentElement.querySelector('input[type="hidden"][name="id_estacion[]"]');
-                        if (!hiddenInput) {
-                            hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.name = 'id_estacion[]';
-                            select.parentElement.appendChild(hiddenInput);
+            // Load stations into select
+            async function cargarSucursalesEnSelect(idSelect) {
+                try {
+                    // Usar estacionesData global si está disponible
+                    const data = estacionesData.length ? estacionesData : await (await fetch('../config/get_sucursales.php')).json();
+                    const select = document.getElementById(idSelect);
+                    if (!select) return;
+                    select.innerHTML = '<option value="">Seleccione una estación</option>';
+                    const estacionesMap = new Map();
+                    data.forEach(item => {
+                        estacionesMap.set(String(item.IdSucursal), item);
+                        const option = document.createElement('option');
+                        option.value = item.IdSucursal;
+                        option.textContent = item.NombreSucursal;
+                        select.appendChild(option);
+                    });
+                    // Seleccionar automáticamente la estación si el acordeón tiene data-estacion-default
+                    const parentAcordeon = select.closest('.accordion-item');
+                    if (parentAcordeon && parentAcordeon.hasAttribute('data-estacion-default')) {
+                        const defaultId = parentAcordeon.getAttribute('data-estacion-default');
+                        if (defaultId) {
+                            select.value = defaultId;
                         }
-                        // Actualizar el valor cada vez que cambie el select
-                        select.addEventListener('change', function() {
-                            hiddenInput.value = select.value;
-                        });
-                        // Inicializar el valor al cargar
-                        hiddenInput.value = select.value;
-
-                        // --- Envío correcto del id_estacion al backend ---
-                        // Si tienes un botón para guardar el servicio, aquí se asegura que se envíe el id correcto
-                        // Ejemplo: document.getElementById('btnGuardarServicio').onclick = function() { ... }
-                        // Si usas AJAX/fetch, agrega esto en el JS de envío:
-                        window.getIdEstacionSeleccionada = function() {
-                            return hiddenInput.value;
-                        };
-                    } catch (err) {
-                        // Si hay error, mostrar opción de error
-                        const select = document.getElementById(idSelect);
-                        if (select) select.innerHTML = '<option value="">Error al cargar estaciones</option>';
                     }
+                    select.dispatchEvent(new Event('change'));
+                    select.addEventListener('change', function() {
+                        const id = select.value;
+                        if (id && estacionesMap.has(id)) {
+                            console.log('Estación seleccionada:', estacionesMap.get(id));
+                        }
+                    });
+                    let hiddenInput = select.parentElement.querySelector('input[type="hidden"][name="id_estacion[]"]');
+                    if (!hiddenInput) {
+                        hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'id_estacion[]';
+                        select.parentElement.appendChild(hiddenInput);
+                    }
+                    select.addEventListener('change', function() {
+                        hiddenInput.value = select.value;
+                    });
+                    hiddenInput.value = select.value;
+                    window.getIdEstacionSeleccionada = function() {
+                        return hiddenInput.value;
+                    };
+                } catch (err) {
+                    const select = document.getElementById(idSelect);
+                    if (select) select.innerHTML = '<option value="">Error al cargar estaciones</option>';
                 }
+            }
 
-                // Observer para cargar sucursales en cada select de estación cuando se agregue
-                const observer = new MutationObserver(mutations => {
-                    mutations.forEach(mutation => {
-                        mutation.addedNodes.forEach(node => {
-                            if (node.nodeType === 1) {
-                                const selects = node.querySelectorAll('.select-estacion');
-                                selects.forEach(sel => {
-                                    cargarSucursalesEnSelect(sel.id);
-                                });
-                            }
-                        });
+            // Observer for dynamic select loading
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === 1) {
+                            const selects = node.querySelectorAll('.select-estacion');
+                            selects.forEach(sel => {
+                                cargarSucursalesEnSelect(sel.id);
+                            });
+                        }
                     });
                 });
-                observer.observe(serviciosAccordion, { childList: true });
             });
+            observer.observe(serviciosAccordion, { childList: true });
+        });
 
-            // --- Envío de servicio al backend ---
-            // Ejemplo de función para guardar el servicio
-            const btnGuardarServicio = document.getElementById('btnGuardarServicio');
-            if (btnGuardarServicio) {
-                btnGuardarServicio.addEventListener('click', async function() {
-                    // Recolecta los datos del formulario
-                    const form = document.getElementById('nuevoServicioForm');
-                    const id_programacion = document.getElementById('id_programacion')?.value || '';
-                    const fecha_servicio = form.querySelector('input[name="fecha_servicio[]"]')?.value || form.querySelector('input[name="fecha_servicio"]')?.value || '';
-                    const hora_inicio = form.querySelector('input[name="hora_inicio[]"]')?.value || form.querySelector('input[name="hora_inicio"]')?.value || '';
-                    const hora_fin = form.querySelector('input[name="hora_fin[]"]')?.value || form.querySelector('input[name="hora_fin"]')?.value || '';
-                    const servidor_site = form.querySelector('input[name="servidor_site[]"]')?.value || form.querySelector('input[name="servidor_site"]')?.value || '';
-                    const serie_id = form.querySelector('input[name="serie_id[]"]')?.value || form.querySelector('input[name="serie_id"]')?.value || '';
-                    const estatus = form.querySelector('input[name="estatus[]"]')?.value || form.querySelector('input[name="estatus"]')?.value || '';
-                    const afectacion = form.querySelector('select[name="afectacion"]')?.value || '';
-                    const serie_folio_hoja_servicio = form.querySelector('input[name="serie_folio_hoja[]"]')?.value || form.querySelector('input[name="serie_folio_hoja_servicio"]')?.value || '';
-                    const quien = form.querySelector('input[name="quien[]"]')?.value || form.querySelector('input[name="quien"]')?.value || '';
-                    // id_estacion (IdSucursal)
-                    const id_estacion = window.getIdEstacionSeleccionada();
-
-                    // Formatear fechas para MySQL
-                    const fecha_inicio = fecha_servicio && hora_inicio ? (fecha_servicio + ' ' + hora_inicio + ':00') : '';
-                    const fecha_final = fecha_servicio && hora_fin ? (fecha_servicio + ' ' + hora_fin + ':00') : '';
-
-                    const formData = {
-                        fecha_inicio,
-                        fecha_final,
-                        servidor_site,
-                        serie_id,
-                        estatus,
-                        afectacion,
-                        serie_folio_hoja_servicio,
-                        id_estacion,
-                        quien,
-                        id_programacion
-                    };
-                    // Monitoreo: mostrar en consola el id_estacion y el objeto formData
-                    console.log('Valor id_estacion a enviar:', formData.id_estacion);
-                    console.log('Objeto formData a enviar:', formData);
-                    // --- ejemplo de envío ---
-                    try {
-                        const response = await fetch('../ajax/mantenimiento/create_servicio.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        });
-                        const result = await response.json();
-                        if (result.success) {
-                            alert('Servicio guardado correctamente');
-                        } else {
-                            alert('Error: ' + result.message);
-                        }
-                    } catch (err) {
-                        alert('Error al guardar servicio');
+        // Guardar servicio al backend
+        const btnGuardarServicio = document.getElementById('btnGuardarServicio');
+        if (btnGuardarServicio) {
+            btnGuardarServicio.addEventListener('click', async function() {
+                const form = document.getElementById('nuevoServicioForm');
+                const id_programacion = document.getElementById('id_programacion')?.value || '';
+                const fecha_servicio = form.querySelector('input[name="fecha_servicio[]"]')?.value || form.querySelector('input[name="fecha_servicio"]')?.value || '';
+                const hora_inicio = form.querySelector('input[name="hora_inicio[]"]')?.value || form.querySelector('input[name="hora_inicio"]')?.value || '';
+                const hora_fin = form.querySelector('input[name="hora_fin[]"]')?.value || form.querySelector('input[name="hora_fin"]')?.value || '';
+                const servidor_site = form.querySelector('input[name="servidor_site[]"]')?.value || form.querySelector('input[name="servidor_site"]')?.value || '';
+                const serie_id = form.querySelector('input[name="serie_id[]"]')?.value || form.querySelector('input[name="serie_id"]')?.value || '';
+                const estatus = form.querySelector('input[name="estatus[]"]')?.value || form.querySelector('input[name="estatus"]')?.value || '';
+                const afectacion = form.querySelector('select[name="afectacion"]')?.value || '';
+                const serie_folio_hoja_servicio = form.querySelector('input[name="serie_folio_hoja[]"]')?.value || form.querySelector('input[name="serie_folio_hoja_servicio"]')?.value || '';
+                const quien = form.querySelector('input[name="quien[]"]')?.value || form.querySelector('input[name="quien"]')?.value || '';
+                const id_estacion = window.getIdEstacionSeleccionada();
+                const fecha_inicio = fecha_servicio && hora_inicio ? (fecha_servicio + ' ' + hora_inicio + ':00') : '';
+                const fecha_final = fecha_servicio && hora_fin ? (fecha_servicio + ' ' + hora_fin + ':00') : '';
+                const formData = {
+                    fecha_inicio,
+                    fecha_final,
+                    servidor_site,
+                    serie_id,
+                    estatus,
+                    afectacion,
+                    serie_folio_hoja_servicio,
+                    id_estacion,
+                    quien,
+                    id_programacion
+                };
+                console.log('Valor id_estacion a enviar:', formData.id_estacion);
+                console.log('Objeto formData a enviar:', formData);
+                try {
+                    const response = await fetch('../ajax/mantenimiento/create_servicio.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Servicio guardado correctamente');
+                    } else {
+                        alert('Error: ' + result.message);
                     }
-                });
-            }
+                } catch (err) {
+                    alert('Error al guardar servicio');
+                }
+            });
+        }
         </script>
 
-
-
-
+        <!-- CSS: Servicios Accordion Styles -->
         <style>
             #serviciosAccordion {
                 border-radius: 8px;
                 background: #fff;
                 box-shadow: none !important;
-                padding: 4px 0;
+                padding: 2px 0;
+                max-width: 100%;
+                min-height:38px;
+                height:320px;
+                overflow-y: auto;
+                overflow-x: hidden;
             }
-
             #serviciosAccordion .accordion-item {
-                border-radius: 8px;
+                border-radius: 4px;
                 border: 1px solid #e3e8ee;
                 margin-bottom: 8px;
                 background: #fff;
-                font-size: 0.92rem;
+                font-size: 0.90rem;
+                min-height: 38px;
+                transition: height 0.2s;
+                overflow: visible;
             }
-
+            #serviciosAccordion .accordion-header {
+                min-height: 38px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+            }
+            #serviciosAccordion .accordion-item .accordion-collapse {
+                display: none;
+            }
+            #serviciosAccordion .accordion-item .accordion-collapse.show {
+                display: block;
+                height: auto;
+                margin-top: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
             #serviciosAccordion .accordion-header {
                 background: #fff;
-                padding: 0.5rem 0.8rem;
+                padding: 0.25rem 0.5rem;
                 border-bottom: 1px solid #e3e8ee;
             }
-
             #serviciosAccordion .accordion-button {
                 font-weight: 500;
                 color: #222;
                 background: transparent;
                 border: none;
                 box-shadow: none !important;
-                font-size: 0.98rem;
-                padding: 0.3rem 0.5rem;
+                font-size: 0.95rem;
+                padding: 0.15rem 0.3rem;
             }
-
             #serviciosAccordion .accordion-body {
                 background: #fff;
-                border-radius: 0 0 8px 8px;
-                padding: 0.8rem;
+                border-radius: 0 0 4px 4px;
+                padding: 0.4rem;
             }
-
             #serviciosAccordion label.form-label,
             #serviciosAccordion input.form-control {
-                font-size: 0.92rem;
+                font-size: 0.90rem;
                 color: #222;
             }
-
             #serviciosAccordion input.form-control {
-                border-radius: 6px;
+                border-radius: 4px;
                 border: 1px solid #d1d1d1;
-                height: 32px;
-                padding: 4px 8px;
+                height: 28px;
+                padding: 2px 6px;
                 background: #fff;
             }
-
             .btnQuitarServicio,
             #btnAgregarServicio {
-                border-radius: 6px;
+                border-radius: 4px;
                 font-weight: 500;
-                font-size: 0.92rem;
-                padding: 2px 10px;
+                font-size: 0.90rem;
+                padding: 1px 8px;
                 border: 1px solid #e3e8ee;
                 background: #fff;
                 color: #444;
                 box-shadow: none !important;
             }
-
             .btnQuitarServicio:hover,
             #btnAgregarServicio:hover {
                 background: #ececec;
                 border-color: #bbb;
                 color: #222;
             }
-
             .btnQuitarServicio i,
             #btnAgregarServicio i {
-                font-size: 0.95rem;
+                font-size: 0.90rem;
             }
         </style>
         <?php

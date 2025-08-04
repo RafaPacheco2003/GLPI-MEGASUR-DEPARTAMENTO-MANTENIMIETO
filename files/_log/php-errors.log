@@ -201,3 +201,13 @@
   src\Html.php:1692                                  Html::includeHeader()
   front\mantenimiento\view\servicio.php:43           Html::header()
   
+[2025-08-01 20:33:47] glpiphplog.WARNING:   *** PHP Warning (2): file_get_contents(C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion/../config/get_sucursales.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\ProgramacionModal.php at line 356
+  Backtrace :
+  ...ponentes\programacion\ProgramacionModal.php:356 file_get_contents()
+  front\mantenimiento\view\programacion.php:259      ProgramacionModal::render()
+  
+[2025-08-01 21:20:12] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $tipo_programacion in C:\xampp\htdocs\glpi\front\mantenimiento\componentes\programacion\ProgramacionModal.php at line 368
+  Backtrace :
+  front\mantenimiento\view\programacion.php:259      ProgramacionModal::render()
+  
+[2025-08-02 19:09:04] glpiphplog.WARNING: Failed to save key "{key}" of type int: rename(C:\xampp\htdocs\glpi\files\_cache\core\1a47b3771d60,C:\xampp\htdocs\glpi\files\_cache\core\T\B\pVIg6X1gOf0UC2JeLpIw): Acceso denegado (code: 5) {"key":"2d03bd78927f28fc033adce8927dbc91f9026652","exception":"[object] (ErrorException(code: 0): rename(C:\\xampp\\htdocs\\glpi\\files\\_cache\\core\\1a47b3771d60,C:\\xampp\\htdocs\\glpi\\files\\_cache\\core\\T\\B\\pVIg6X1gOf0UC2JeLpIw): Acceso denegado (code: 5) at C:\\xampp\\htdocs\\glpi\\vendor\\symfony\\cache\\Traits\\FilesystemCommonTrait.php:117)","cache-adapter":"Symfony\\Component\\Cache\\Adapter\\FilesystemAdapter"} 

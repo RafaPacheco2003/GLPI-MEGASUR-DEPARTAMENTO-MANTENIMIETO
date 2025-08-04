@@ -23,7 +23,7 @@ if (!Session::haveRight("config", READ) || !Session::haveRight("config", UPDATE)
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     // Redirigir a la página 404
     header("Location: 404.php");
-    exit;
+    exit; 
 }
 
 // Obtener el ID de la programación de la URL
@@ -50,12 +50,13 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
         <div class="card-header px-3 py-3">
             <div class="row g-2 align-items-center flex-column flex-md-row">
                 <!-- Columna izquierda: Volver y buscador -->
-                <div class="col-12 col-md-7 d-flex flex-column flex-md-row align-items-stretch align-items-md-center mb-2 mb-md-0 gap-2">
+                <div
+                    class="col-12 col-md-7 d-flex flex-column flex-md-row align-items-stretch align-items-md-center mb-2 mb-md-0 gap-2">
                     <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/programacion.php#"); ?>
                     <form class="d-flex flex-grow-1" method="GET" action="">
                         <input type="hidden" name="id" value="<?php echo $id_programacion; ?>">
-                        <input type="text" name="search" class="form-control me-2 ms-2" placeholder="Buscar por servidor..."
-                            style="width: 100%; min-width: 0; max-width: 350px;"
+                        <input type="text" name="search" class="form-control me-2 ms-2"
+                            placeholder="Buscar por servidor..." style="width: 100%; min-width: 0; max-width: 350px;"
                             value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                         <?php echo ButtonComponent::search(); ?>
                     </form>
@@ -284,8 +285,7 @@ include '../componentes/programacion/RevisionModal.php';
                     .then(async response => {
                         const data = await response.json();
                         if (response.ok && data.success) {
-                            alert('✅ Programación autorizada correctamente.');
-                            // Cerrar modal si está abierto
+                       
                             const modal = document.getElementById('modalAutorizar');
                             if (modal) {
                                 const modalInstance = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
@@ -377,6 +377,72 @@ include '../componentes/programacion/RevisionModal.php';
                 if (horaFinalInput) horaFinalInput.value = horaFinal;
 
                 if (nuevoServicioModal) nuevoServicioModal.show();
+            });
+        }
+
+        // Validación al guardar nuevo servicio
+        const btnGuardarServicio = document.getElementById('btnGuardarServicio');
+        if (btnGuardarServicio) {
+            btnGuardarServicio.addEventListener('click', function (e) {
+                // Evita el envío automático si es un formulario
+                e.preventDefault();
+
+                // Obtén los campos requeridos
+                const fechaInput = document.getElementById('fecha_servicio');
+                const horaInicioInput = document.getElementById('hora_inicio');
+                const horaFinalInput = document.getElementById('hora_final');
+                const servidorInput = document.getElementById('servidor_site');
+                const serieIdInput = document.getElementById('serie_id');
+                const estatusInput = document.getElementById('estatus');
+                const afectacionInput = document.getElementById('afectacion');
+                const folioInput = document.getElementById('serie_folio_hoja_servicio');
+
+                // Valida que no estén vacíos
+                if (!fechaInput || !fechaInput.value ||
+                    !horaInicioInput || !horaInicioInput.value ||
+                    !horaFinalInput || !horaFinalInput.value ||
+                    !servidorInput || !servidorInput.value ||
+                    !serieIdInput || !serieIdInput.value ||
+                    !estatusInput || !estatusInput.value ||
+                    !afectacionInput || !afectacionInput.value ||
+                    !folioInput || !folioInput.value) {
+                    alert('Por favor, completa todos los campos obligatorios.');
+                    return;
+                }
+
+                // Prepara los datos para el backend
+                const data = {
+                    fecha_inicio: horaInicioInput.value,
+                    fecha_final: horaFinalInput.value,
+                    servidor_site: servidorInput.value,
+                    afectacion: afectacionInput.value,
+                    // Puedes agregar los demás campos si tu backend los acepta
+                    fecha_servicio: fechaInput.value,
+                    serie_id: serieIdInput.value,
+                    estatus: estatusInput.value,
+                    serie_folio_hoja_servicio: folioInput.value,
+                    id_programacion: (new URLSearchParams(window.location.search)).get('id')
+                };
+
+                fetch('../../../ajax/mantenimiento/create_servicio.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Servicio creado exitosamente');
+                        // Puedes cerrar el modal y recargar la lista si lo deseas
+                        if (nuevoServicioModal) nuevoServicioModal.hide();
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error de conexión: ' + error.message);
+                });
             });
         }
 

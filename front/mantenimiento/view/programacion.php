@@ -87,9 +87,123 @@ echo ProgramacionPagination::getStyles();
                 <?php echo ButtonComponent::search(); ?>
             </form>
 
-            <div>
+            <div class="d-flex gap-2">
+                <?php
+                    // Botón Importar con color de ColorConfig
+                    echo '
+<style>
+    .btn-importar-excel {
+        background: #fff !important;
+        color: #217346 !important;
+        border: 2px solid #217346 !important;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+    }
+    .btn-importar-excel:hover, .btn-importar-excel:focus {
+        background: #fff !important;
+        color: #14532d !important;
+        border-color: #14532d !important;
+    }
+    .btn-importar-excel .excel-icon {
+        color: #217346;
+        margin-right: 6px;
+        font-size: 1.1em;
+        vertical-align: middle;
+        transition: color 0.2s;
+    }
+    .btn-importar-excel:hover .excel-icon, .btn-importar-excel:focus .excel-icon {
+        color: #14532d;
+    }
+    .modal-importar-excel .modal-content {
+        border-radius: 14px;
+        border: none;
+        box-shadow: 0 8px 32px rgba(60,60,60,0.12);
+        background: #fff;
+        padding: 0;
+    }
+    .modal-importar-excel .modal-header {
+        border-bottom: none;
+        padding: 2rem 2rem 0.5rem 2rem;
+        background: #f8fafc;
+        border-radius: 14px 14px 0 0;
+    }
+    .modal-importar-excel .modal-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #217346;
+        letter-spacing: 0.5px;
+    }
+    .modal-importar-excel .modal-body {
+        padding: 1.5rem 2rem 2rem 2rem;
+        text-align: center;
+    }
+    .modal-importar-excel .form-control[type=file] {
+        border: 2px dashed #217346;
+        border-radius: 8px;
+        padding: 1.2rem;
+        background: #f8fafc;
+        color: #217346;
+        font-size: 1rem;
+        margin-bottom: 1.2rem;
+        transition: border-color 0.2s;
+    }
+    .modal-importar-excel .form-control[type=file]:focus {
+        border-color: #14532d;
+        outline: none;
+    }
+    .modal-importar-excel .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.3rem;
+        color: #888;
+        opacity: 1;
+        transition: color 0.2s;
+    }
+    .modal-importar-excel .btn-close:hover {
+        color: #217346;
+    }
+    .modal-importar-excel .btn-upload {
+        background: #217346;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: background 0.2s;
+    }
+    .modal-importar-excel .btn-upload:hover {
+        background: #14532d;
+    }
+</style>';
+                    echo '<button type="button" class="btn btn-importar-excel" data-bs-toggle="modal" data-bs-target="#modalImportarExcel">'
+                        . '<i class="fa-solid fa-file-excel excel-icon"></i>Importar</button>';
+                ?>
                 <?php echo ButtonComponent::custom('Nueva programacion', 'fas fa-plus', '', 'openNewProgramacionModal()'); ?>
             </div>
+<!-- Modal Importar Excel (solo Bootstrap) -->
+<div class="modal fade" id="modalImportarExcel" tabindex="-1" aria-labelledby="modalImportarExcelLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-light border-0">
+        <h5 class="modal-title text-success fw-bold d-flex align-items-center gap-2" id="modalImportarExcelLabel">
+          <i class="fa-solid fa-file-excel"></i> Importar Excel
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body pb-4">
+        <form id="formImportarExcel" enctype="multipart/form-data">
+          <div class="mb-3">
+            <input class="form-control border border-success border-2 py-3" type="file" accept=".xlsx,.xls" id="inputExcelFile" name="excel_file" required>
+          </div>
+          <button type="submit" class="btn btn-success w-100 fw-semibold">
+            <i class="fa-solid fa-cloud-arrow-up me-2"></i>Subir archivo
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
         </div>
     </div>
 </div>

@@ -832,7 +832,23 @@ $servicio = $servicioManager->getById($_GET['id']);
                         // Imprimir todas las estaciones en la consola
                         console.log('Estaciones obtenidas:');
                         data.forEach(function (item) {
-                            console.log('IdSucursal:', item.IdSucursal, '| NombreSucursal:', item.NombreSucursal);
+                            console.log(
+                                'IdEmpresa:', item.IdEmpresa || item.Empresa,
+                                '\nNombreEmpresa:', item.NombreEmpresa || item.Nombre,
+                                '\nRFCEmpresa:', item.RFCEmpresa || item.RFC,
+                                '\nIdSucursal:', item.IdSucursal || item.Sucursal,
+                                '\nNombreSucursal:', item.NombreSucursal || item.Nombre,
+                                '\ncodigoPostal:', item.codigoPostal || item.CodigoPostal,
+                                '\nRFC:', item.RFC,
+                                '\nListaPreciosEsp:', item.ListaPreciosEsp,
+                                '\nEncargado:', item.Encargado,
+                                '\nDireccion:', item.Direccion,
+                                '\nPoblacion:', item.Poblacion,
+                                '\nEstado:', item.Estado,
+                                '\nPais:', item.Pais,
+                                '\nTelefonos:', item.Telefonos,
+                                '\n-----------------------------'
+                            );
                         });
                         data.forEach(function (item) {
                             const option = document.createElement('option');
@@ -842,18 +858,16 @@ $servicio = $servicioManager->getById($_GET['id']);
                             option.setAttribute('data-index', sucursalesData.indexOf(item));
                             estacionSelect.appendChild(option);
                         });
-                        // Seleccionar automáticamente la estación si coincide con el id_estacion del servicio
+                        // Guardar el id de estación para usarlo después de inicializar Select2
                         var idEstacionServicio = <?php echo json_encode($servicio['id_estacion'] ?? null); ?>;
-                        if (idEstacionServicio) {
-                            estacionSelect.value = idEstacionServicio;
-                        }
-                        setTimeout(initSelect2Estacion, 100);
-                        // Si se usa Select2, también actualizar visualmente después de inicializar
                         setTimeout(function() {
-                            if (window.jQuery && $(estacionSelect).data('select2') && idEstacionServicio) {
+                            initSelect2Estacion();
+                            // Seleccionar automáticamente la estación SOLO después de inicializar Select2
+                            if (idEstacionServicio && window.jQuery && $(estacionSelect).data('select2')) {
+                                // Selecciona la estación y dispara el evento change (Select2 actualiza UI y dispara handlers)
                                 $(estacionSelect).val(idEstacionServicio).trigger('change');
                             }
-                        }, 200);
+                        }, 100);
                     }
                 })
                 .catch(error => {
@@ -894,48 +908,43 @@ $servicio = $servicioManager->getById($_GET['id']);
                     e.stopPropagation();
                 }
             });
-            // Evento al seleccionar una estación
-            $('#estacion').on('select2:select', function (e) {
-                const selectedId = $(this).val();
-                const selected = sucursalesData.find(item => String(item.IdSucursal) === String(
-                    selectedId));
+            // Handler para llenar los campos relacionados a la estación
+            function fillEstacionFields(selectedId) {
+                const selected = sucursalesData.find(item => String(item.IdSucursal) === String(selectedId));
                 if (selected) {
                     // Concatenar los datos requeridos para ubicación
                     let direccion = '';
-                    if (selected.ColoniaSucursal && selected.ColoniaSucursal !== 'NULL') direccion +=
-                        selected.ColoniaSucursal + ', ';
-                    if (selected.Direccion && selected.Direccion !== 'NULL') direccion += selected
-                        .Direccion + ', ';
-                    if (selected.Poblacion && selected.Poblacion !== 'NULL') direccion += selected
-                        .Poblacion + ', ';
+                    if (selected.ColoniaSucursal && selected.ColoniaSucursal !== 'NULL') direccion += selected.ColoniaSucursal + ', ';
+                    if (selected.Direccion && selected.Direccion !== 'NULL') direccion += selected.Direccion + ', ';
+                    if (selected.Poblacion && selected.Poblacion !== 'NULL') direccion += selected.Poblacion + ', ';
                     if (selected.Estado && selected.Estado !== 'NULL') direccion += selected.Estado + ', ';
                     if (selected.Pais && selected.Pais !== 'NULL') direccion += selected.Pais;
                     direccion = direccion.replace(/, $/, ''); // Quitar coma final
                     // Concatenar CodigoPostal al final si existe y no es 'NULL'
-                    if ((selected.codigoPostal || selected.CodigoPostal) && (selected.codigoPostal !==
-                        'NULL' && selected.codigoPostal !== undefined || selected.CodigoPostal !==
-                        'NULL' && selected.CodigoPostal !== undefined)) {
-                        let cp = selected.codigoPostal !== undefined ? selected.codigoPostal : selected
-                            .CodigoPostal;
+                    if ((selected.codigoPostal || selected.CodigoPostal) && (selected.codigoPostal !== 'NULL' && selected.codigoPostal !== undefined || selected.CodigoPostal !== 'NULL' && selected.CodigoPostal !== undefined)) {
+                        let cp = selected.codigoPostal !== undefined ? selected.codigoPostal : selected.CodigoPostal;
                         direccion += (direccion ? ', ' : '') + cp;
                     }
                     document.getElementById('ubicacion').value = direccion;
                     // RFC
-                    document.getElementById('rfc').value = (selected.RFC && selected.RFC !== 'NULL') ?
-                        selected.RFC : '';
+                    document.getElementById('rfc').value = (selected.RFC && selected.RFC !== 'NULL') ? selected.RFC : '';
                     // N.Estación
-                    document.getElementById('nestacion').value = (selected.IdSucursal && selected
-                        .IdSucursal !== 'NULL') ? selected.IdSucursal : '';
+                    document.getElementById('nestacion').value = (selected.IdSucursal && selected.IdSucursal !== 'NULL') ? selected.IdSucursal : '';
                     // N.P CRE
-                    document.getElementById('npcre').value = (selected.ListaPreciosEsp && selected
-                        .ListaPreciosEsp !== 'NULL') ? selected.ListaPreciosEsp : '';
+                    document.getElementById('npcre').value = (selected.ListaPreciosEsp && selected.ListaPreciosEsp !== 'NULL') ? selected.ListaPreciosEsp : '';
                     // Teléfono
-                    document.getElementById('telefono').value = (selected.Telefonos && selected
-                        .Telefonos !== 'NULL') ? selected.Telefonos : '';
+                    document.getElementById('telefono').value = (selected.Telefonos && selected.Telefonos !== 'NULL') ? selected.Telefonos : '';
                     // Jefe de estación
-                    document.getElementById('jefe').value = (selected.Encargado && selected.Encargado !==
-                        'NULL') ? selected.Encargado : '';
+                    document.getElementById('jefe').value = (selected.Encargado && selected.Encargado !== 'NULL') ? selected.Encargado : '';
                 }
+            }
+            // Evento al seleccionar una estación (Select2)
+            $('#estacion').on('select2:select', function (e) {
+                fillEstacionFields($(this).val());
+            });
+            // También llenar campos al cambiar el valor (para .trigger('change'))
+            $('#estacion').on('change', function (e) {
+                fillEstacionFields($(this).val());
             });
             // Limpiar input si se deselecciona
             $('#estacion').on('select2:clear', function () {

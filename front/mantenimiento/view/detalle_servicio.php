@@ -7,7 +7,7 @@ include '../../../inc/includes.php';
 include '../componentes/ButtonComponent.php';
 include '../../../inc/mantenimiento/ServicioManager.php';
 include '../../../inc/mantenimiento/ProgramacionManager.php';
-
+include '../../../inc/mantenimiento/HojaServicio.php';
 // Verificar permisos'
 Session::checkRight("config", UPDATE);
 
@@ -15,6 +15,12 @@ Session::checkRight("config", UPDATE);
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     Html::displayErrorAndDie(__('Invalid ID'));
 }
+
+//Obtener hoja de servicio
+$hojaServicio = new HojaServicio();
+$hojaServicioData = $hojaServicio->getById_servicio($_GET['id']);
+
+
 
 // Obtener el servicio
 $servicioManager = new ServicioManager();
@@ -144,7 +150,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
     <div class="mt-3">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
-        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
+        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2 && empty($hojaServicioData)): ?>
             <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
                 data-bs-target="#modalFormularioPuesto">
                 Llenar Hoja de servicio

@@ -267,3 +267,4 @@
   Backtrace :
   ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
   
+[2025-08-05 17:29:45] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $id in C:\xampp\htdocs\glpi\front\mantenimiento\view\detalle_servicio.php at line 21  

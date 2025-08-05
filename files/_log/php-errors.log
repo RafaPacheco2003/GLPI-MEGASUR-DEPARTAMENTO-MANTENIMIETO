@@ -268,3 +268,31 @@
   ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
   
 [2025-08-05 17:29:45] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $id in C:\xampp\htdocs\glpi\front\mantenimiento\view\detalle_servicio.php at line 21  
+[2025-08-05 22:16:26] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:88       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:16:32] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:88       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:17:45] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:88       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:20:11] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:88       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:20:17] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:88       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:22:16] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:92       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  
+[2025-08-05 22:22:24] glpiphplog.CRITICAL:   *** Uncaught Exception PhpOffice\PhpSpreadsheet\Exception: Cell range D3:R3 not known as merged. in C:\xampp\htdocs\glpi\lib\PhpSpreadsheet\src\PhpSpreadsheet\Worksheet\Worksheet.php at line 1912
+  Backtrace :
+  ajax\mantenimiento\hoja_servicio_xlsx.php:92       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
+  

@@ -1,27 +1,25 @@
-
 <?php
 // Exporta hoja de servicio a Excel (.xlsx) usando PhpSpreadsheet
 require __DIR__ . '/../../lib/PhpSpreadsheet/autoload.php';
 
+// ========================
+// 1. DEPENDENCIAS Y DATOS
+// ========================
+require __DIR__ . '/../../lib/PhpSpreadsheet/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-
-// --- 1. Crear hoja de cálculo ---
-
-
-// Incluir dependencias para HojaServicio
 require_once __DIR__ . '/../../inc/mantenimiento/bootstrap.php';
 require_once __DIR__ . '/../../inc/mantenimiento/HojaServicio.php';
 
-// Obtener datos de hoja de servicio usando getById_servicio con id 51
+// Obtener datos de hoja de servicio
 $hojaServicio = new HojaServicio();
 $datosHoja = $hojaServicio->getById_servicio(51);
 if (!is_array($datosHoja) || count($datosHoja) === 0) {
     die('No se pudo obtener la información de la hoja de servicio.');
 }
 
-// Determinar el idSucursal a partir de id_estacion de la hoja de servicio
+// Obtener datos de sucursal
 if (array_keys($datosHoja) !== range(0, count($datosHoja) - 1)) {
     $idSucursal = isset($datosHoja['id_estacion']) ? $datosHoja['id_estacion'] : null;
 } else {
@@ -38,14 +36,16 @@ if (!is_array($datosSucursal) || count($datosSucursal) === 0) {
 }
 $sucursal = $datosSucursal[0];
 
+// ========================
+// 2. CREAR HOJA Y CONFIGURACIÓN GENERAL
+// ========================
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
-
-
-// --- 3. Configuración visual general ---
 $sheet->getSheetView()->setView(\PhpOffice\PhpSpreadsheet\Worksheet\SheetView::SHEETVIEW_PAGE_LAYOUT);
 
-// --- 4. Encabezado con logo ---
+// ========================
+// 3. ENCABEZADO Y LOGO
+// ========================
 $logoPath = __DIR__ . '/../../files/logos/SGI.jpeg';
 $nombreProgramacionHeader = 'Hoja de servicio sistemas';
 if (file_exists($logoPath)) {
@@ -60,17 +60,16 @@ if (file_exists($logoPath)) {
     $sheet->getHeaderFooter()->setOddHeader('&C&10&B' . $nombreProgramacionHeader . '&C');
 }
 
-// --- 5. Estilos y formato compacto ---
+// ========================
+// 4. ESTILOS Y ENCABEZADOS
+// ========================
 $highestColumn = $sheet->getHighestColumn();
 $highestRow = $sheet->getHighestRow();
 $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
     'font' => [ 'size' => 10 ],
 ]);
 
-
-
-
-// Aplicar borde grueso solo al rango B1:R8
+// Borde grueso al bloque principal
 $sheet->getStyle('B1:R8')->applyFromArray([
     'borders' => [
         'outline' => [
@@ -80,8 +79,7 @@ $sheet->getStyle('B1:R8')->applyFromArray([
     ],
 ]);
 
-// Unir celdas C3:N3 y C4:N4
-
+// Encabezados principales
 $sheet->mergeCells('C1:M1');
 $sheet->mergeCells('C2:M2');
 $sheet->mergeCells('O1:R1');
@@ -109,27 +107,16 @@ $sheet->getStyle('C1:M1')->getFont()->setSize(5);
 $sheet->getStyle('C1:M1')->getFont()->setBold(true);
 $sheet->getStyle('C2:M2')->getFont()->setSize(3);
 
-// Ajustar alto de todas las filas para que sea compacto
-for ($row = 1; $row <= $highestRow; $row++) {
-    $sheet->getRowDimension($row)->setRowHeight(16);
-}
-
-
-
-
-
-
-// --- 2. Escribir datos principales de la sucursal ---
-// (Se mueve la configuración de la columna A después del bucle de anchos)
-
-
+// ========================
+// 5. DATOS DE SUCURSAL Y SERVICIO
+// ========================
 $sheet->setCellValue('B1', 'UEN');
 $sheet->setCellValue('B2', '42');
 $sheet->getStyle('B1')->getFont()->setSize(3);
 $sheet->getStyle('B2')->getFont()->setSize(6);
 $sheet->getStyle('B2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
 $fila = 5;
-// Sucursal primero
 foreach ($sucursal as $campo => $valor) {
     $sheet->setCellValue('B' . $fila, $campo);
     $sheet->setCellValue('C' . $fila, $valor);
@@ -140,7 +127,6 @@ $fila++; // Dejar una fila vacía
 $sheet->setCellValue('B' . $fila, '--- HOJA DE SERVICIO ---');
 $sheet->getStyle('B' . $fila)->getFont()->setSize(5);
 $fila++;
-// Hoja de servicio después
 if (array_keys($datosHoja) !== range(0, count($datosHoja) - 1)) {
     foreach ($datosHoja as $campo => $valor) {
         $sheet->setCellValue('B' . $fila, $campo);
@@ -160,17 +146,17 @@ if (array_keys($datosHoja) !== range(0, count($datosHoja) - 1)) {
     }
 }
 
-// Ajustar alto de todas las filas para que sea compacto (mitad)
+// ========================
+// 6. AJUSTES FINALES DE FORMATO
+// ========================
 $highestRow = $sheet->getHighestRow();
 for ($row = 1; $row <= $highestRow; $row++) {
-    $sheet->getRowDimension($row)->setRowHeight(8);
+    $sheet->getRowDimension($row)->setRowHeight(10);
 }
-// Ajustar ancho de las columnas de la B a la R para impresión (NO modificar la A)
 $columnas = range('B', 'R');
 foreach ($columnas as $col) {
     $sheet->getColumnDimension($col)->setWidth(5);
 }
-// Ahora sí, hacer la columna A lo más pequeña posible, solo para un dígito
 $sheet->getColumnDimension('A')->setWidth(2);
 $sheet->getColumnDimension('A')->setAutoSize(false);
 $sheet->getColumnDimension('B')->setWidth(3.6);
@@ -182,7 +168,9 @@ foreach (['O', 'P', 'Q', 'R'] as $col) {
     $sheet->getColumnDimension($col)->setAutoSize(false);
 }
 
-// --- 6. Salida del archivo ---
+// ========================
+// 7. SALIDA DEL ARCHIVO
+// ========================
 if (ob_get_length()) ob_end_clean();
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Content-Disposition: attachment;filename="hoja_servicio.xlsx"');
@@ -193,3 +181,4 @@ header('Expires: 0');
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
 exit;
+// --- 6. Salida del archivo ---

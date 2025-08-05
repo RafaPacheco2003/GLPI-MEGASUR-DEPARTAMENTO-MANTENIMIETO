@@ -170,9 +170,10 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
                     Llenar Hoja de servicio
                 </button>
             <?php else: ?>
-                <button class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio" type="button">
+                <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
+                   href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
                     <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
-                </button>
+                </a>
             <?php endif; ?>
         <?php endif; ?>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>

@@ -1,3 +1,15 @@
+<style>
+    #btnLlenarFormulario,
+    #btnExportarHojaServicio {
+        transition: color 0.2s, border-color 0.2s;
+    }
+    #btnLlenarFormulario:hover,
+    #btnExportarHojaServicio:hover {
+        color: #111827; /* texto más oscuro */
+        border-color: #111827; /* borde más oscuro */
+        background-color: inherit !important;
+    }
+</style>
 <?php
 /**
  * Vista principal del módulo de Mantenimiento
@@ -150,11 +162,20 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
     <div class="mt-3">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
-        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2 && empty($hojaServicioData)): ?>
-            <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
-                data-bs-target="#modalFormularioPuesto">
-                Llenar Hoja de servicio
-            </button>
+        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
+            <?php
+                include_once __DIR__ . '/../config/ColorConfig.php';
+            ?>
+            <?php if (empty($hojaServicioData)): ?>
+                <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalFormularioPuesto">
+                    Llenar Hoja de servicio
+                </button>
+            <?php else: ?>
+                <button class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio" type="button">
+                    <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
+                </button>
+            <?php endif; ?>
         <?php endif; ?>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>

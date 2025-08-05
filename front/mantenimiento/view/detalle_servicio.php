@@ -85,8 +85,6 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
             <div class="d-flex">
                 <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/servicio.php?id=" . $servicio['id_programacion']); ?>
 
-                <input type="text" class="form-control me-2 ms-2" placeholder="Buscar..." style="width: 250px;">
-                <?php echo ButtonComponent::search(); ?>
             </div>
 
 
@@ -102,7 +100,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 <div class="section-info ">
     <div class="row">
         <!-- Columna principal (Información del servicio) -->
-        <div class="col-md-9 p-0 m-0">
+        <div class="col-md-9 p-2 mt-2">
             <div class="card mb-3">
                 <div class="card-body">
                     <h2>Información del servicio</h2>
@@ -155,12 +153,12 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
         </div>
 
         <!-- Columna lateral (Estado del Servicio) -->
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
             <?php include __DIR__ . '/../componentes/detalle_servicio/lineaTiempo.php'; ?>
         </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-1">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
         <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
             <?php

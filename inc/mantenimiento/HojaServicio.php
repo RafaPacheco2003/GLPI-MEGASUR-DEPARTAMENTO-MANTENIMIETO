@@ -75,4 +75,24 @@ class HojaServicio {
             throw $e;
         }
     }
+
+    /**
+     * Busca una hoja de servicio por el id_servicio
+     * @param int $id
+     * @return array|null
+     */
+
+    public function getById_servicio($id){
+
+        $query = "SELECT * FROM hoja_servicio WHERE id_servicio = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if (!$result) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+        }
+        return $result->fetch_assoc();
+
+    }
 }

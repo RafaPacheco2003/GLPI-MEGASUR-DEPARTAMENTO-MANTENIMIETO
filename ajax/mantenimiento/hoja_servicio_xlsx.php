@@ -1,3 +1,4 @@
+
 <?php
 // Exporta hoja de servicio a Excel (.xlsx) usando PhpSpreadsheet
 require __DIR__ . '/../../lib/PhpSpreadsheet/autoload.php';
@@ -40,4 +41,28 @@ header('Expires: 0');
 
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
+
+
+
+
+
+// Agregar una fila con bordes negros de la columna A a la J en la fila 3 y hacerla visible
+$filaBordes = 3;
+$colInicio = 'A';
+$colFin = 'J';
+$rangoBordes = $colInicio . $filaBordes . ':' . $colFin . $filaBordes;
+$sheet->getStyle($rangoBordes)->applyFromArray([
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            'color' => ['rgb' => '000000'],
+        ],
+    ],
+]);
+// Ajustar alto de la fila 3 para que sea visible
+$sheet->getRowDimension($filaBordes)->setRowHeight(22);
+// Ajustar ancho de columnas A-J para que sean visibles
+foreach (range('A', 'J') as $col) {
+    $sheet->getColumnDimension($col)->setWidth(14);
+}
 exit;

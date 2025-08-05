@@ -296,3 +296,10 @@
   Backtrace :
   ajax\mantenimiento\hoja_servicio_xlsx.php:92       PhpOffice\PhpSpreadsheet\Worksheet\Worksheet->unmergeCells()
   
+[2025-08-05 23:46:50] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-05 23:51:31] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-05 23:55:02] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-05 23:56:38] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-05 23:58:18] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-05 23:58:57] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $RFCEmpresa in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 162  
+[2025-08-06 00:07:54] glpiphplog.WARNING:   *** PHP Warning (2): Undefined variable $jefeEstacion in C:\xampp\htdocs\glpi\ajax\mantenimiento\hoja_servicio_xlsx.php at line 192  

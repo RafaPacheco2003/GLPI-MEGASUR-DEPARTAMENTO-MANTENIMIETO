@@ -1,3 +1,4 @@
+
 <?php
 /**
  * Componente: Modal Hoja de Servicio (wizard)
@@ -5,6 +6,17 @@
  *
  * Este componente contiene el modal completo para la hoja de servicio, con toda la estructura, estilos y scripts necesarios.
  */
+
+require_once '../../../inc/mantenimiento/ServicioManager.php';
+
+
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    Html::displayErrorAndDie(__('Invalid ID'));
+}
+
+
+$servicioManager = new ServicioManager();
+$servicio = $servicioManager->getById($_GET['id']);
 ?>
 
 <!-- Modal Formulario hoja de servicio (wizard) -->
@@ -35,22 +47,8 @@
                                         <span class="input-group-text"
                                             style="padding: 0.375rem 0.75rem; color: #757575;"><i
                                                 class="fas fa-hashtag fa-sm"></i></span>
-                                        <input type="text" class="form-control" id="folio" name="folio" maxlength="5"
+                                        <input type="text" class="form-control" id="folio" name="folio" maxlength="20"
                                             required placeholder="Folio">
-                                        <script>
-                                            document.addEventListener('DOMContentLoaded', function () {
-                                                // Validar solo números en Folio
-                                                const folioInput = document.getElementById('folio');
-                                                folioInput.addEventListener('input', function () {
-                                                    this.value = this.value.replace(/[^0-9]/g, '');
-                                                });
-                                                // Validar solo letras en Serie
-                                                const serieInput = document.getElementById('serie');
-                                                serieInput.addEventListener('input', function () {
-                                                    this.value = this.value.replace(/[^a-zA-Z]/g, '');
-                                                });
-                                            });
-                                        </script>
                                     </div>
                                 </div>
                                 <div class="col-6 mb-3">
@@ -246,7 +244,7 @@
                                     <label for="firmaCliente" class="form-label">Entregado</label>
                                     <div class="input-with-icon">
                                         <input type="text" class="form-control" id="firmaCliente" name="firmaCliente"
-                                            placeholder="Nombre del cliente" required>
+                                            placeholder="Nombre del cliente" required readonly style="background:#f5f5f5;">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
@@ -259,13 +257,14 @@
                                         <img id="firmaTecnicoPreview" style="display: none; max-width: 100%; max-height: 120px;" alt="Firma del técnico">
                                         <span class="placeholder-text">Click aquí para firmar</span>
                                     </div>
+                                    <div id="firmaTecnicoStatus" style="margin-top: 6px; min-height: 22px;"></div>
                                 </div>
                                 <!-- Recibido -->
                                 <div class="col-12 mb-3">
-                                    <label for="firmaRecibido" class="form-label">Recibido</label>
+                                    <label for="firmaRecibido" class="form-label">Recibido (ID numérico)</label>
                                     <div class="input-with-icon">
-                                        <input type="text" class="form-control" id="firmaRecibido" name="firmaRecibido"
-                                            placeholder="Nombre de quien recibe" required>
+                                        <input type="number" class="form-control" id="firmaRecibido" name="firmaRecibido"
+                                            placeholder="ID de quien recibe" required min="1" step="1">
                                         <i class="fas fa-user"></i>
                                     </div>
                                 </div>
@@ -278,6 +277,7 @@
                                         <img id="firmaRecibidoPreview" style="display: none; max-width: 100%; max-height: 120px;" alt="Firma de recibido">
                                         <span class="placeholder-text">Click aquí para firmar</span>
                                     </div>
+                                    <div id="firmaRecibidoStatus" style="margin-top: 6px; min-height: 22px;"></div>
                                 </div>
                     <!-- Modal para la firma de recibido -->
                     <div class="modal fade" id="firmaRecibidoModal" tabindex="-1"
@@ -328,7 +328,7 @@
                         </div>
                         <div id="controls-step3" style="display: none; justify-content: space-between;">
                             <button type="button" class="btn btn-back" id="btnBack2">Anterior</button>
-                            <button type="button" class="btn btn-next" id="btnGuardarPuesto">Guardar</button>
+                            <button type="button" class="btn btn-next" id="btnGuardarHojaServicio">Guardar</button>
                         </div>
                     </div>
 
@@ -402,13 +402,24 @@
                                     try {
                                         const fileName = await uploadFirmaTecnicoImage(dataURL);
                                         firmaTecnicoFileName = fileName;
+                                        window.firmaTecnicoFileName = fileName;
                                         const firmaTecnicoPreview = document.getElementById('firmaTecnicoPreview');
                                         firmaTecnicoPreview.src = '/glpi/files/firmas/' + fileName;
                                         firmaTecnicoPreview.style.display = 'block';
                                         const placeholder = document.querySelector('#firmaTecnicoContainer .placeholder-text');
                                         if (placeholder) placeholder.style.display = 'none';
+                                        // Mostrar mensaje solo en consola
+                                        console.log('Firma del técnico guardada correctamente');
+                                        // Limpiar mensaje visual si existe
+                                        const statusDiv = document.getElementById('firmaTecnicoStatus');
+                                        if (statusDiv) statusDiv.innerHTML = '';
                                         firmaTecnicoModal.hide();
                                     } catch (err) {
+                                        // Mostrar badge rojo de error
+                                        const statusDiv = document.getElementById('firmaTecnicoStatus');
+                                        if (statusDiv) {
+                                            statusDiv.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Error al guardar la firma</span>';
+                                        }
                                         alert('Error al guardar la firma: ' + err);
                                     }
                                 };
@@ -423,42 +434,54 @@
                                 firmaRecibidoModal = new bootstrap.Modal(document.getElementById('firmaRecibidoModal'));
                             }
                             firmaRecibidoModal.show();
-                            setTimeout(() => {
-                                const canvas = document.getElementById('firmaRecibidoPad');
-                                resizeFirmaTecnicoCanvas(canvas);
-                                if (!firmaRecibidoPad) {
-                                    firmaRecibidoPad = new SignaturePad(canvas, {
-                                        penColor: 'rgb(0, 0, 0)'
-                                    });
-                                } else {
-                                    firmaRecibidoPad.clear();
-                                }
-                                document.getElementById('clearFirmaRecibido').onclick = function () {
-                                    firmaRecibidoPad.clear();
-                                };
-                                document.getElementById('saveFirmaRecibido').onclick = async function () {
-                                    if (firmaRecibidoPad.isEmpty()) {
-                                        alert('Por favor, realiza una firma antes de guardar.');
-                                        return;
-                                    }
-                                    const dataURL = firmaRecibidoPad.toDataURL('image/png');
-                                    try {
-                                        const fileName = await uploadFirmaTecnicoImage(dataURL);
-                                        firmaRecibidoFileName = fileName;
-                                        const firmaRecibidoPreview = document.getElementById('firmaRecibidoPreview');
-                                        firmaRecibidoPreview.src = '/glpi/files/firmas/' + fileName;
-                                        firmaRecibidoPreview.style.display = 'block';
-                                        const placeholder = document.querySelector('#firmaRecibidoContainer .placeholder-text');
-                                        if (placeholder) placeholder.style.display = 'none';
-                                        firmaRecibidoModal.hide();
-                                    } catch (err) {
-                                        alert('Error al guardar la firma: ' + err);
-                                    }
-                                };
-                                window.addEventListener('resize', function () {
-                                    resizeFirmaTecnicoCanvas(canvas);
-                                });
-                            }, 100);
+    setTimeout(() => {
+        const canvas = document.getElementById('firmaRecibidoPad');
+        resizeFirmaTecnicoCanvas(canvas);
+        if (!firmaRecibidoPad) {
+            firmaRecibidoPad = new SignaturePad(canvas, {
+                penColor: 'rgb(0, 0, 0)'
+            });
+        } else {
+            firmaRecibidoPad.clear();
+        }
+        document.getElementById('clearFirmaRecibido').onclick = function () {
+            firmaRecibidoPad.clear();
+        };
+        document.getElementById('saveFirmaRecibido').onclick = async function () {
+            if (firmaRecibidoPad.isEmpty()) {
+                alert('Por favor, realiza una firma antes de guardar.');
+                return;
+            }
+            const dataURL = firmaRecibidoPad.toDataURL('image/png');
+            try {
+                const fileName = await uploadFirmaTecnicoImage(dataURL);
+                // Asignar el nombre de la imagen a window.firmaRecibidoFileName para que esté disponible al guardar
+                window.firmaRecibidoFileName = fileName;
+                firmaRecibidoFileName = fileName;
+                const firmaRecibidoPreview = document.getElementById('firmaRecibidoPreview');
+                firmaRecibidoPreview.src = '/glpi/files/firmas/' + fileName;
+                firmaRecibidoPreview.style.display = 'block';
+                const placeholder = document.querySelector('#firmaRecibidoContainer .placeholder-text');
+                if (placeholder) placeholder.style.display = 'none';
+                // Mostrar mensaje solo en consola
+                console.log('Firma de recibido guardada correctamente');
+                // Limpiar mensaje visual si existe
+                const statusDiv = document.getElementById('firmaRecibidoStatus');
+                if (statusDiv) statusDiv.innerHTML = '';
+                firmaRecibidoModal.hide();
+            } catch (err) {
+                // Mostrar badge rojo de error
+                const statusDiv = document.getElementById('firmaRecibidoStatus');
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<span class="badge bg-danger"><i class="fas fa-times-circle me-1"></i>Error al guardar la firma</span>';
+                }
+                alert('Error al guardar la firma: ' + err);
+            }
+        };
+        window.addEventListener('resize', function () {
+            resizeFirmaTecnicoCanvas(canvas);
+        });
+    }, 100);
                         }
 
                         function resizeFirmaTecnicoCanvas(canvas) {
@@ -509,6 +532,25 @@
                                     e.stopPropagation();
                                     showFirmaRecibidoModal();
                                 });
+                            }
+                            // Al cargar el modal, mostrar el estado de la firma si ya existe
+                            if (window.firmaTecnicoFileName) {
+                                const statusDiv = document.getElementById('firmaTecnicoStatus');
+                                if (statusDiv) {
+                                    statusDiv.innerHTML = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Firma guardada correctamente</span>';
+                                }
+                            } else {
+                                const statusDiv = document.getElementById('firmaTecnicoStatus');
+                                if (statusDiv) statusDiv.innerHTML = '';
+                            }
+                            if (window.firmaRecibidoFileName) {
+                                const statusDiv = document.getElementById('firmaRecibidoStatus');
+                                if (statusDiv) {
+                                    statusDiv.innerHTML = '<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Firma guardada correctamente</span>';
+                                }
+                            } else {
+                                const statusDiv = document.getElementById('firmaRecibidoStatus');
+                                if (statusDiv) statusDiv.innerHTML = '';
                             }
                         });
                     </script>
@@ -664,6 +706,112 @@
 
         let sucursalesData = [];
 
+        // Imprimir en consola el id del material seleccionado en articuloSelect (Select2)
+        const articuloSelect = document.getElementById('articuloSelect');
+        // Variable global para guardar el id del material seleccionado
+        window._idMaterialSeleccionado = '';
+        if (articuloSelect && window.jQuery) {
+            $(articuloSelect).on('select2:select', function (e) {
+                // El id del material seleccionado está en e.params.data.id
+                window._idMaterialSeleccionado = e.params.data.id;
+                console.log('ID del material seleccionado:', window._idMaterialSeleccionado);
+            });
+            // Limpiar variable si se limpia el select
+            $(articuloSelect).on('select2:clear', function () {
+                window._idMaterialSeleccionado = '';
+            });
+        }
+
+        // Validación y restricción de hora de inicio y fin
+        const horaInicioInput = document.getElementById('hora_inicio');
+        const horaFinInput = document.getElementById('hora_fin');
+
+        function ajustarMinHoraFin() {
+            if (horaInicioInput && horaFinInput) {
+                const inicio = horaInicioInput.value;
+                if (inicio) {
+                    // El valor mínimo de hora_fin debe ser 1 minuto después de hora_inicio
+                    let [h, m] = inicio.split(":").map(Number);
+                    m++;
+                    if (m >= 60) { h++; m = 0; }
+                    let minFin = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                    horaFinInput.min = minFin;
+                    horaFinInput.disabled = false;
+                    // Si la hora_fin actual es menor o igual, la limpia
+                    if (horaFinInput.value && horaFinInput.value < minFin) {
+                        horaFinInput.value = '';
+                    }
+                    // Establecer automáticamente una hora después como valor por defecto
+                    let hFin = parseInt(inicio.split(":")[0], 10) + 1;
+                    let mFin = parseInt(inicio.split(":")[1], 10);
+                    if (hFin >= 24) hFin = 0;
+                    let sugerido = (hFin < 10 ? '0' : '') + hFin + ':' + (mFin < 10 ? '0' : '') + mFin;
+                    // Solo poner el valor sugerido si está vacío o es menor al mínimo
+                    if (!horaFinInput.value || horaFinInput.value < minFin) {
+                        horaFinInput.value = sugerido;
+                    }
+                } else {
+                    horaFinInput.min = '';
+                    horaFinInput.value = '';
+                    horaFinInput.disabled = true;
+                }
+            }
+        }
+
+        function validarHoras() {
+            const inicio = horaInicioInput.value;
+            const fin = horaFinInput.value;
+            if (inicio && fin) {
+                // Calcular el mínimo permitido (1 minuto después de inicio)
+                let [h, m] = inicio.split(":").map(Number);
+                m++;
+                if (m >= 60) { h++; m = 0; }
+                let minFin = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+                if (fin < minFin) {
+                    horaFinInput.setCustomValidity('La hora de fin debe ser mayor que la hora de inicio.');
+                    horaFinInput.value = '';
+                    mostrarErrorHoraFin('La hora de fin debe ser mayor que la hora de inicio.');
+                } else {
+                    horaFinInput.setCustomValidity('');
+                    ocultarErrorHoraFin();
+                }
+            } else {
+                horaFinInput.setCustomValidity('');
+                ocultarErrorHoraFin();
+            }
+        }
+
+        // Mensaje visual inmediato
+        function mostrarErrorHoraFin(msg) {
+            let error = document.getElementById('horaFinError');
+            if (!error) {
+                error = document.createElement('div');
+                error.id = 'horaFinError';
+                error.className = 'invalid-feedback d-block';
+                horaFinInput.parentElement.appendChild(error);
+            }
+            error.textContent = msg;
+        }
+        function ocultarErrorHoraFin() {
+            let error = document.getElementById('horaFinError');
+            if (error) error.remove();
+        }
+
+        if (horaInicioInput && horaFinInput) {
+            // Al inicio, deshabilitar hora_fin
+            if (!horaInicioInput.value) {
+                horaFinInput.disabled = true;
+            }
+            horaInicioInput.addEventListener('change', function() {
+                ajustarMinHoraFin();
+                validarHoras();
+            });
+            horaFinInput.addEventListener('input', validarHoras);
+            horaFinInput.addEventListener('change', validarHoras);
+            // Al cargar, también ajustar
+            ajustarMinHoraFin();
+        }
+
         function showStep(stepToShow, controlsToShow) {
             // Ocultar todos los pasos
             [step1, step2, step3].forEach(step => {
@@ -682,27 +830,123 @@
         }
 
         document.getElementById('btnNext1').addEventListener('click', function () {
+            // Cerrar Select2 de articuloSelect si está abierto
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step2, controls2);
         });
         document.getElementById('btnBack1').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step1, controls1);
         });
         document.getElementById('btnNext2').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step3, controls3);
         });
         document.getElementById('btnBack2').addEventListener('click', function () {
+            if ($('#articuloSelect').data('select2')) {
+                $('#articuloSelect').select2('close');
+            }
             showStep(step2, controls2);
         });
-        document.getElementById('btnGuardarPuesto').addEventListener('click', function () {
-            const form = document.getElementById('formHoja');
-            if (form.checkValidity()) {
-                alert('Formulario guardado correctamente');
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalFormularioPuesto'));
-                modal.hide();
-            } else {
-                form.reportValidity();
-            }
-        });
+        const btnGuardarHojaServicio = document.getElementById('btnGuardarHojaServicio');
+
+        if (btnGuardarHojaServicio) {
+            btnGuardarHojaServicio.addEventListener('click', async function (e) {
+                e.preventDefault();
+                // Tomar todos los campos requeridos
+                const id_estacion = document.getElementById('estacion')?.value || '';
+                // Obtener id_servicio de la URL
+                function getIdServicioFromUrl() {
+                    const params = new URLSearchParams(window.location.search);
+                    return params.get('id') || '';
+                }
+                const id_servicio = getIdServicioFromUrl();
+                // Usar el id del material seleccionado en el select2
+                const id_material = window._idMaterialSeleccionado || '';
+                const folio = document.getElementById('folio')?.value || '';
+                const serie = document.getElementById('serie')?.value || '';
+                const fecha_inicio = document.getElementById('fecha')?.value + ' ' + (document.getElementById('hora_inicio')?.value || '') + ':00';
+                const fecha_fin = document.getElementById('fecha')?.value + ' ' + (document.getElementById('hora_fin')?.value || '') + ':00';
+                const descripcion1 = document.getElementById('descripcionServicio')?.value || '';
+                const descripcion2 = document.getElementById('descripcion2')?.value || '';
+                let descripcion = '';
+                if (descripcion1 && descripcion2) {
+                    descripcion = descripcion1 + ' | ' + descripcion2;
+                } else if (descripcion1) {
+                    descripcion = descripcion1;
+                } else if (descripcion2) {
+                    descripcion = descripcion2;
+                }
+                const tipo_servicio = document.getElementById('servicioSelect')?.value || '';
+                const id_entregado = document.getElementById('firmaCliente')?.value || '';
+                let id_recibido = document.getElementById('firmaRecibido')?.value || '';
+                if (id_recibido !== '') {
+                    id_recibido = Number(id_recibido);
+                }
+                const firma_entregado = window.firmaTecnicoFileName || '';
+                const firma_recibido = window.firmaRecibidoFileName || '';
+
+                // Validar campos requeridos (excepto firma_entregado)
+                const required = {id_estacion, id_servicio, id_material, folio, serie, fecha_inicio, fecha_fin, descripcion, id_entregado, id_recibido, firma_recibido, tipo_servicio};
+                for (const [key, val] of Object.entries(required)) {
+                    if (!val) {
+                        alert('El campo ' + key + ' es requerido');
+                        return;
+                    }
+                }
+
+                // Validar firma_entregado (firma del técnico) aparte, con mensaje claro
+                if (!firma_entregado) {
+                    alert('Debes firmar como técnico antes de guardar la hoja de servicio. Da click en el recuadro de firma y guarda tu firma.');
+                    return;
+                }
+                // Validar firma_recibido (firma de recibido) aparte, con mensaje claro
+                if (!firma_recibido) {
+                    alert('Debes firmar como recibido antes de guardar la hoja de servicio. Da click en el recuadro de firma de recibido y guarda la firma.');
+                    return;
+                }
+
+                const data = {id_estacion, id_servicio, id_material, folio, serie, fecha_inicio, fecha_fin, descripcion, id_entregado, id_recibido, firma_entregado, firma_recibido, tipo_servicio};
+                // Mostrar en consola el objeto que se enviará al backend
+                // Mostrar los datos como texto legible
+                let datosTexto = 'Datos enviados a create_hoja_servicio.php:\n';
+                for (const [key, val] of Object.entries(data)) {
+                    datosTexto += key + ': ' + val + '\n';
+                }
+                console.log(datosTexto);
+                try {
+                    const response = await fetch('/glpi/ajax/mantenimiento/create_hoja_servicio.php', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                    const text = await response.text();
+                    let result = null;
+                    let isJson = false;
+                    try {
+                        result = JSON.parse(text);
+                        isJson = true;
+                    } catch (jsonErr) {
+                        isJson = false;
+                    }
+                    if (isJson && result && result.success) {
+                        alert('Hoja de servicio guardada correctamente');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalFormularioPuesto'));
+                        if (modal) modal.hide();
+                    } else if (isJson && result && result.message) {
+                        alert('Error: ' + result.message);
+                    } // Si no es JSON o no hay success, no mostrar alert de error
+                } catch (err) {
+                    alert('Error al guardar hoja de servicio: ' + (err && err.message ? err.message : ''));
+                }
+            });
+        }
 
         // Reiniciar wizard al abrir el modal
         document.getElementById('modalFormularioPuesto').addEventListener('show.bs.modal', function () {
@@ -713,35 +957,64 @@
             } else {
                 showStep(step1, controls1);
             }
-                                        // Mantener el wizard en el paso de firmas al cerrar el modal de firma
-                                        window._mantenerPasoFirmas = true;
-            // Llenar el select de estación desde la API PHP solo si no se ha llenado antes
+            // Mantener el wizard en el paso de firmas al cerrar el modal de firma
+            window._mantenerPasoFirmas = true;
+            // Llenar el select de estación desde la API PHP SIEMPRE que se abre el modal (para evitar problemas visuales)
             const estacionSelect = document.getElementById('estacion');
-            if (!estacionSelect.hasAttribute('data-loaded')) {
-                estacionSelect.innerHTML = '<option value="">Seleccione una estación</option>';
-                fetch('../config/get_sucursales.php')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (Array.isArray(data)) {
-                            sucursalesData = data;
-                            data.forEach(function (item) {
-                                const option = document.createElement('option');
-                                option.value = item.IdSucursal;
-                                option.textContent = item.NombreSucursal;
-                                // Guardar el índice para fácil acceso
-                                option.setAttribute('data-index', sucursalesData.indexOf(item));
-                                estacionSelect.appendChild(option);
-                            });
-                            estacionSelect.setAttribute('data-loaded', 'true');
-                            setTimeout(initSelect2Estacion, 100);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar estaciones:', error);
-                    });
-            } else {
-                setTimeout(initSelect2Estacion, 100);
+            // Si ya tiene Select2, destruirlo antes de manipular el select
+            if (window.jQuery && $(estacionSelect).data('select2')) {
+                $(estacionSelect).select2('destroy');
             }
+            estacionSelect.innerHTML = '<option value="">Seleccione una estación</option>';
+            fetch('../config/get_sucursales.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        sucursalesData = data;
+                        // Imprimir todas las estaciones en la consola
+                        console.log('Estaciones obtenidas:');
+                        data.forEach(function (item) {
+                            console.log(
+                                'IdEmpresa:', item.IdEmpresa || item.Empresa,
+                                '\nNombreEmpresa:', item.NombreEmpresa || item.Nombre,
+                                '\nRFCEmpresa:', item.RFCEmpresa || item.RFC,
+                                '\nIdSucursal:', item.IdSucursal || item.Sucursal,
+                                '\nNombreSucursal:', item.NombreSucursal || item.Nombre,
+                                '\ncodigoPostal:', item.codigoPostal || item.CodigoPostal,
+                                '\nRFC:', item.RFC,
+                                '\nListaPreciosEsp:', item.ListaPreciosEsp,
+                                '\nEncargado:', item.Encargado,
+                                '\nDireccion:', item.Direccion,
+                                '\nPoblacion:', item.Poblacion,
+                                '\nEstado:', item.Estado,
+                                '\nPais:', item.Pais,
+                                '\nTelefonos:', item.Telefonos,
+                                '\n-----------------------------'
+                            );
+                        });
+                        data.forEach(function (item) {
+                            const option = document.createElement('option');
+                            option.value = item.IdSucursal;
+                            option.textContent = item.NombreSucursal;
+                            // Guardar el índice para fácil acceso
+                            option.setAttribute('data-index', sucursalesData.indexOf(item));
+                            estacionSelect.appendChild(option);
+                        });
+                        // Guardar el id de estación para usarlo después de inicializar Select2
+                        var idEstacionServicio = <?php echo json_encode($servicio['id_estacion'] ?? null); ?>;
+                        setTimeout(function() {
+                            initSelect2Estacion();
+                            // Seleccionar automáticamente la estación SOLO después de inicializar Select2
+                            if (idEstacionServicio && window.jQuery && $(estacionSelect).data('select2')) {
+                                // Selecciona la estación y dispara el evento change (Select2 actualiza UI y dispara handlers)
+                                $(estacionSelect).val(idEstacionServicio).trigger('change');
+                            }
+                        }, 100);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar estaciones:', error);
+                });
             // Establecer la fecha de hoy y hacerla no editable
             const fechaInput = document.getElementById('fecha');
             const today = new Date();
@@ -750,6 +1023,15 @@
             const dd = String(today.getDate()).padStart(2, '0');
             fechaInput.value = `${yyyy}-${mm}-${dd}`;
             fechaInput.readOnly = true;
+
+            // Auto-rellenar el campo Nombre entregado (firmaCliente) con el nombre del usuario logueado
+            const firmaClienteInput = document.getElementById('firmaCliente');
+            if (firmaClienteInput) {
+                firmaClienteInput.value = <?php echo json_encode($_SESSION['glpiname'] ?? ''); ?>;
+            }
+
+            // Imprimir el id_estacion del servicio en la consola al abrir el modal
+            console.log('id_estacion:', <?php echo json_encode($servicio['id_estacion'] ?? null); ?>);
         });
         // Inicializar Select2 después de llenar el select
         function initSelect2Estacion() {
@@ -761,55 +1043,44 @@
                 allowClear: true,
                 dropdownAutoWidth: true
             });
-            // Solución robusta: Evitar que el dropdown se cierre al hacer scroll en el modal
-            // Usar mousedown en el modal para evitar el cierre
-            $('#modalFormularioPuesto').on('mousedown', function (e) {
-                if ($('.select2-container--open').length) {
-                    e.stopPropagation();
-                }
-            });
-            // Evento al seleccionar una estación
-            $('#estacion').on('select2:select', function (e) {
-                const selectedId = $(this).val();
-                const selected = sucursalesData.find(item => String(item.IdSucursal) === String(
-                    selectedId));
+            // (Eliminado el handler de mousedown para evitar interferencia con Select2)
+            // Handler para llenar los campos relacionados a la estación
+            function fillEstacionFields(selectedId) {
+                const selected = sucursalesData.find(item => String(item.IdSucursal) === String(selectedId));
                 if (selected) {
                     // Concatenar los datos requeridos para ubicación
                     let direccion = '';
-                    if (selected.ColoniaSucursal && selected.ColoniaSucursal !== 'NULL') direccion +=
-                        selected.ColoniaSucursal + ', ';
-                    if (selected.Direccion && selected.Direccion !== 'NULL') direccion += selected
-                        .Direccion + ', ';
-                    if (selected.Poblacion && selected.Poblacion !== 'NULL') direccion += selected
-                        .Poblacion + ', ';
+                    if (selected.ColoniaSucursal && selected.ColoniaSucursal !== 'NULL') direccion += selected.ColoniaSucursal + ', ';
+                    if (selected.Direccion && selected.Direccion !== 'NULL') direccion += selected.Direccion + ', ';
+                    if (selected.Poblacion && selected.Poblacion !== 'NULL') direccion += selected.Poblacion + ', ';
                     if (selected.Estado && selected.Estado !== 'NULL') direccion += selected.Estado + ', ';
                     if (selected.Pais && selected.Pais !== 'NULL') direccion += selected.Pais;
                     direccion = direccion.replace(/, $/, ''); // Quitar coma final
                     // Concatenar CodigoPostal al final si existe y no es 'NULL'
-                    if ((selected.codigoPostal || selected.CodigoPostal) && (selected.codigoPostal !==
-                        'NULL' && selected.codigoPostal !== undefined || selected.CodigoPostal !==
-                        'NULL' && selected.CodigoPostal !== undefined)) {
-                        let cp = selected.codigoPostal !== undefined ? selected.codigoPostal : selected
-                            .CodigoPostal;
+                    if ((selected.codigoPostal || selected.CodigoPostal) && (selected.codigoPostal !== 'NULL' && selected.codigoPostal !== undefined || selected.CodigoPostal !== 'NULL' && selected.CodigoPostal !== undefined)) {
+                        let cp = selected.codigoPostal !== undefined ? selected.codigoPostal : selected.CodigoPostal;
                         direccion += (direccion ? ', ' : '') + cp;
                     }
                     document.getElementById('ubicacion').value = direccion;
                     // RFC
-                    document.getElementById('rfc').value = (selected.RFC && selected.RFC !== 'NULL') ?
-                        selected.RFC : '';
+                    document.getElementById('rfc').value = (selected.RFC && selected.RFC !== 'NULL') ? selected.RFC : '';
                     // N.Estación
-                    document.getElementById('nestacion').value = (selected.IdSucursal && selected
-                        .IdSucursal !== 'NULL') ? selected.IdSucursal : '';
+                    document.getElementById('nestacion').value = (selected.IdSucursal && selected.IdSucursal !== 'NULL') ? selected.IdSucursal : '';
                     // N.P CRE
-                    document.getElementById('npcre').value = (selected.ListaPreciosEsp && selected
-                        .ListaPreciosEsp !== 'NULL') ? selected.ListaPreciosEsp : '';
+                    document.getElementById('npcre').value = (selected.ListaPreciosEsp && selected.ListaPreciosEsp !== 'NULL') ? selected.ListaPreciosEsp : '';
                     // Teléfono
-                    document.getElementById('telefono').value = (selected.Telefonos && selected
-                        .Telefonos !== 'NULL') ? selected.Telefonos : '';
+                    document.getElementById('telefono').value = (selected.Telefonos && selected.Telefonos !== 'NULL') ? selected.Telefonos : '';
                     // Jefe de estación
-                    document.getElementById('jefe').value = (selected.Encargado && selected.Encargado !==
-                        'NULL') ? selected.Encargado : '';
+                    document.getElementById('jefe').value = (selected.Encargado && selected.Encargado !== 'NULL') ? selected.Encargado : '';
                 }
+            }
+            // Evento al seleccionar una estación (Select2)
+            $('#estacion').on('select2:select', function (e) {
+                fillEstacionFields($(this).val());
+            });
+            // También llenar campos al cambiar el valor (para .trigger('change'))
+            $('#estacion').on('change', function (e) {
+                fillEstacionFields($(this).val());
             });
             // Limpiar input si se deselecciona
             $('#estacion').on('select2:clear', function () {

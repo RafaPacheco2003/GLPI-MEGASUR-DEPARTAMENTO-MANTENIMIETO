@@ -60,6 +60,7 @@ CREATE TABLE hoja_servicio (
     id_recibido INT,
     firma_recibido VARCHAR(100),
     tipo_servicio ENUM('Instalación', 'Mantenimiento', 'Retiro', 'Proyecto') NOT NULL,
+    id_material INT,
 
     FOREIGN KEY (id_servicio) REFERENCES servicio(id),
 

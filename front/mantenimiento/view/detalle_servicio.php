@@ -1,3 +1,15 @@
+<style>
+    #btnLlenarFormulario,
+    #btnExportarHojaServicio {
+        transition: color 0.2s, border-color 0.2s;
+    }
+    #btnLlenarFormulario:hover,
+    #btnExportarHojaServicio:hover {
+        color: #111827; /* texto más oscuro */
+        border-color: #111827; /* borde más oscuro */
+        background-color: inherit !important;
+    }
+</style>
 <?php
 /**
  * Vista principal del módulo de Mantenimiento
@@ -7,7 +19,7 @@ include '../../../inc/includes.php';
 include '../componentes/ButtonComponent.php';
 include '../../../inc/mantenimiento/ServicioManager.php';
 include '../../../inc/mantenimiento/ProgramacionManager.php';
-
+include '../../../inc/mantenimiento/HojaServicio.php';
 // Verificar permisos'
 Session::checkRight("config", UPDATE);
 
@@ -15,6 +27,12 @@ Session::checkRight("config", UPDATE);
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     Html::displayErrorAndDie(__('Invalid ID'));
 }
+
+//Obtener hoja de servicio
+$hojaServicio = new HojaServicio();
+$hojaServicioData = $hojaServicio->getById_servicio($_GET['id']);
+
+
 
 // Obtener el servicio
 $servicioManager = new ServicioManager();
@@ -67,8 +85,6 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
             <div class="d-flex">
                 <?php echo ButtonComponent::volver('Volver', 'fas fa-arrow-left', "http://localhost/glpi/front/mantenimiento/view/servicio.php?id=" . $servicio['id_programacion']); ?>
 
-                <input type="text" class="form-control me-2 ms-2" placeholder="Buscar..." style="width: 250px;">
-                <?php echo ButtonComponent::search(); ?>
             </div>
 
 
@@ -84,7 +100,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 <div class="section-info ">
     <div class="row">
         <!-- Columna principal (Información del servicio) -->
-        <div class="col-md-9 p-0 m-0">
+        <div class="col-md-9 p-2 mt-2">
             <div class="card mb-3">
                 <div class="card-body">
                     <h2>Información del servicio</h2>
@@ -137,18 +153,28 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
         </div>
 
         <!-- Columna lateral (Estado del Servicio) -->
-        <div class="col-md-3">
+        <div class="col-md-3 mt-3">
             <?php include __DIR__ . '/../componentes/detalle_servicio/lineaTiempo.php'; ?>
         </div>
     </div>
 
-    <div class="mt-3">
+    <div class="mt-1">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
         <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
-            <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
-                data-bs-target="#modalFormularioPuesto">
-                Llenar Hoja de servicio
-            </button>
+            <?php
+                include_once __DIR__ . '/../config/ColorConfig.php';
+            ?>
+            <?php if (empty($hojaServicioData)): ?>
+                <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
+                    data-bs-target="#modalFormularioPuesto">
+                    Llenar Hoja de servicio
+                </button>
+            <?php else: ?>
+                <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
+                   href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
+                    <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
+                </a>
+            <?php endif; ?>
         <?php endif; ?>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>

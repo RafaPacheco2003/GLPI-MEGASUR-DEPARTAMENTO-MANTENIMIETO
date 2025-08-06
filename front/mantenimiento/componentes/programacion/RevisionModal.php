@@ -35,34 +35,188 @@
             </div>
           </div>
 
-          <!-- Modal para dibujar la firma -->
+          <!-- Modal para dibujar la firma con el mismo estilo que ProgramacionModal.php -->
+          <style>
+            #revisionSignatureModal .modal-dialog {
+              max-width: 100vw !important;
+              margin: 0;
+              width: 100vw;
+            }
+            #revisionSignatureModal .modal-content {
+              height: 100vh !important;
+              width: 100vw;
+              border-radius: 18px;
+              box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+              background: linear-gradient(135deg,#f8faff 60%,#e0e7ff 100%);
+            }
+            #revisionSignatureModal .modal-header {
+              border-radius: 18px 18px 0 0;
+              border-bottom: 1.5px solid #e0e7ff;
+              background: rgba(37,99,235,0.07);
+            }
+            #revisionSignatureModal .modal-title {
+              font-weight: 700;
+              color: #2563eb;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            #revisionSignatureModal .modal-title span {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              background: #e0e7ff;
+              border-radius: 50%;
+              width: 38px;
+              height: 38px;
+              margin-right: 8px;
+            }
+            #revisionSignatureModal .modal-body {
+              height: calc(100vh - 120px) !important;
+              flex: 1;
+              width: 100vw;
+              padding: 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+            }
+            #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen {
+              width: 96vw;
+              max-width: 700px;
+              height: 100%;
+              min-height: 340px;
+              flex: 1;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin: 0;
+              border-radius: 18px;
+              background: #fff;
+              border: 2.5px solid #2563eb;
+              box-shadow: 0 4px 24px rgba(37,99,235,0.08);
+            }
+            #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+              width: 100% !important;
+              height: 60vh !important;
+              min-height: 220px;
+              border-radius: 14px;
+              border: none;
+              background: #f8fafc;
+            }
+            #revisionSignatureModal .signature-controls {
+              width: 96vw;
+              max-width: 700px;
+              display: flex;
+              justify-content: flex-end;
+              align-items: center;
+              padding: 0 0.5vw;
+              gap: 12px;
+            }
+            #revisionSignatureModal .signature-controls button {
+              font-size: 1rem;
+              padding: 8px 24px;
+              border-radius: 8px;
+              font-weight: 600;
+              box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+              transition: all 0.18s;
+            }
+            #revisionSignatureModal .signature-controls .btn-outline-secondary {
+              background: #fff;
+              color: #2563eb;
+              border: 2px solid #2563eb;
+            }
+            #revisionSignatureModal .signature-controls .btn-outline-secondary:hover {
+              background: #e0e7ff;
+              color: #1d4ed8;
+              border-color: #1d4ed8;
+            }
+            #revisionSignatureModal .signature-controls .btn-primary, #revisionSignatureModal .signature-controls .btn {
+              background: linear-gradient(90deg,#2563eb 60%,#1d4ed8 100%);
+              color: #fff;
+              border: none;
+            }
+            #revisionSignatureModal .signature-controls .btn-primary:hover, #revisionSignatureModal .signature-controls .btn:hover {
+              background: #1d4ed8;
+              box-shadow: 0 4px 16px rgba(37,99,235,0.13);
+            }
+            @media (max-width: 991.98px) {
+              #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen {
+                max-width: 98vw;
+                min-height: 180px;
+                border-radius: 12px;
+              }
+              #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                height: 32vh !important;
+                min-height: 120px;
+                border-radius: 10px;
+              }
+              #revisionSignatureModal .signature-controls {
+                max-width: 98vw;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 0 2vw;
+              }
+            }
+            @media (max-width: 600px) {
+              #revisionSignatureModal .modal-content {
+                border-radius: 0;
+              }
+              #revisionSignatureModal .modal-header {
+                border-radius: 0;
+                padding: 0.7rem 0.7rem 0.7rem 1rem;
+              }
+              #revisionSignatureModal .modal-title span {
+                width: 30px;
+                height: 30px;
+                margin-right: 5px;
+              }
+              #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen {
+                width: 99vw;
+                max-width: 99vw;
+                min-height: 100px;
+                border-radius: 6px;
+              }
+              #revisionSignatureModal .signature-pad-container.signature-pad-fullscreen canvas {
+                height: 22vh !important;
+                min-height: 70px;
+                border-radius: 6px;
+              }
+              #revisionSignatureModal .signature-controls {
+                width: 99vw;
+                max-width: 99vw;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 0 2vw;
+              }
+              #revisionSignatureModal .signature-controls button {
+                font-size: 0.98rem;
+                padding: 8px 0;
+              }
+            }
+          </style>
           <div class="modal fade" id="revisionSignatureModal" tabindex="-1" aria-labelledby="revisionSignatureModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen-sm-down modal-xl" style="max-width:100vw; margin:0;">
-              <div class="modal-content" style="height:100vh;">
+            <div class="modal-dialog">
+              <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="revisionSignatureModalLabel">Dibujar firma</h5>
+                  <h5 class="modal-title d-flex align-items-center gap-2" id="revisionSignatureModalLabel">
+                    <span><i class="fas fa-signature" style="font-size:1.3rem; color:#2563eb;"></i></span>
+                    Dibujar firma
+                  </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-                <div class="modal-body"
-                  style="height:calc(100vh - 120px); display:flex; flex-direction:column; justify-content:center; align-items:center;">
-                  <div class="signature-pad-container signature-pad-fullscreen"
-                    style="width:100%; max-width:1200px; height:100%; flex:1; display:flex; align-items:center; justify-content:center;">
-                    <canvas id="revisionSignaturePad"
-                      style="width:100%; height:100%; min-height:300px; border-radius:12px;"></canvas>
+                <div class="modal-body d-flex flex-column justify-content-center align-items-center pb-0">
+                  <div class="signature-pad-container signature-pad-fullscreen shadow-lg">
+                    <canvas id="revisionSignaturePad"></canvas>
                   </div>
-                  <div class="signature-controls mt-3"
-                    style="width:100%; max-width:1200px; display:flex; justify-content:flex-end;">
-                    <button type="button" class="btn btn-outline-secondary me-2" id="clearRevisionSignature"
-                      style="color: #2563eb; border-color: #2563eb; background: #fff;"
-                      onmouseover="this.style.background='#f0f5ff'; this.style.color='#1d4ed8'; this.style.borderColor='#1d4ed8';"
-                      onmouseout="this.style.background='#fff'; this.style.color='#2563eb'; this.style.borderColor='#2563eb';">
-                      <i class="fas fa-eraser"></i> Limpiar
+                  <div class="signature-controls mt-4 d-flex gap-3">
+                    <button type="button" class="btn btn-outline-secondary me-2" id="clearRevisionSignature">
+                      <i class="fas fa-eraser" style="font-size:1.1rem; margin-right:6px;"></i> Limpiar
                     </button>
-                    <button type="button" class="btn" id="saveRevisionSignature"
-                      style="background-color: #2563eb; color: #fff; border: 1px solid #2563eb;"
-                      onmouseover="this.style.background='#1d4ed8'; this.style.borderColor='#1d4ed8';"
-                      onmouseout="this.style.background='#2563eb'; this.style.borderColor='#2563eb';">
-                      <i class="fas fa-save"></i> Guardar firma
+                    <button type="button" class="btn" id="saveRevisionSignature">
+                      <i class="fas fa-save" style="font-size:1.1rem; margin-right:6px;"></i> Guardar firma
                     </button>
                   </div>
                 </div>

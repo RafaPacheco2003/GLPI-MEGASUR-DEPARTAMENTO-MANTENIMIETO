@@ -151,6 +151,12 @@ $sheet->mergeCells('J5:L5');
 $sheet->mergeCells('J6:L6');
 $sheet->mergeCells('J7:L7');
 $sheet->mergeCells('J8:L8');
+$sheet->mergeCells('M5:R5');
+
+$sheet->mergeCells('M6:R6');
+$sheet->mergeCells('M7:R7');
+$sheet->mergeCells('M8:R8');
+
 $sheet->setCellValue('J7', '');
 $sheet->setCellValue('J8', '');
 $sheet->setCellValue('O1', 'FOLIO');

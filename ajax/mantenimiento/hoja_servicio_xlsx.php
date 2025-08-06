@@ -159,7 +159,7 @@ $sheet->getStyle('D3')->getFont()->setSize(6);
 
 $sheet->setCellValue('C4', "Ubicación / Dirección: ");
 $sheet->getStyle('C4')->getFont()->setSize(5)->setBold(true);
-$sheet->setCellValue('D4', $direccion);
+$sheet->setCellValue('D4', $direccion . ' C.P. ' . $codigoPostal);
 $sheet->getStyle('D4')->getFont()->setSize(6);
 
 
@@ -201,6 +201,13 @@ $sheet->getStyle('J7')->getFont()->setSize(5)->setBold(true);
 $sheet->setCellValue('J8', "Hora de servicio Ini: ");
 $sheet->getStyle('J8')->getFont()->setSize(5)->setBold(true);
 
+
+
+
+$sheet->getStyle('C4:D8')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('C4:D8')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+$sheet->getStyle('M5:M8')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$sheet->getStyle('M5:M8')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
 $folioValor = '';
 if (array_keys($datosHoja) !== range(0, count($datosHoja) - 1)) {
@@ -311,6 +318,11 @@ if (array_keys($datosHoja) !== range(0, count($datosHoja) - 1)) {
     }
 }
 
+
+// Fondo gris #969696 para el rango B1:R2
+$sheet->getStyle('B1:R2')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('969696');
+$sheet->getStyle('B3:C8')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('969696');
+$sheet->getStyle('J5:L8')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('969696');
 // ========================
 // 6. AJUSTES FINALES DE FORMATO
 // ========================

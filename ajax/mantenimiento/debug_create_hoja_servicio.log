@@ -1,0 +1,20 @@
+2025-08-06T18:35:43+02:00 - INICIO create_hoja_servicio.php
+2025-08-06T18:35:43+02:00 - Incluyendo includes.php
+2025-08-06T18:35:44+02:00 - Incluyendo HojaServicio.php
+2025-08-06T18:35:44+02:00 - RAW POST: {"id_estacion":"14655","id_servicio":"55","id_material":1,"folio":"12","serie":"12","fecha_inicio":"2025-08-06 11:32:00","fecha_fin":"2025-08-06 12:32:00","descripcion":"Se realizo mantenimient preventivo ... al siguiente equipo | Se le dio mantenimiento de software al equipo volumetrico, dando como seguimiento el checklist ortogrado. De manera que consta de verifcar","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_6893845377d23.png","firma_recibido":"firma_6893845826cf4.png","tipo_servicio":"instalacion"}
+2025-08-06T18:35:44+02:00 - Instanciando HojaServicio
+2025-08-06T18:35:44+02:00 - Llamando crearHojaServicio
+2025-08-06T18:35:44+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-06T18:35:44+02:00 - [HojaServicio] Iniciando transacción
+2025-08-06T18:35:44+02:00 - [HojaServicio] Ejecutando query
+2025-08-06T18:35:44+02:00 - [HojaServicio] EXITO insert id: 6
+2025-08-06T18:52:44+02:00 - INICIO create_hoja_servicio.php
+2025-08-06T18:52:44+02:00 - Incluyendo includes.php
+2025-08-06T18:52:44+02:00 - Incluyendo HojaServicio.php
+2025-08-06T18:52:44+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"56","id_material":1,"folio":"12","serie":"21JH2","fecha_inicio":"2025-08-06 00:52:00","fecha_fin":"2025-08-06 01:52:00","descripcion":"Se realizo mantenimient preventivo ... al siguiente equipo | Se le dio mantenimiento de software al equipo volumetrico, dando como seguimiento el checklist ortogrado. De manera que consta de verificar","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_6893885525073.png","firma_recibido":"firma_68938858911c6.png","tipo_servicio":"instalacion"}
+2025-08-06T18:52:44+02:00 - Instanciando HojaServicio
+2025-08-06T18:52:44+02:00 - Llamando crearHojaServicio
+2025-08-06T18:52:44+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-06T18:52:44+02:00 - [HojaServicio] Iniciando transacción
+2025-08-06T18:52:44+02:00 - [HojaServicio] Ejecutando query
+2025-08-06T18:52:44+02:00 - [HojaServicio] EXITO insert id: 7

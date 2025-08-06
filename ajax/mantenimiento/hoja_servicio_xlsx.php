@@ -15,8 +15,13 @@ require_once __DIR__ . '/../../inc/mantenimiento/HojaServicio.php';
 
 // Obtener datos de hoja de servicio
 
+// Obtener el id de servicio desde la URL
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die('ID de servicio no válido.');
+}
+$idServicio = (int)$_GET['id'];
 $hojaServicio = new HojaServicio();
-$datosHoja = $hojaServicio->getById_servicio(51);
+$datosHoja = $hojaServicio->getById_servicio($idServicio);
 if (!is_array($datosHoja) || count($datosHoja) === 0) {
     die('No se pudo obtener la información de la hoja de servicio.');
 }

@@ -115,8 +115,28 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
                         </div>
 
                         <div class="col-md-6">
-                            <p class="mb-0 text-muted mb-2">Servidor/Site</p>
-                            <p class="fw-semibold"><?php echo htmlspecialchars($servicio['servidor_site']); ?></p>
+                            <p class="mb-0 text-muted mb-2">
+                                <?php
+                                $mostrarTitulo = 'Servidor/Site';
+                                $mostrarValor = $servicio['servidor_site'];
+                                if (strtoupper(trim($servicio['servidor_site'])) === 'N/A' && !empty($servicio['id_estacion'])) {
+                                    // Consultar el nombre de la sucursal
+                                    $nombreSucursal = null;
+                                    $urlApi = 'http://localhost/glpi/front/mantenimiento/config/get_sucursales_detalle.php?id=' . urlencode($servicio['id_estacion']);
+                                    $response = @file_get_contents($urlApi);
+                                    if ($response !== false) {
+                                        $data = json_decode($response, true);
+                                        if (is_array($data) && isset($data[0]['NombreSucursal'])) {
+                                            $nombreSucursal = $data[0]['NombreSucursal'];
+                                        }
+                                    }
+                                    $mostrarTitulo = 'Estación';
+                                    $mostrarValor = $nombreSucursal ? $nombreSucursal : 'Estación: ' . htmlspecialchars($servicio['id_estacion']);
+                                }
+                                echo htmlspecialchars($mostrarTitulo);
+                                ?>
+                            </p>
+                            <p class="fw-semibold"><?php echo htmlspecialchars($mostrarValor); ?></p>
                         </div>
                     </div>
 

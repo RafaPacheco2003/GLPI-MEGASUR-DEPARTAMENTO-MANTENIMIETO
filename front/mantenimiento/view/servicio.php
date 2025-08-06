@@ -163,7 +163,7 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
                     $estadoTexto,
                     $progreso,
                     "detalle_servicio.php?id=" . $servicio['id'],
-                    $servicio['serie_id'] ?? null
+                    $servicio['id_estacion'] ?? null
                 );
             }
         } else {

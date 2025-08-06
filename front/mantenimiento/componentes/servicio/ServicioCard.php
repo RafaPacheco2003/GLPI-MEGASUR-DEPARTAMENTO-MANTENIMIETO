@@ -16,12 +16,32 @@ class ServicioCard {
      * @param string $url URL para el enlace de la card (opcional)
      * @return string HTML de la card
      */
-    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#', $serie_id = null) {
+    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#', $id_estacion = null) {
+        // Asegurarse de que $id_estacion esté definido
+        // (ya está como parámetro, pero para evitar warnings en algunos entornos)
+        if (!isset($id_estacion)) {
+            $id_estacion = null;
+        }
         // Escapar valores para prevenir XSS
         $tituloSeguro = htmlspecialchars($titulo);
         if (strtoupper(trim($tituloSeguro)) === 'N/A') {
-        $tituloSeguro = $serie_id ? 'Serie: ' . htmlspecialchars($serie_id) : 'No tiene titulo';
-    }   
+            if ($id_estacion) {
+                // Consultar el nombre de la sucursal
+                $nombreSucursal = null;
+                $endpoint = __DIR__ . '/../../config/get_sucursales_detalle.php?id=' . urlencode($id_estacion);
+                $urlApi = 'http://localhost/glpi/front/mantenimiento/config/get_sucursales_detalle.php?id=' . urlencode($id_estacion);
+                $response = @file_get_contents($urlApi);
+                if ($response !== false) {
+                    $data = json_decode($response, true);
+                    if (is_array($data) && isset($data[0]['NombreSucursal'])) {
+                        $nombreSucursal = $data[0]['NombreSucursal'];
+                    }
+                }
+                $tituloSeguro = $nombreSucursal ? htmlspecialchars($nombreSucursal) : 'Estación: ' . htmlspecialchars($id_estacion);
+            } else {
+                $tituloSeguro = 'No tiene titulo';
+            }
+        }
         $afectacionSegura = htmlspecialchars($afectacion);
         $estadoSeguro = htmlspecialchars($estado);
         $urlSegura = htmlspecialchars($url);

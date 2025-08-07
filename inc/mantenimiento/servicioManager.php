@@ -17,30 +17,30 @@ class ServicioManager
     {
         $this->connection = MantenimientoConnection::getConnection();
     }
-/**
- * Crear un nuevo servicio de tipo servidor y red
- */
-public function crearServicioServidorRed($data)
-{
-    try {
-        // Validar que id_programacion sea válido
-        if (!isset($data['id_programacion']) || !is_numeric($data['id_programacion'])) {
-            throw new Exception("ID de programación no válido.");
-        }
+    /**
+     * Crear un nuevo servicio de tipo servidor y red
+     */
+    public function crearServicioServidorRed($data)
+    {
+        try {
+            // Validar que id_programacion sea válido
+            if (!isset($data['id_programacion']) || !is_numeric($data['id_programacion'])) {
+                throw new Exception("ID de programación no válido.");
+            }
 
-        // Iniciar transacción
-        $this->connection->begin_transaction();
+            // Iniciar transacción
+            $this->connection->begin_transaction();
 
 
-        // Permitir valores nulos para campos opcionales
-        $serie_id = isset($data['serie_id']) && $data['serie_id'] !== '' ? $data['serie_id'] : null;
-        $estatus = isset($data['estatus']) && $data['estatus'] !== '' ? $data['estatus'] : null;
-        $serie_folio_hoja_servicio = isset($data['serie_folio_hoja_servicio']) && $data['serie_folio_hoja_servicio'] !== '' ? $data['serie_folio_hoja_servicio'] : null;
-        $id_estacion = isset($data['id_estacion']) && $data['id_estacion'] !== '' ? $data['id_estacion'] : null;
-        $quien = isset($data['quien']) && $data['quien'] !== '' ? $data['quien'] : null;
-        $id_programacion = isset($data['id_programacion']) && $data['id_programacion'] !== '' ? $data['id_programacion'] : null;
+            // Permitir valores nulos para campos opcionales
+            $serie_id = isset($data['serie_id']) && $data['serie_id'] !== '' ? $data['serie_id'] : null;
+            $estatus = isset($data['estatus']) && $data['estatus'] !== '' ? $data['estatus'] : null;
+            $serie_folio_hoja_servicio = isset($data['serie_folio_hoja_servicio']) && $data['serie_folio_hoja_servicio'] !== '' ? $data['serie_folio_hoja_servicio'] : null;
+            $id_estacion = isset($data['id_estacion']) && $data['id_estacion'] !== '' ? $data['id_estacion'] : null;
+            $quien = isset($data['quien']) && $data['quien'] !== '' ? $data['quien'] : null;
+            $id_programacion = isset($data['id_programacion']) && $data['id_programacion'] !== '' ? $data['id_programacion'] : null;
 
-        $query = "INSERT INTO servicio (
+            $query = "INSERT INTO servicio (
             fecha_inicio,
             fecha_final,
             servidor_site,
@@ -54,63 +54,64 @@ public function crearServicioServidorRed($data)
             estado
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
-        $stmt = $this->connection->prepare($query);
-        if (!$stmt) {
-            throw new Exception("Error en la preparación de la consulta: " . $this->connection->error);
+            $stmt = $this->connection->prepare($query);
+            if (!$stmt) {
+                throw new Exception("Error en la preparación de la consulta: " . $this->connection->error);
+            }
+
+            // Log de los datos a insertar
+            error_log("Insertando servicio con: " . json_encode([
+                'fecha_inicio' => $data['fecha_inicio'],
+                'fecha_final' => $data['fecha_final'],
+                'servidor_site' => $data['servidor_site'],
+                'serie_id' => $serie_id,
+                'estatus' => $estatus,
+                'afectacion' => $data['afectacion'],
+                'serie_folio_hoja_servicio' => $serie_folio_hoja_servicio,
+                'id_estacion' => $id_estacion,
+                'quien' => $quien,
+                'id_programacion' => $id_programacion
+            ]));
+
+            $bindResult = $stmt->bind_param(
+                "sssssssssi",
+                $data['fecha_inicio'],
+                $data['fecha_final'],
+                $data['servidor_site'],
+                $serie_id,
+                $estatus,
+                $data['afectacion'],
+                $serie_folio_hoja_servicio,
+                $id_estacion,
+                $quien,
+                $id_programacion
+            );
+
+            if (!$bindResult) {
+                throw new Exception("Error al vincular parámetros: " . $stmt->error);
+            }
+
+            if (!$stmt->execute()) {
+                throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+            }
+
+            $insertId = $stmt->insert_id;
+            if (!$insertId) {
+                throw new Exception("La inserción no generó un ID.");
+            }
+
+            // Confirmar transacción
+            $this->connection->commit();
+
+            error_log("Servicio creado exitosamente con ID: " . $insertId);
+            return $insertId;
+
+        } catch (Exception $e) {
+            $this->connection->rollback();
+            error_log("Error al crear servicio: " . $e->getMessage());
+            throw $e;
         }
-
-        // Log de los datos a insertar
-        error_log("Insertando servicio con: " . json_encode([
-            'fecha_inicio' => $data['fecha_inicio'],
-            'fecha_final' => $data['fecha_final'],
-            'servidor_site' => $data['servidor_site'],
-            'serie_id' => $serie_id,
-            'estatus' => $estatus,
-            'afectacion' => $data['afectacion'],
-            'serie_folio_hoja_servicio' => $serie_folio_hoja_servicio,
-            'id_estacion' => $id_estacion,
-            'quien' => $quien,
-            'id_programacion' => $id_programacion
-        ]));
-
-        $bindResult = $stmt->bind_param("sssssssssi",
-            $data['fecha_inicio'],
-            $data['fecha_final'],
-            $data['servidor_site'],
-            $serie_id,
-            $estatus,
-            $data['afectacion'],
-            $serie_folio_hoja_servicio,
-            $id_estacion,
-            $quien,
-            $id_programacion
-        );
-
-        if (!$bindResult) {
-            throw new Exception("Error al vincular parámetros: " . $stmt->error);
-        }
-
-        if (!$stmt->execute()) {
-            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
-        }
-
-        $insertId = $stmt->insert_id;
-        if (!$insertId) {
-            throw new Exception("La inserción no generó un ID.");
-        }
-
-        // Confirmar transacción
-        $this->connection->commit();
-
-        error_log("Servicio creado exitosamente con ID: " . $insertId);
-        return $insertId;
-
-    } catch (Exception $e) {
-        $this->connection->rollback();
-        error_log("Error al crear servicio: " . $e->getMessage());
-        throw $e;
     }
-}
 
 
     /**
@@ -123,7 +124,7 @@ public function crearServicioServidorRed($data)
     {
         $offset = ($pagina - 1) * $this->itemsPerPage;
 
-        $query = "SELECT * FROM servicio WHERE id_programacion = ? LIMIT ? OFFSET ?";
+        $query = "SELECT * FROM servicio WHERE id_programacion = ? ORDER BY fecha_inicio ASC LIMIT ? OFFSET ?";
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("iii", $id_programacion, $this->itemsPerPage, $offset);
         $stmt->execute();
@@ -138,7 +139,8 @@ public function crearServicioServidorRed($data)
         return $servicios;
     }
 
-     public function getServiciosByProgramacion2($id_programacion, )
+
+    public function getServiciosByProgramacion2($id_programacion, )
     {
         $query = "SELECT * FROM servicio WHERE id_programacion = ?";
         $stmt = $this->connection->prepare($query);

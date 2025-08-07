@@ -218,21 +218,17 @@ class ServiciosAccordion
             // Accordion item template for UENS
             const plantillaUENS = (id, nombre) => `
                 <div class="accordion-item mb-3">
-                    <h2 class="accordion-header" id="heading${id}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
-                            Servicio ${servicioCount}
-                        </button>
-                    </h2>
-                    <div id="collapse${id}" class="accordion-collapse collapse" aria-labelledby="heading${id}" data-bs-parent="#serviciosAccordion">
-                        <div class="accordion-body">
-                            <div class="row g-3 mb-2">
-                                ${generarCamposUENS(nombre, id)}
-                            </div>
-                            <div class="d-flex justify-content-end mt-3">
-                                <span class="btnQuitarServicio" title="Quitar servicio" style="cursor:pointer; color:#dc3545; font-size:1.2rem;">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </div>
+                    <div class="accordion-header" id="heading${id}">
+                        <span class="fw-bold" style="font-size:0.95rem; padding:0.15rem 0.3rem;">Servicio ${servicioCount}</span>
+                    </div>
+                    <div class="accordion-body" style="display:block;">
+                        <div class="row g-3 mb-2">
+                            ${generarCamposUENS(nombre, id)}
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            <span class="btnQuitarServicio" title="Quitar servicio" style="cursor:pointer; color:#dc3545; font-size:1.2rem;">
+                                <i class="fas fa-trash"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -241,21 +237,17 @@ class ServiciosAccordion
             // Accordion item template for default
             const plantillaDefault = (id, nombre) => `
                 <div class="accordion-item mb-3">
-                    <h2 class="accordion-header" id="heading${id}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${id}" aria-expanded="false">
-                            Servicio ${servicioCount}
-                        </button>
-                    </h2>
-                    <div id="collapse${id}" class="accordion-collapse collapse" aria-labelledby="heading${id}" data-bs-parent="#serviciosAccordion">
-                        <div class="accordion-body">
-                            <div class="row g-4 mb-2">
-                                ${generarCamposDefault(nombre, id)}
-                            </div>
-                            <div class="d-flex justify-content-end mt-3">
-                                <span class="btnQuitarServicio" title="Quitar servicio" style="cursor:pointer; color:#dc3545; font-size:1.2rem;">
-                                    <i class="fas fa-trash"></i>
-                                </span>
-                            </div>
+                    <div class="accordion-header" id="heading${id}">
+                        <span class="fw-bold" style="font-size:0.95rem; padding:0.15rem 0.3rem;">Servicio ${servicioCount}</span>
+                    </div>
+                    <div class="accordion-body" style="display:block;">
+                        <div class="row g-4 mb-2">
+                            ${generarCamposDefault(nombre, id)}
+                        </div>
+                        <div class="d-flex justify-content-end mt-3">
+                            <span class="btnQuitarServicio" title="Quitar servicio" style="cursor:pointer; color:#dc3545; font-size:1.2rem;">
+                                <i class="fas fa-trash"></i>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -416,29 +408,15 @@ class ServiciosAccordion
                 height: 38px;
                 display: flex;
                 align-items: center;
-            }
-            #serviciosAccordion .accordion-item .accordion-collapse {
-                display: none;
-            }
-            #serviciosAccordion .accordion-item .accordion-collapse.show {
-                display: block;
-                height: auto;
-                margin-top: 0.5rem;
-                margin-bottom: 0.5rem;
-            }
-            #serviciosAccordion .accordion-header {
                 background: #fff;
                 padding: 0.25rem 0.5rem;
                 border-bottom: 1px solid #e3e8ee;
             }
+            /* Eliminar estilos de collapse y botón de acordeón */
+            #serviciosAccordion .accordion-item .accordion-collapse,
+            #serviciosAccordion .accordion-item .accordion-collapse.show,
             #serviciosAccordion .accordion-button {
-                font-weight: 500;
-                color: #222;
-                background: transparent;
-                border: none;
-                box-shadow: none !important;
-                font-size: 0.95rem;
-                padding: 0.15rem 0.3rem;
+                display: none !important;
             }
             #serviciosAccordion .accordion-body {
                 background: #fff;

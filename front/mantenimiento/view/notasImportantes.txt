@@ -5,4 +5,8 @@ estatus = Alta
 
 
 alta = datetime
+ESTATUS = A
 
+
+
+RECORDAR QUITAR FECHA DE ALTA

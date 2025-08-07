@@ -18,3 +18,13 @@
 2025-08-06T18:52:44+02:00 - [HojaServicio] Iniciando transacción
 2025-08-06T18:52:44+02:00 - [HojaServicio] Ejecutando query
 2025-08-06T18:52:44+02:00 - [HojaServicio] EXITO insert id: 7
+2025-08-06T20:34:29+02:00 - INICIO create_hoja_servicio.php
+2025-08-06T20:34:29+02:00 - Incluyendo includes.php
+2025-08-06T20:34:29+02:00 - Incluyendo HojaServicio.php
+2025-08-06T20:34:29+02:00 - RAW POST: {"id_estacion":"14655","id_servicio":"59","id_material":1,"folio":"404","serie":"EM","fecha_inicio":"2025-08-06 12:30:00","fecha_fin":"2025-08-06 15:30:00","descripcion":"Se realizo mantenimient preventivo ... al siguiente equipo | Se le dio mantenimiento de software al equipo volumetrico, dando como seguimiento el checklist ortogrado. De manera que consta de verificar","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_6893a02343f49.png","firma_recibido":"firma_6893a0327998c.png","tipo_servicio":"instalacion"}
+2025-08-06T20:34:29+02:00 - Instanciando HojaServicio
+2025-08-06T20:34:29+02:00 - Llamando crearHojaServicio
+2025-08-06T20:34:29+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-06T20:34:29+02:00 - [HojaServicio] Iniciando transacción
+2025-08-06T20:34:29+02:00 - [HojaServicio] Ejecutando query
+2025-08-06T20:34:29+02:00 - [HojaServicio] EXITO insert id: 8

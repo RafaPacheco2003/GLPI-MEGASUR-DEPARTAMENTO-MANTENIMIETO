@@ -5,16 +5,19 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class HojaServicioExporter {
+class HojaServicioExporter
+{
     private $datosHoja;
     private $datosSucursal;
 
-    public function __construct(array $datosHoja, array $datosSucursal) {
+    public function __construct(array $datosHoja, array $datosSucursal)
+    {
         $this->datosHoja = $datosHoja;
         $this->datosSucursal = $datosSucursal;
     }
 
-    public function exportar() {
+    public function exportar()
+    {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->getSheetView()->setView(\PhpOffice\PhpSpreadsheet\Worksheet\SheetView::SHEETVIEW_PAGE_LAYOUT);
@@ -38,7 +41,7 @@ class HojaServicioExporter {
         $highestColumn = $sheet->getHighestColumn();
         $highestRow = $sheet->getHighestRow();
         $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
-            'font' => [ 'size' => 10 ],
+            'font' => ['size' => 10],
         ]);
         $sheet->getStyle('B1:R8')->applyFromArray([
             'borders' => [
@@ -66,6 +69,7 @@ class HojaServicioExporter {
         $sheet->mergeCells('M6:R6');
         $sheet->mergeCells('M7:R7');
         $sheet->mergeCells('M8:R8');
+
         $sheet->setCellValue('J7', '');
         $sheet->setCellValue('J8', '');
         $sheet->setCellValue('O1', 'FOLIO');
@@ -107,6 +111,7 @@ class HojaServicioExporter {
         $sheet->getStyle('J7')->getFont()->setSize(5)->setBold(true);
         $sheet->setCellValue('J8', 'Hora de servicio Ini: ');
         $sheet->getStyle('J8')->getFont()->setSize(5)->setBold(true);
+
         $sheet->getStyle('C4:D8')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
         $sheet->getStyle('C4:D8')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
         $sheet->getStyle('M5:M8')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -125,13 +130,86 @@ class HojaServicioExporter {
         $sheet->getStyle('C1:M1')->getFont()->setBold(true);
         $sheet->getStyle('C2:M2')->getFont()->setSize(10);
 
+
+
+
+
+
+
+
+
         // Datos de sucursal y servicio
         $sheet->setCellValue('B1', 'UEN');
         $sheet->setCellValue('B2', '42');
         $sheet->getStyle('B1')->getFont()->setSize(3);
         $sheet->getStyle('B2')->getFont()->setSize(6);
         $sheet->getStyle('B2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-        $fila = 10;
+
+
+
+
+
+        
+        // Descricpion del servicio
+
+
+        $sheet->mergeCells('B10:R10');
+        $sheet->setCellValue('B10', 'Datos de la estación de Servicio');
+        $sheet->getStyle('B10:R10')->getFont()->setSize(7);
+        $sheet->getStyle('B10:R10')->getFont()->setBold(true);
+        $sheet->getStyle('B10:R10')->getFont()->getColor()->setRGB('000000');
+        $sheet->getStyle('B10:R10')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('969696');
+
+        $sheet->setCellValue('C11', 'Instalacion');
+        $sheet->getStyle('C11')->getFont()->setSize(8);
+        $sheet->getStyle('C11')->getFont()->setBold(true);
+        $sheet->getStyle('C11')->getFont()->getColor()->setRGB('000000');
+        $sheet->mergeCells('F11:H11');
+        $sheet->setCellValue('F11', 'Mantenimiento');
+        $sheet->getStyle('F11')->getFont()->setSize(8);
+        $sheet->getStyle('F11')->getFont()->setBold(true);
+        $sheet->getStyle('F11')->getFont()->getColor()->setRGB('000000');
+        $sheet->mergeCells('K11:L11');
+        $sheet->setCellValue('K11', 'Retiro');
+        $sheet->getStyle('K11')->getFont()->setSize(8);
+        $sheet->getStyle('K11')->getFont()->setBold(true);
+        $sheet->getStyle('K11')->getFont()->getColor()->setRGB('000000');
+        $sheet->mergeCells('O11:P11');
+        $sheet->setCellValue('O11', 'Proyecto');
+        $sheet->getStyle('O11')->getFont()->setSize(8);
+        $sheet->getStyle('O11')->getFont()->setBold(true);
+        $sheet->getStyle('O11')->getFont()->getColor()->setRGB('000000');
+
+        $sheet->mergeCells('C12:Q12');
+        
+        $sheet->setCellValue('C12', 'Observaciones: ');
+        $sheet->getStyle('C12')->getFont()->setSize(8);
+        $sheet->getStyle('C12:Q12')->getFont()->setBold(true);
+        $sheet->getStyle('C12:Q12')->getFont()->getColor()->setRGB('000000');
+        // Borde solo abajo y negro en la celda fusionada C12:Q12
+        $sheet->getStyle('C12:Q12')->applyFromArray([
+            'borders' => [
+                'bottom' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        // Bordes exteriores para el rango B10:R26 (sin bordes internos)
+        $sheet->getStyle('B10:R26')->applyFromArray([
+            'borders' => [
+                'outline' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+
+
+
+        $fila = 27;
         foreach ([
             'IdEmpresa' => $s['IdEmpresa'] ?? '',
             'NombreEmpresa' => $s['NombreEmpresa'] ?? '',

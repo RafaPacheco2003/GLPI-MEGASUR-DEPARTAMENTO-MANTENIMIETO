@@ -160,10 +160,9 @@ $servicio = $servicioManager->getById($_GET['id']);
                             </div>
                             <label for="descripcionServicio" class="form-label">Descripción</label>
                             <div class="input-with-icon mb-3">
-                                <input type="text" class="form-control" id="descripcionServicio"
-                                    name="descripcionServicio"
-                                    placeholder="Se realizó mantenimiento preventivo y correctivo a la estación de servicio."
-                                    required>
+            <textarea class="form-control" id="descripcionServicio" name="descripcionServicio" rows="3" cols="80"
+                placeholder="Se realizó mantenimiento preventivo y correctivo a la estación de servicio."
+                required style="resize:none; min-height: 30px; max-width:100%;"></textarea>
                                 <i class="fas fa-align-left"></i>
                             </div>
                             <!-- Campo único: Artículo con búsqueda profesional (Select2 AJAX) -->
@@ -225,8 +224,8 @@ $servicio = $servicioManager->getById($_GET['id']);
                             <!-- Nuevo campo: Descripción 2 -->
                             <label for="descripcion2" class="form-label">Descripción 2</label>
                             <div class="input-with-icon mb-3">
-                                <textarea class="form-control" id="descripcion2" name="descripcion2" rows="3"
-                                    placeholder="Descripción adicional..." required style="resize:vertical;"></textarea>
+                                <textarea class="form-control" id="descripcion2" name="descripcion2" rows="10" cols="80"
+                                    placeholder="Descripción adicional..." required style="resize:none; min-height: 140px; max-width:100%;"></textarea>
                                 <i class="fas fa-align-left"></i>
                             </div>
                         </div>

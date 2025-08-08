@@ -180,22 +180,13 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
     <div class="mt-1">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
-        <?php if (isset($programacion['estado']) && $programacion['estado'] == 2): ?>
-            <?php
-                include_once __DIR__ . '/../config/ColorConfig.php';
-            ?>
-            <?php if (empty($hojaServicioData)): ?>
-                <button class="btn btn-outline-dark hover-white" id="btnLlenarFormulario" type="button" data-bs-toggle="modal"
-                    data-bs-target="#modalFormularioPuesto">
-                    Llenar Hoja de servicio
-                </button>
-            <?php else: ?>
-                <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
-                   href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
-                    <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
-                </a>
-            <?php endif; ?>
-        <?php endif; ?>
+        <button class="btn btn-outline-dark hover-white me-2" id="btnLlenarFormulario" type="button" data-bs-toggle="modal" data-bs-target="#modalFormularioPuesto">
+            Llenar Hoja de servicio
+        </button>
+        <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
+           href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
+            <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
+        </a>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>
 

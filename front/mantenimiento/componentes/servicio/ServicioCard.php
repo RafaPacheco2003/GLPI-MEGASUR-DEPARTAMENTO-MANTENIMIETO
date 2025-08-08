@@ -16,7 +16,7 @@ class ServicioCard {
      * @param string $url URL para el enlace de la card (opcional)
      * @return string HTML de la card
      */
-    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#', $id_estacion = null) {
+    public static function render($titulo, $afectacion, $estado, $progreso = 3, $url = '#', $id_estacion = null, $fecha_inicio = null, $fecha_final = null) {
         // Asegurarse de que $id_estacion esté definido
         // (ya está como parámetro, pero para evitar warnings en algunos entornos)
         if (!isset($id_estacion)) {
@@ -45,6 +45,8 @@ class ServicioCard {
         $afectacionSegura = htmlspecialchars($afectacion);
         $estadoSeguro = htmlspecialchars($estado);
         $urlSegura = htmlspecialchars($url);
+        $fechaInicioSegura = $fecha_inicio ? htmlspecialchars($fecha_inicio) : '';
+        $fechaFinalSegura = $fecha_final ? htmlspecialchars($fecha_final) : '';
 
         // Generar los puntos de progreso
         $puntosProgreso = '';
@@ -74,7 +76,13 @@ class ServicioCard {
             </style>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0 fw-bold">{$tituloSeguro}</h5>
+                    <div class="d-flex flex-column">
+                        <h5 class="card-title mb-0 fw-bold">{$tituloSeguro}</h5>
+                        <small class="text-muted" style="font-size:0.95em;">
+                            <span>Inicio: {$fechaInicioSegura}</span>
+                            <span style="margin-left:10px;">Final: {$fechaFinalSegura}</span>
+                        </small>
+                    </div>
                     <a href="{$urlSegura}" class="text-primary" style="font-size: 1rem;">
                         <i class="fas fa-chevron-right text-secondary"></i>
                     </a>

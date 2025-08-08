@@ -121,23 +121,33 @@ class ServicioManager
      * @return array Lista de servicios asociados a la programación
      */
     public function getServiciosByProgramacion($id_programacion, $pagina = 1)
-    {
-        $offset = ($pagina - 1) * $this->itemsPerPage;
+{
+    $offset = ($pagina - 1) * $this->itemsPerPage;
 
-        $query = "SELECT * FROM servicio WHERE id_programacion = ? ORDER BY fecha_inicio ASC LIMIT ? OFFSET ?";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("iii", $id_programacion, $this->itemsPerPage, $offset);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    // Ordena por fecha y hora (de menor a mayor)
+    // Si tienes un campo de hora separado, por ejemplo 'hora_inicio', usa ese campo. Si la hora está incluida en fecha_inicio como DATETIME, solo usa fecha_inicio.
+    // Suponiendo que tienes un campo 'hora_inicio' (tipo TIME o VARCHAR), ordena por fecha_inicio ASC, hora_inicio ASC
+    $query = "SELECT * FROM servicio 
+              WHERE id_programacion = ? 
+              ORDER BY fecha_inicio ASC 
+              LIMIT ? OFFSET ?";
 
-        $servicios = [];
-        while ($row = $result->fetch_assoc()) {
-            $servicios[] = $row;
-        }
+    $stmt = $this->connection->prepare($query);
+    $stmt->bind_param("iii", $id_programacion, $this->itemsPerPage, $offset);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        $stmt->close();
-        return $servicios;
+    $servicios = [];
+    while ($row = $result->fetch_assoc()) {
+        $servicios[] = $row;
     }
+
+    $stmt->close();
+    return $servicios;
+}
+
+
+
 
 
     public function getServiciosByProgramacion2($id_programacion, )

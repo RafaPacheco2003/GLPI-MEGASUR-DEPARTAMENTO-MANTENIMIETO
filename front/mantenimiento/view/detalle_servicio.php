@@ -3,11 +3,45 @@
     #btnExportarHojaServicio {
         transition: color 0.2s, border-color 0.2s;
     }
+
     #btnLlenarFormulario:hover,
     #btnExportarHojaServicio:hover {
-        color: #111827; /* texto más oscuro */
-        border-color: #111827; /* borde más oscuro */
+        color: #111827;
+        /* texto más oscuro */
+        border-color: #111827;
+        /* borde más oscuro */
         background-color: inherit !important;
+    }
+
+
+    #overlayDocs {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 1040;
+    }
+
+    #panelDocs {
+        position: fixed;
+        top: 0;
+        right: -350px;
+        width: 350px;
+        height: 100%;
+        background: white;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        transition: right 0.3s ease;
+        z-index: 1050;
+        overflow-y: auto;
+    }
+
+    #panelDocs.activo {
+        right: 0;
+    }
+
+    #overlayDocs.activo {
+        display: block;
     }
 </style>
 <?php
@@ -103,7 +137,15 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
         <div class="col-md-9 p-2 mt-2">
             <div class="card mb-3">
                 <div class="card-body">
-                    <h2>Información del servicio</h2>
+                    <div class="row mb-2 align-items-center">
+                        <div class="col-6">
+                            <h2 class="mb-0">Información del servicio</h2>
+                        </div>
+                        <div class="col-6 text-end">
+                            <span class="fw-semibold" id="btnDocumentos"
+                                style="font-size:0.7rem; cursor: pointer;">Documentos</span>
+                        </div>
+                    </div>
 
                     <!-- Primera fila: Programación -->
                     <div class="row mb-3 mt-4">
@@ -180,21 +222,73 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
     <div class="mt-1">
         <?php echo ButtonComponent::primary('Editar servicio', null, 'me-2'); ?>
-        <button class="btn btn-outline-dark hover-white me-2" id="btnLlenarFormulario" type="button" data-bs-toggle="modal" data-bs-target="#modalFormularioPuesto">
+        <button class="btn btn-outline-dark hover-white me-2" id="btnLlenarFormulario" type="button"
+            data-bs-toggle="modal" data-bs-target="#modalFormularioPuesto">
             Llenar Hoja de servicio
         </button>
         <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
-           href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
+            href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
             <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
         </a>
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>
 
-    
+
+
+
+    <!-- Overlay y Panel lateral -->
+    <div id="overlayDocs"></div>
+    <div id="panelDocs">
+        <h4 class="mb-3">Documentos</h4>
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                <i class="fas fa-file-excel fa-lg text-success me-3"></i>
+                <div>
+                    <div class="fw-semibold">Hoja de Servicio</div>
+                    <small class="text-muted">Archivo Excel (.xlsx)</small>
+                </div>
+                <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                <i class="fas fa-file-pdf fa-lg text-danger me-3"></i>
+                <div>
+                    <div class="fw-semibold">Manual de Usuario</div>
+                    <small class="text-muted">Archivo PDF</small>
+                </div>
+                <span class="badge bg-light text-danger ms-auto"><i class="fas fa-download"></i></span>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                <i class="fas fa-file-word fa-lg text-primary me-3"></i>
+                <div>
+                    <div class="fw-semibold">Reporte de Mantenimiento</div>
+                    <small class="text-muted">Archivo Word</small>
+                </div>
+                <span class="badge bg-light text-primary ms-auto"><i class="fas fa-download"></i></span>
+            </a>
+        </div>
+        <button id="cerrarDocs" class="btn btn-sm btn-outline-secondary mt-3">Cerrar</button>
+    </div>
+
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    
+
 
     <!-- FontAwesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
+    <!-- Script para abrir/cerrar -->
+    <script>
+        document.getElementById('btnDocumentos').addEventListener('click', () => {
+            document.getElementById('panelDocs').classList.add('activo');
+            document.getElementById('overlayDocs').classList.add('activo');
+        });
+        document.getElementById('cerrarDocs').addEventListener('click', cerrarPanel);
+        document.getElementById('overlayDocs').addEventListener('click', cerrarPanel);
+
+        function cerrarPanel() {
+            document.getElementById('panelDocs').classList.remove('activo');
+            document.getElementById('overlayDocs').classList.remove('activo');
+        }
+    </script>

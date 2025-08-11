@@ -142,8 +142,10 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
                             <h2 class="mb-0">Información del servicio</h2>
                         </div>
                         <div class="col-6 text-end">
-                            <span class="fw-semibold" id="btnDocumentos"
-                                style="font-size:0.7rem; cursor: pointer;">Documentos</span>
+                            <a id="btnDocumentos" href="#" class="text-decoration-none fw-semibold d-inline-flex align-items-center"
+                               style="font-size:1rem; color:#3b82f6; transition:color 0.2s;">
+                                <i class="fas fa-folder-open me-2"></i>
+                            </a>
                         </div>
                     </div>
 
@@ -244,29 +246,20 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
             <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
                 <i class="fas fa-file-excel fa-lg text-success me-3"></i>
                 <div>
-                    <div class="fw-semibold">Hoja de Servicio</div>
+                    <div class="fw-semibold">Hoja de Servicio 1</div>
                     <small class="text-muted">Archivo Excel (.xlsx)</small>
                 </div>
                 <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
             </a>
             <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                <i class="fas fa-file-pdf fa-lg text-danger me-3"></i>
+                <i class="fas fa-file-excel fa-lg text-success me-3"></i>
                 <div>
-                    <div class="fw-semibold">Manual de Usuario</div>
-                    <small class="text-muted">Archivo PDF</small>
+                    <div class="fw-semibold">Hoja de Servicio 2</div>
+                    <small class="text-muted">Archivo Excel (.xlsx)</small>
                 </div>
-                <span class="badge bg-light text-danger ms-auto"><i class="fas fa-download"></i></span>
-            </a>
-            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                <i class="fas fa-file-word fa-lg text-primary me-3"></i>
-                <div>
-                    <div class="fw-semibold">Reporte de Mantenimiento</div>
-                    <small class="text-muted">Archivo Word</small>
-                </div>
-                <span class="badge bg-light text-primary ms-auto"><i class="fas fa-download"></i></span>
+                <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
             </a>
         </div>
-        <button id="cerrarDocs" class="btn btn-sm btn-outline-secondary mt-3">Cerrar</button>
     </div>
 
     <!-- Select2 CSS -->

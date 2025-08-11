@@ -89,93 +89,121 @@ echo ProgramacionPagination::getStyles();
 
             <div class="d-flex gap-2">
                 <?php
+                    // Botón de filtro solo icono
+                    echo '
+            <style>
+                .btn-filtrar-icono {
+                    color: #6c757d !important; /* gris bootstrap */
+                    border: 2px solid #6c757d !important;
+                    background: #fff !important;
+                    font-weight: 500;
+                    height: 38px;
+                    width: 38px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0;
+                    transition: border-width 0.2s, font-weight 0.2s, color 0.2s;
+                }
+                .btn-filtrar-icono:hover, .btn-filtrar-icono:focus {
+                    color: #343a40 !important; /* gris oscuro */
+                    border-color: #343a40 !important;
+                    border-width: 3px !important;
+                    font-weight: 700;
+                    background: #fff !important;
+                }
+            </style>
+            <button type="button" class="btn btn-filtrar-icono" title="Filtrar">
+                <i class="fa-solid fa-filter"></i>
+            </button>';
+
                     // Botón Importar con color de ColorConfig
                     echo '
-<style>
-    .btn-importar-excel {
-        background: #fff !important;
-        color: #217346 !important;
-        border: 2px solid #217346 !important;
-        font-weight: 600;
-        transition: background 0.2s, color 0.2s;
-    }
-    .btn-importar-excel:hover, .btn-importar-excel:focus {
-        background: #fff !important;
-        color: #14532d !important;
-        border-color: #14532d !important;
-    }
-    .btn-importar-excel .excel-icon {
-        color: #217346;
-        margin-right: 6px;
-        font-size: 1.1em;
-        vertical-align: middle;
-        transition: color 0.2s;
-    }
-    .btn-importar-excel:hover .excel-icon, .btn-importar-excel:focus .excel-icon {
-        color: #14532d;
-    }
-    .modal-importar-excel .modal-content {
-        border-radius: 14px;
-        border: none;
-        box-shadow: 0 8px 32px rgba(60,60,60,0.12);
-        background: #fff;
-        padding: 0;
-    }
-    .modal-importar-excel .modal-header {
-        border-bottom: none;
-        padding: 2rem 2rem 0.5rem 2rem;
-        background: #f8fafc;
-        border-radius: 14px 14px 0 0;
-    }
-    .modal-importar-excel .modal-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: #217346;
-        letter-spacing: 0.5px;
-    }
-    .modal-importar-excel .modal-body {
-        padding: 1.5rem 2rem 2rem 2rem;
-        text-align: center;
-    }
-    .modal-importar-excel .form-control[type=file] {
-        border: 2px dashed #217346;
-        border-radius: 8px;
-        padding: 1.2rem;
-        background: #f8fafc;
-        color: #217346;
-        font-size: 1rem;
-        margin-bottom: 1.2rem;
-        transition: border-color 0.2s;
-    }
-    .modal-importar-excel .form-control[type=file]:focus {
-        border-color: #14532d;
-        outline: none;
-    }
-    .modal-importar-excel .btn-close {
-        background: none;
-        border: none;
-        font-size: 1.3rem;
-        color: #888;
-        opacity: 1;
-        transition: color 0.2s;
-    }
-    .modal-importar-excel .btn-close:hover {
-        color: #217346;
-    }
-    .modal-importar-excel .btn-upload {
-        background: #217346;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 0.6rem 1.5rem;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: background 0.2s;
-    }
-    .modal-importar-excel .btn-upload:hover {
-        background: #14532d;
-    }
-</style>';
+            <style>
+                .btn-importar-excel {
+                    background: #fff !important;
+                    color: #217346 !important;
+                    border: 2px solid #217346 !important;
+                    font-weight: 600;
+                    transition: background 0.2s, color 0.2s;
+                }
+                .btn-importar-excel:hover, .btn-importar-excel:focus {
+                    background: #fff !important;
+                    color: #14532d !important;
+                    border-color: #14532d !important;
+                }
+                .btn-importar-excel .excel-icon {
+                    color: #217346;
+                    margin-right: 6px;
+                    font-size: 1.1em;
+                    vertical-align: middle;
+                    transition: color 0.2s;
+                }
+                .btn-importar-excel:hover .excel-icon, .btn-importar-excel:focus .excel-icon {
+                    color: #14532d;
+                }
+                .modal-importar-excel .modal-content {
+                    border-radius: 14px;
+                    border: none;
+                    box-shadow: 0 8px 32px rgba(60,60,60,0.12);
+                    background: #fff;
+                    padding: 0;
+                }
+                .modal-importar-excel .modal-header {
+                    border-bottom: none;
+                    padding: 2rem 2rem 0.5rem 2rem;
+                    background: #f8fafc;
+                    border-radius: 14px 14px 0 0;
+                }
+                .modal-importar-excel .modal-title {
+                    font-size: 1.3rem;
+                    font-weight: 700;
+                    color: #217346;
+                    letter-spacing: 0.5px;
+                }
+                .modal-importar-excel .modal-body {
+                    padding: 1.5rem 2rem 2rem 2rem;
+                    text-align: center;
+                }
+                .modal-importar-excel .form-control[type=file] {
+                    border: 2px dashed #217346;
+                    border-radius: 8px;
+                    padding: 1.2rem;
+                    background: #f8fafc;
+                    color: #217346;
+                    font-size: 1rem;
+                    margin-bottom: 1.2rem;
+                    transition: border-color 0.2s;
+                }
+                .modal-importar-excel .form-control[type=file]:focus {
+                    border-color: #14532d;
+                    outline: none;
+                }
+                .modal-importar-excel .btn-close {
+                    background: none;
+                    border: none;
+                    font-size: 1.3rem;
+                    color: #888;
+                    opacity: 1;
+                    transition: color 0.2s;
+                }
+                .modal-importar-excel .btn-close:hover {
+                    color: #217346;
+                }
+                .modal-importar-excel .btn-upload {
+                    background: #217346;
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 0.6rem 1.5rem;
+                    font-weight: 600;
+                    font-size: 1rem;
+                    transition: background 0.2s;
+                }
+                .modal-importar-excel .btn-upload:hover {
+                    background: #14532d;
+                }
+            </style>';
                     echo '<button type="button" class="btn btn-importar-excel" data-bs-toggle="modal" data-bs-target="#modalImportarExcel">'
                         . '<i class="fa-solid fa-file-excel excel-icon"></i>Importar</button>';
                 ?>

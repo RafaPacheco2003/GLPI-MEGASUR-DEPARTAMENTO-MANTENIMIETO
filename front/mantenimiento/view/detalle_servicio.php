@@ -228,10 +228,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
             data-bs-toggle="modal" data-bs-target="#modalFormularioPuesto">
             Llenar Hoja de servicio
         </button>
-        <a class="btn btn-outline-dark hover-white" id="btnExportarHojaServicio"
-            href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($_GET['id']); ?>">
-            <i class="fas fa-file-excel me-2"></i>Exportar Excel hoja
-        </a>
+       
         <?php include __DIR__ . '/../componentes/detalle_servicio/ModalHojaServicioComponent.php'; ?>
     </div>
 
@@ -241,6 +238,9 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
     <!-- Overlay y Panel lateral -->
     <div id="overlayDocs"></div>
     <div id="panelDocs">
+        <button id="cerrarDocs" type="button" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;z-index:1060;" aria-label="Cerrar panel">
+            <i class="fas fa-times"></i>
+        </button>
         <h4 class="mb-3">Documentos</h4>
         <div class="list-group">
             <?php if (!empty($hojasServicioData)): ?>
@@ -278,7 +278,12 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
             document.getElementById('overlayDocs').classList.add('activo');
         });
         document.getElementById('cerrarDocs').addEventListener('click', cerrarPanel);
-        document.getElementById('overlayDocs').addEventListener('click', cerrarPanel);
+        document.getElementById('overlayDocs').addEventListener('click', function(e) {
+            // Solo cerrar si el click es directamente en el overlay, no en el panel
+            if (e.target === this) {
+                cerrarPanel();
+            }
+        });
 
         function cerrarPanel() {
             document.getElementById('panelDocs').classList.remove('activo');

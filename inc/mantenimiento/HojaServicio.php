@@ -76,15 +76,31 @@ class HojaServicio {
         }
     }
 
+
     /**
-     * Busca una hoja de servicio por el id_servicio
+     * Busca todas las hojas de servicio por el id_servicio (FK)
+     * @param int $id_servicio
+     * @return array
+     */
+    public function getById_servicio($id_servicio){
+        $query = "SELECT * FROM hoja_servicio WHERE id_servicio = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("i", $id_servicio);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if (!$result) {
+            throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
+        }
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Busca una hoja de servicio por su id único (PK)
      * @param int $id
      * @return array|null
      */
-
-    public function getById_servicio($id){
-
-        $query = "SELECT * FROM hoja_servicio WHERE id_servicio = ?";
+    public function getById($id){
+        $query = "SELECT * FROM hoja_servicio WHERE id = ?";
         $stmt = $this->db->prepare($query);
         $stmt->bind_param("i", $id);
         $stmt->execute();
@@ -93,6 +109,8 @@ class HojaServicio {
             throw new Exception("Error al ejecutar la consulta: " . $stmt->error);
         }
         return $result->fetch_assoc();
-
     }
+
+
+    
 }

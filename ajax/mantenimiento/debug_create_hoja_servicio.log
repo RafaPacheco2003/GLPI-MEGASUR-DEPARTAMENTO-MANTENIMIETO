@@ -28,3 +28,23 @@
 2025-08-06T20:34:29+02:00 - [HojaServicio] Iniciando transacción
 2025-08-06T20:34:29+02:00 - [HojaServicio] Ejecutando query
 2025-08-06T20:34:29+02:00 - [HojaServicio] EXITO insert id: 8
+2025-08-12T17:21:55+02:00 - INICIO create_hoja_servicio.php
+2025-08-12T17:21:55+02:00 - Incluyendo includes.php
+2025-08-12T17:21:55+02:00 - Incluyendo HojaServicio.php
+2025-08-12T17:21:55+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":1,"folio":"12","serie":"21JH2","fecha_inicio":"2025-08-12 10:20:00","fecha_fin":"2025-08-12 11:20:00","descripcion":"lksdjsdjlsdjlsdjk | kjjksdjkjkds","id_entregado":"glpi","id_recibido":2,"firma_entregado":"firma_689b5bfa2655c.png","firma_recibido":"firma_689b5bff98115.png","tipo_servicio":"instalacion"}
+2025-08-12T17:21:55+02:00 - Instanciando HojaServicio
+2025-08-12T17:21:55+02:00 - Llamando crearHojaServicio
+2025-08-12T17:21:55+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-12T17:21:55+02:00 - [HojaServicio] Iniciando transacción
+2025-08-12T17:21:55+02:00 - [HojaServicio] Ejecutando query
+2025-08-12T17:21:55+02:00 - [HojaServicio] EXITO insert id: 9
+2025-08-12T17:34:06+02:00 - INICIO create_hoja_servicio.php
+2025-08-12T17:34:06+02:00 - Incluyendo includes.php
+2025-08-12T17:34:06+02:00 - Incluyendo HojaServicio.php
+2025-08-12T17:34:06+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":1,"folio":"404","serie":"404L","fecha_inicio":"2025-08-12 01:33:00","fecha_fin":"2025-08-12 02:33:00","descripcion":"WDSKJDJSD | DSNJKSNKJDSKJKJSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_689b5ee68bb68.png","firma_recibido":"firma_689b5eec584f9.png","tipo_servicio":"mantenimiento"}
+2025-08-12T17:34:06+02:00 - Instanciando HojaServicio
+2025-08-12T17:34:06+02:00 - Llamando crearHojaServicio
+2025-08-12T17:34:06+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-12T17:34:06+02:00 - [HojaServicio] Iniciando transacción
+2025-08-12T17:34:06+02:00 - [HojaServicio] Ejecutando query
+2025-08-12T17:34:06+02:00 - [HojaServicio] EXITO insert id: 10

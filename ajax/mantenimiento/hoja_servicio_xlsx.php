@@ -15,19 +15,15 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 require_once __DIR__ . '/../../inc/mantenimiento/bootstrap.php';
 require_once __DIR__ . '/../../inc/mantenimiento/HojaServicio.php';
 
-// Obtener el id de servicio desde la URL
+// Obtener el id de hoja de servicio desde la URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    die('ID de servicio no válido.');
+    die('ID de hoja de servicio no válido.');
 }
-$idServicio = (int)$_GET['id'];
+$idHoja = (int)$_GET['id'];
 $hojaServicio = new HojaServicio();
-$datosHoja = $hojaServicio->getById_servicio($idServicio);
-if (!is_array($datosHoja) || count($datosHoja) === 0) {
+$datosHoja = $hojaServicio->getById($idHoja);
+if (!$datosHoja || !is_array($datosHoja)) {
     die('No se pudo obtener la información de la hoja de servicio.');
-}
-// Normalizar datosHoja a un solo registro asociativo
-if (array_keys($datosHoja) === range(0, count($datosHoja) - 1)) {
-    $datosHoja = $datosHoja[0];
 }
 // Obtener datos de sucursal usando el servicio
 $idEstacion = isset($datosHoja['id_estacion']) ? $datosHoja['id_estacion'] : null;

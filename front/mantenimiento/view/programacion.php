@@ -47,13 +47,21 @@ if (!empty($searchTerm)) {
 // Crear instancia del manager
 $programacionManager = new ProgramacionManager();
 
-// Procesar búsqueda si existe
+// Procesar búsqueda y filtrado por año si existe
 $programaciones = [];
 $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+$anioFiltro = isset($_GET['anio']) ? trim($_GET['anio']) : '';
 
 if (!empty($searchTerm)) {
     // Si hay término de búsqueda, usar la función de búsqueda
     $programaciones = $programacionManager->searchProgramacionesByNombre($searchTerm);
+    // Si además hay filtro de año, filtrar por año de fecha_emision
+    if (!empty($anioFiltro)) {
+        $programaciones = array_filter($programaciones, function($prog) use ($anioFiltro) {
+            return !empty($prog['fecha_emision']) && date('Y', strtotime($prog['fecha_emision'])) == $anioFiltro;
+        });
+        $programaciones = array_values($programaciones);
+    }
     $result = [
         'items' => $programaciones,
         'currentPage' => 1,
@@ -64,6 +72,17 @@ if (!empty($searchTerm)) {
     // Si no hay búsqueda, obtener con paginación normal
     $result = $programacionManager->getAllPaginated($currentPage);
     $programaciones = $result['items'];
+    // Si hay filtro de año, filtrar por año de fecha_emision
+    if (!empty($anioFiltro)) {
+        $programaciones = array_filter($programaciones, function($prog) use ($anioFiltro) {
+            return !empty($prog['fecha_emision']) && date('Y', strtotime($prog['fecha_emision'])) == $anioFiltro;
+        });
+        $programaciones = array_values($programaciones);
+        $result['items'] = $programaciones;
+        $result['totalItems'] = count($programaciones);
+        $result['totalPages'] = 1;
+        $result['currentPage'] = 1;
+    }
 }
 
 $totalPages = $result['totalPages'];
@@ -89,7 +108,7 @@ echo ProgramacionPagination::getStyles();
 
             <div class="d-flex gap-2">
                 <?php
-                    // Botón de filtro solo icono
+                    // Botón de filtro con menú de opciones
                     echo '
             <style>
                 .btn-filtrar-icono {
@@ -112,13 +131,58 @@ echo ProgramacionPagination::getStyles();
                     font-weight: 700;
                     background: #fff !important;
                 }
-            </style>
-            <button type="button" class="btn btn-filtrar-icono" title="Filtrar">
-                <i class="fa-solid fa-filter"></i>
-            </button>';
-
-                    // Botón Importar con color de ColorConfig
-                    echo '
+                .filtro-dropdown {
+                    display: none;
+                    position: absolute;
+                    top: 45px;
+                    right: 0;
+                    background: #fff;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+                    min-width: 200px;
+                    z-index: 1000;
+                }
+            </style>';
+                    ?>
+                    <div style="position: relative; display: inline-block;">
+                        <button type="button" class="btn btn-filtrar-icono" title="Filtrar" id="btnFiltrar">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                        <div class="filtro-dropdown" id="filtroDropdown">
+                            <div style="padding:1rem;">
+                                <strong>Opciones de filtrado</strong>
+                                <hr style="margin:0.5rem 0;">
+                                <div class="mb-2">
+                                    <label for="filtroAnio" style="font-size:0.95em;">Año:</label>
+                                    <select id="filtroAnio" class="form-control form-control-sm" name="anio" onchange="aplicarFiltro()">
+                                        <option value="">Todos</option>
+                                        <?php
+                                        // Mostrar todos los años únicos de fecha_emision de todas las programaciones
+                                        $anios = [];
+                                        $todasProgramaciones = $programacionManager->getAll();
+                                        if (!empty($todasProgramaciones)) {
+                                            foreach ($todasProgramaciones as $prog) {
+                                                if (!empty($prog['fecha_emision'])) {
+                                                    $anio = date('Y', strtotime($prog['fecha_emision']));
+                                                    if (!in_array($anio, $anios)) {
+                                                        $anios[] = $anio;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        rsort($anios);
+                                        foreach ($anios as $anio) {
+                                            $selected = ($anio == $anioFiltro) ? ' selected' : '';
+                                            echo '<option value="' . $anio . '"' . $selected . '>' . $anio . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <!-- Botón Aplicar eliminado, ya no es necesario -->
+                            </div>
+                        </div>
+                    </div>
             <style>
                 .btn-importar-excel {
                     background: #fff !important;
@@ -203,12 +267,14 @@ echo ProgramacionPagination::getStyles();
                 .modal-importar-excel .btn-upload:hover {
                     background: #14532d;
                 }
-            </style>';
-                    echo '<button type="button" class="btn btn-importar-excel" data-bs-toggle="modal" data-bs-target="#modalImportarExcel">'
-                        . '<i class="fa-solid fa-file-excel excel-icon"></i>Importar</button>';
-                ?>
-                <?php echo ButtonComponent::custom('Nueva programacion', 'fas fa-plus', '', 'openNewProgramacionModal()'); ?>
-            </div>
+            </style>
+            <button type="button" class="btn btn-importar-excel" data-bs-toggle="modal" data-bs-target="#modalImportarExcel">
+                <i class="fa-solid fa-file-excel excel-icon"></i>Importar
+            </button>
+        <?php
+        ?>
+        <?php echo ButtonComponent::custom('Nueva programacion', 'fas fa-plus', '', 'openNewProgramacionModal()'); ?>
+    </div>
 <!-- Modal Importar Excel (solo Bootstrap) -->
 <div class="modal fade" id="modalImportarExcel" tabindex="-1" aria-labelledby="modalImportarExcelLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -288,6 +354,33 @@ echo ProgramacionModal::render($programacionManager);
 ?>
 
 <script>
-    console.log('ID usuario logueado: <?php echo $id_usuario; ?>, Nombre: <?php echo $nombre_usuario; ?>');
+// Mostrar/ocultar menú de filtrado
+document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('btnFiltrar');
+    var dropdown = document.getElementById('filtroDropdown');
+    if (btn && dropdown) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && e.target !== btn) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+});
+function aplicarFiltro() {
+    var anio = document.getElementById('filtroAnio').value;
+    var params = new URLSearchParams(window.location.search);
+    if (anio) {
+        params.set('anio', anio);
+    } else {
+        params.delete('anio');
+    }
+    window.location.search = params.toString();
+    document.getElementById('filtroDropdown').style.display = 'none';
+}
+console.log('ID usuario logueado: <?php echo $id_usuario; ?>, Nombre: <?php echo $nombre_usuario; ?>');
 </script>
 <?php Html::footer(); ?>

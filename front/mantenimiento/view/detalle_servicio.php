@@ -62,9 +62,9 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     Html::displayErrorAndDie(__('Invalid ID'));
 }
 
-//Obtener hoja de servicio
+//Obtener hojas de servicio (pueden ser varias)
 $hojaServicio = new HojaServicio();
-$hojaServicioData = $hojaServicio->getById_servicio($_GET['id']);
+$hojasServicioData = $hojaServicio->getById_servicio($_GET['id']);
 
 
 
@@ -243,22 +243,22 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
     <div id="panelDocs">
         <h4 class="mb-3">Documentos</h4>
         <div class="list-group">
-            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                <i class="fas fa-file-excel fa-lg text-success me-3"></i>
-                <div>
-                    <div class="fw-semibold">Hoja de Servicio 1</div>
-                    <small class="text-muted">Archivo Excel (.xlsx)</small>
-                </div>
-                <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
-            </a>
-            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                <i class="fas fa-file-excel fa-lg text-success me-3"></i>
-                <div>
-                    <div class="fw-semibold">Hoja de Servicio 2</div>
-                    <small class="text-muted">Archivo Excel (.xlsx)</small>
-                </div>
-                <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
-            </a>
+            <?php if (!empty($hojasServicioData)): ?>
+                <?php foreach ($hojasServicioData as $hoja): ?>
+                    <a href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($hoja['id']); ?>" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center">
+                        <i class="fas fa-file-excel fa-lg text-success me-3"></i>
+                        <div>
+                            <div class="fw-semibold">
+                                Hoja de Servicio - <?php echo htmlspecialchars($hoja['tipo_servicio']); ?>
+                            </div>
+                            <small class="text-muted">Archivo Excel (.xlsx)</small>
+                        </div>
+                        <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="list-group-item">No hay hoja de servicio generada.</div>
+            <?php endif; ?>
         </div>
     </div>
 

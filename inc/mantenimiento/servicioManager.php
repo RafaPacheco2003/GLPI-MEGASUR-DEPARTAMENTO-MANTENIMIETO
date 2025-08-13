@@ -1,8 +1,7 @@
-
 <?php
 
 
-require_once 'MantenimientoConnection.php';
+require_once __DIR__ . '/MantenimientoConnection.php';
 
 class ServicioManager
 {
@@ -112,6 +111,23 @@ class ServicioManager
             error_log("Error al crear servicio: " . $e->getMessage());
             throw $e;
         }
+    }
+
+        /**
+     * Obtener el primer servicio (más antiguo) de una programación por fecha_inicio
+     * @param int $id_programacion
+     * @return array|null
+     */
+    public function getPrimerServicioByProgramacion($id_programacion)
+    {
+        $query = "SELECT * FROM servicio WHERE id_programacion = ? ORDER BY fecha_inicio ASC LIMIT 1";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bind_param("i", $id_programacion);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $servicio = $result->fetch_assoc();
+        $stmt->close();
+        return $servicio ? $servicio : null;
     }
 
 

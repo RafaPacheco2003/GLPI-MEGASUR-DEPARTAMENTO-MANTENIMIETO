@@ -196,12 +196,14 @@ Html::header("Servicio", $_SERVER['PHP_SELF']);
 <?php
 // Renderizar estilos del modal
 echo NuevoServicioModal::getStyles();
-
-// Renderizar el modal
 echo NuevoServicioModal::render();
-
-// Renderizar el script del modal
 echo NuevoServicioModal::getScript();
+
+// Renderizar el modal UENS
+include '../componentes/servicio/ModalsNuevoServicio/NuevoServicioUENS.php';
+echo NuevoServicioUENS::getStyles();
+echo NuevoServicioUENS::render();
+echo NuevoServicioUENS::getScript();
 
 // Renderizar el modal de edición de programación
 echo EditarProgramacionModal::getStyles();
@@ -360,19 +362,28 @@ include '../componentes/programacion/RevisionModal.php';
         const btnNuevoServicio = document.querySelector('button:has(i.fas.fa-plus)');
         if (btnNuevoServicio) {
             btnNuevoServicio.addEventListener('click', function () {
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                const fechaInput = document.getElementById('fecha_servicio');
-                const horaInicioInput = document.getElementById('hora_inicio');
-                const horaFinalInput = document.getElementById('hora_final');
+                const nombreProgramacion = <?php echo json_encode($nombreProgramacion); ?>;
+                if (nombreProgramacion === 'PROGRAMA DE MANTENIMIENTO PREVENTIVO DE EQUIPOS DE CÓMPUTO Y RED (UENS)') {
+                    let modalUENS = document.getElementById('modalNuevoServicioUENS');
+                    if (modalUENS) {
+                        const modalInstance = new bootstrap.Modal(modalUENS);
+                        modalInstance.show();
+                    }
+                } else {
+                    const now = new Date();
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                    const fechaInput = document.getElementById('fecha_servicio');
+                    const horaInicioInput = document.getElementById('hora_inicio');
+                    const horaFinalInput = document.getElementById('hora_final');
 
-                if (fechaInput) fechaInput.value = now.toISOString().split('T')[0];
-                const horaActual = now.toTimeString().slice(0, 5);
-                if (horaInicioInput) horaInicioInput.value = horaActual;
-                const horaFinal = new Date(now.getTime() + 60 * 60000).toTimeString().slice(0, 5);
-                if (horaFinalInput) horaFinalInput.value = horaFinal;
+                    if (fechaInput) fechaInput.value = now.toISOString().split('T')[0];
+                    const horaActual = now.toTimeString().slice(0, 5);
+                    if (horaInicioInput) horaInicioInput.value = horaActual;
+                    const horaFinal = new Date(now.getTime() + 60 * 60000).toTimeString().slice(0, 5);
+                    if (horaFinalInput) horaFinalInput.value = horaFinal;
 
-                if (nuevoServicioModal) nuevoServicioModal.show();
+                    if (nuevoServicioModal) nuevoServicioModal.show();
+                }
             });
         }
 

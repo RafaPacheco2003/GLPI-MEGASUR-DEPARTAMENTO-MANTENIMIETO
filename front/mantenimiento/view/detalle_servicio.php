@@ -236,57 +236,7 @@ Html::header("detalle-servicio", $_SERVER['PHP_SELF']);
 
 
     <!-- Overlay y Panel lateral -->
-    <div id="overlayDocs"></div>
-    <div id="panelDocs">
-        <button id="cerrarDocs" type="button" style="position:absolute;top:10px;right:10px;background:none;border:none;font-size:1.5rem;z-index:1060;" aria-label="Cerrar panel">
-            <i class="fas fa-times"></i>
-        </button>
-        <h4 class="mb-3">Documentos</h4>
-        <div class="list-group">
-            <?php if (!empty($hojasServicioData)): ?>
-                <?php foreach ($hojasServicioData as $hoja): ?>
-                    <a href="/glpi/ajax/mantenimiento/hoja_servicio_xlsx.php?id=<?php echo urlencode($hoja['id']); ?>" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center">
-                        <i class="fas fa-file-excel fa-lg text-success me-3"></i>
-                        <div>
-                            <div class="fw-semibold">
-                                Hoja de Servicio - <?php echo htmlspecialchars($hoja['tipo_servicio']); ?>
-                            </div>
-                            <small class="text-muted">Archivo Excel (.xlsx)</small>
-                        </div>
-                        <span class="badge bg-light text-success ms-auto"><i class="fas fa-download"></i></span>
-                    </a>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="list-group-item">No hay hoja de servicio generada.</div>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-
-
-    <!-- FontAwesome CDN for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-
-    <!-- Script para abrir/cerrar -->
-    <script>
-        document.getElementById('btnDocumentos').addEventListener('click', () => {
-            document.getElementById('panelDocs').classList.add('activo');
-            document.getElementById('overlayDocs').classList.add('activo');
-        });
-        document.getElementById('cerrarDocs').addEventListener('click', cerrarPanel);
-        document.getElementById('overlayDocs').addEventListener('click', function(e) {
-            // Solo cerrar si el click es directamente en el overlay, no en el panel
-            if (e.target === this) {
-                cerrarPanel();
-            }
-        });
-
-        function cerrarPanel() {
-            document.getElementById('panelDocs').classList.remove('activo');
-            document.getElementById('overlayDocs').classList.remove('activo');
-        }
-    </script>
+    <?php
+        require_once __DIR__ . '/../componentes/detalle_servicio/PanelDocumentosComponent.php';
+        renderPanelDocumentos($hojasServicioData);
+    ?>

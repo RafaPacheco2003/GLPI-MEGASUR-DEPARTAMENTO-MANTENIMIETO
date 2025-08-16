@@ -48,3 +48,103 @@
 2025-08-12T17:34:06+02:00 - [HojaServicio] Iniciando transacción
 2025-08-12T17:34:06+02:00 - [HojaServicio] Ejecutando query
 2025-08-12T17:34:06+02:00 - [HojaServicio] EXITO insert id: 10
+2025-08-16T18:16:17+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:16:17+02:00 - Incluyendo includes.php
+2025-08-16T18:16:18+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:16:18+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","serial_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:15:00","fecha_fin":"2025-08-16 12:15:00","descripcion":"sdssdds | sdksdjksdjksdjksdjkkjds","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0aec4089a9.png","firma_recibido":"firma_68a0aec73e9cc.png","tipo_servicio":"instalacion"}
+2025-08-16T18:16:18+02:00 - FALTA CAMPO: id_material
+2025-08-16T18:16:18+02:00 - ERROR: El campo id_material es requerido
+2025-08-16T18:16:24+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:16:24+02:00 - Incluyendo includes.php
+2025-08-16T18:16:25+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:16:25+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","serial_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:15:00","fecha_fin":"2025-08-16 12:15:00","descripcion":"sdssdds | sdksdjksdjksdjksdjkkjds","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0aec4089a9.png","firma_recibido":"firma_68a0aec73e9cc.png","tipo_servicio":"instalacion"}
+2025-08-16T18:16:25+02:00 - FALTA CAMPO: id_material
+2025-08-16T18:16:25+02:00 - ERROR: El campo id_material es requerido
+2025-08-16T18:29:33+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:29:33+02:00 - Incluyendo includes.php
+2025-08-16T18:29:34+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:29:34+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"O32OI","fecha_inicio":"2025-08-16 11:29:00","fecha_fin":"2025-08-16 12:29:00","descripcion":"qwjasdjkkjd | ojsdjksjkd","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b1e5adf73.png","firma_recibido":"firma_68a0b1e87b912.png","tipo_servicio":"instalacion"}
+2025-08-16T18:29:34+02:00 - Instanciando HojaServicio
+2025-08-16T18:29:34+02:00 - Llamando crearHojaServicio
+2025-08-16T18:29:34+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:29:34+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:29:34+02:00 - [HojaServicio] Ejecutando query
+2025-08-16T18:29:34+02:00 - [HojaServicio] EXITO insert id: 12
+2025-08-16T18:34:30+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:34:30+02:00 - Incluyendo includes.php
+2025-08-16T18:34:31+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:34:31+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 10:33:00","fecha_fin":"2025-08-16 11:33:00","descripcion":"KJSDJKSDKJ | DKJJSDKKJSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b30cebaf4.png","firma_recibido":"firma_68a0b314b9810.png","tipo_servicio":"instalacion"}
+2025-08-16T18:34:31+02:00 - Instanciando HojaServicio
+2025-08-16T18:34:31+02:00 - Llamando crearHojaServicio
+2025-08-16T18:34:31+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:34:31+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:34:31+02:00 - [HojaServicio] Ejecutando query
+2025-08-16T18:34:31+02:00 - [HojaServicio] EXITO insert id: 13
+2025-08-16T18:36:24+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:36:24+02:00 - Incluyendo includes.php
+2025-08-16T18:36:24+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:36:24+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:35:00","fecha_fin":"2025-08-16 12:35:00","descripcion":"LJSJKSKJJKD | KJSDJKSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b37e7efac.png","firma_recibido":"firma_68a0b3812a0be.png","tipo_servicio":"proyecto"}
+2025-08-16T18:36:24+02:00 - Instanciando HojaServicio
+2025-08-16T18:36:24+02:00 - Llamando crearHojaServicio
+2025-08-16T18:36:24+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:36:24+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:36:28+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:36:28+02:00 - Incluyendo includes.php
+2025-08-16T18:36:28+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:36:28+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:35:00","fecha_fin":"2025-08-16 12:35:00","descripcion":"LJSJKSKJJKD | KJSDJKSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b37e7efac.png","firma_recibido":"firma_68a0b3812a0be.png","tipo_servicio":"proyecto"}
+2025-08-16T18:36:28+02:00 - Instanciando HojaServicio
+2025-08-16T18:36:28+02:00 - Llamando crearHojaServicio
+2025-08-16T18:36:28+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:36:28+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:37:18+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:37:18+02:00 - Incluyendo includes.php
+2025-08-16T18:37:19+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:37:19+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"EWJHE","serie":"12","fecha_inicio":"2025-08-16 00:36:00","fecha_fin":"2025-08-16 01:36:00","descripcion":"1WQQW | DWWWWWWWDWWWWWWWWW","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b3b886671.png","firma_recibido":"firma_68a0b3bdb1627.png","tipo_servicio":"retiro"}
+2025-08-16T18:37:19+02:00 - Instanciando HojaServicio
+2025-08-16T18:37:19+02:00 - Llamando crearHojaServicio
+2025-08-16T18:37:19+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:37:19+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:37:28+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:37:28+02:00 - Incluyendo includes.php
+2025-08-16T18:37:29+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:37:29+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"EWJHE","serie":"12","fecha_inicio":"2025-08-16 00:36:00","fecha_fin":"2025-08-16 01:36:00","descripcion":"1WQQW | DWWWWWWWDWWWWWWWWW","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b3b886671.png","firma_recibido":"firma_68a0b3bdb1627.png","tipo_servicio":"retiro"}
+2025-08-16T18:37:29+02:00 - Instanciando HojaServicio
+2025-08-16T18:37:29+02:00 - Llamando crearHojaServicio
+2025-08-16T18:37:29+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:37:29+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:37:29+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:37:29+02:00 - Incluyendo includes.php
+2025-08-16T18:37:30+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:37:30+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"EWJHE","serie":"12","fecha_inicio":"2025-08-16 00:36:00","fecha_fin":"2025-08-16 01:36:00","descripcion":"1WQQW | DWWWWWWWDWWWWWWWWW","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b3b886671.png","firma_recibido":"firma_68a0b3bdb1627.png","tipo_servicio":"retiro"}
+2025-08-16T18:37:30+02:00 - Instanciando HojaServicio
+2025-08-16T18:37:30+02:00 - Llamando crearHojaServicio
+2025-08-16T18:37:30+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:37:30+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:37:30+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:37:30+02:00 - Incluyendo includes.php
+2025-08-16T18:37:30+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:37:30+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"EWJHE","serie":"12","fecha_inicio":"2025-08-16 00:36:00","fecha_fin":"2025-08-16 01:36:00","descripcion":"1WQQW | DWWWWWWWDWWWWWWWWW","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b3b886671.png","firma_recibido":"firma_68a0b3bdb1627.png","tipo_servicio":"retiro"}
+2025-08-16T18:37:30+02:00 - Instanciando HojaServicio
+2025-08-16T18:37:30+02:00 - Llamando crearHojaServicio
+2025-08-16T18:37:30+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:37:30+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:39:19+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:39:19+02:00 - Incluyendo includes.php
+2025-08-16T18:39:20+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:39:20+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:38:00","fecha_fin":"2025-08-16 12:38:00","descripcion":"DSLSDLKLDS | KJSDJKSDKJ","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b430ad6d3.png","firma_recibido":"firma_68a0b4335b010.png","tipo_servicio":"proyecto"}
+2025-08-16T18:39:20+02:00 - Instanciando HojaServicio
+2025-08-16T18:39:20+02:00 - Llamando crearHojaServicio
+2025-08-16T18:39:20+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:39:20+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:39:20+02:00 - [HojaServicio] Ejecutando query
+2025-08-16T18:39:20+02:00 - [HojaServicio] EXITO insert id: 14
+2025-08-16T18:43:17+02:00 - INICIO create_hoja_servicio.php
+2025-08-16T18:43:17+02:00 - Incluyendo includes.php
+2025-08-16T18:43:18+02:00 - Incluyendo HojaServicio.php
+2025-08-16T18:43:18+02:00 - RAW POST: {"id_estacion":"6354","id_servicio":"64","id_material":"9SRLVN3","folio":"689","serie":"EM","fecha_inicio":"2025-08-16 11:42:00","fecha_fin":"2025-08-16 12:42:00","descripcion":"SDJJSHDJSD | SDJKHSDJHSD","id_entregado":"glpi","id_recibido":1,"firma_entregado":"firma_68a0b51fd659b.png","firma_recibido":"firma_68a0b52302441.png","tipo_servicio":"proyecto"}
+2025-08-16T18:43:18+02:00 - Instanciando HojaServicio
+2025-08-16T18:43:18+02:00 - Llamando crearHojaServicio
+2025-08-16T18:43:18+02:00 - [HojaServicio] INICIO crearHojaServicio
+2025-08-16T18:43:18+02:00 - [HojaServicio] Iniciando transacción
+2025-08-16T18:43:18+02:00 - [HojaServicio] Ejecutando query
+2025-08-16T18:43:18+02:00 - [HojaServicio] EXITO insert id: 15

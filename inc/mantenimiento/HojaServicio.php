@@ -32,9 +32,9 @@ class HojaServicio {
                 throw new Exception("Error en la preparación de la consulta: " . $this->db->error);
             }
 
-            // Definir tipos para bind_param: todos string menos los enteros
+            // Definir tipos para bind_param: id_material ahora es string
             $stmt->bind_param(
-                "iiissssssisss",
+                "iisssssssisss",
                 $data['id_estacion'],
                 $data['id_servicio'],
                 $data['id_material'],

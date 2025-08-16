@@ -705,19 +705,19 @@ $servicio = $servicioManager->getById($_GET['id']);
 
         let sucursalesData = [];
 
-        // Imprimir en consola el id del material seleccionado en articuloSelect (Select2)
+        // Imprimir en consola el serial del material seleccionado en articuloSelect (Select2)
         const articuloSelect = document.getElementById('articuloSelect');
-        // Variable global para guardar el id del material seleccionado
-        window._idMaterialSeleccionado = '';
+        // Variable global para guardar el serial del material seleccionado
+        window._serialMaterialSeleccionado = '';
         if (articuloSelect && window.jQuery) {
             $(articuloSelect).on('select2:select', function (e) {
-                // El id del material seleccionado está en e.params.data.id
-                window._idMaterialSeleccionado = e.params.data.id;
-                console.log('ID del material seleccionado:', window._idMaterialSeleccionado);
+                // El serial del material seleccionado está en e.params.data.serial
+                window._serialMaterialSeleccionado = e.params.data.serial || '';
+                console.log('Serial del material seleccionado:', window._serialMaterialSeleccionado);
             });
             // Limpiar variable si se limpia el select
             $(articuloSelect).on('select2:clear', function () {
-                window._idMaterialSeleccionado = '';
+                window._serialMaterialSeleccionado = '';
             });
         }
 
@@ -866,8 +866,8 @@ $servicio = $servicioManager->getById($_GET['id']);
                     return params.get('id') || '';
                 }
                 const id_servicio = getIdServicioFromUrl();
-                // Usar el id del material seleccionado en el select2
-                const id_material = window._idMaterialSeleccionado || '';
+                // Usar el serial del material seleccionado en el select2, pero enviarlo como id_material
+                const id_material = String(window._serialMaterialSeleccionado || '');
                 const folio = document.getElementById('folio')?.value || '';
                 const serie = document.getElementById('serie')?.value || '';
                 const fecha_inicio = document.getElementById('fecha')?.value + ' ' + (document.getElementById('hora_inicio')?.value || '') + ':00';

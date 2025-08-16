@@ -317,3 +317,33 @@
   inc\includes.php:58                                include_once()
   front\mantenimiento\view\programacion.php:6        include()
   
+[2025-08-16 18:36:24] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-16 18:36:28] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-16 18:37:19] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-16 18:37:29] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-16 18:37:30] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
+[2025-08-16 18:37:30] glpiphplog.CRITICAL:   *** Uncaught Exception ValueError: mysqli_stmt::bind_param(): Argument #1 ($types) must only contain the "b", "d", "i", "s" type specifiers in C:\xampp\htdocs\glpi\inc\mantenimiento\HojaServicio.php at line 50
+  Backtrace :
+  inc\mantenimiento\HojaServicio.php:50              mysqli_stmt->bind_param()
+  ajax\mantenimiento\create_hoja_servicio.php:82     HojaServicio->crearHojaServicio()
+  
